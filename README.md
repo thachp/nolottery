@@ -72,6 +72,47 @@ For a $1 budget, this currently recommends a Daily Keno 4-Spot play because it h
 
 The recommendation output includes a `Quick Pick Prediction` field: a random valid selection with no odds advantage.
 
+Generate lower-share-risk number picks:
+
+```bash
+uv run lottery low-share powerball
+uv run lottery low-share all --count 5
+```
+
+Low-share picks use a transparent heuristic to avoid common human selection
+patterns, such as birthday-heavy combinations, sequential runs, tight clusters,
+and culturally popular numbers. They do not improve draw odds; they only aim to
+reduce overlap with other player-picked combinations if a ticket wins.
+
+Use `--seed` for deterministic output, `--candidates` to control how many random
+candidates are scored per wager variation, and JSON output for scripting:
+
+```bash
+uv run lottery low-share daily-keno --count 10 --seed 123 --output json
+```
+
+Ask OpenAI to evaluate the generated low-share candidates and select an
+entertainment pick:
+
+```bash
+OPENAI_API_KEY=... uv run lottery low-share powerball --evaluate openai --output json
+```
+
+OpenAI receives the generated candidates, their low-share scores, and the
+heuristic reasons. It is instructed that low-share scores are not draw-odds
+advantages and may only select a candidate as an entertainment choice.
+
+You can optionally exclude exact winning combinations already stored in local
+draw history:
+
+```bash
+uv run lottery low-share powerball --avoid-recent-winning-combos
+uv run lottery low-share powerball --avoid-recent-winning-combos --last 180
+```
+
+This history filter is duplicate avoidance only. It does not make any remaining
+combination more likely to be drawn.
+
 Ask OpenAI to evaluate the recommendation and return a strict JSON decision:
 
 ```bash
@@ -167,6 +208,17 @@ uv run lottery audit all --output json
 uv run lottery audit all --output json --details
 ```
 
+Ask OpenAI to explain audit results:
+
+```bash
+OPENAI_API_KEY=... uv run lottery audit all cashpop --evaluate openai --output json
+OPENAI_API_KEY=... uv run lottery audit frequency cashpop --evaluate openai
+```
+
+OpenAI receives compact audit facts, including statuses, p-values, draw counts,
+warnings, and notable bucket summaries. It is instructed not to treat audit
+signals as proof of bias or as a way to predict future winning numbers.
+
 Audit statuses are `OK`, `WARN`, `INSUFFICIENT_DATA`, or `NOT_APPLICABLE`. Chi-square tests use SciPy p-values and mark `WARN` when `p < 0.01`; sparse tests are marked `INSUFFICIENT_DATA` when expected bucket counts are below 5. Pair and triple audits include chi-square summaries, but they are often sparse for large games. Gap audits report per-number gap statistics and use a pooled geometric chi-square test over completed gaps only.
 
 Statistical warnings are screening signals, not proof of non-random drawing behavior.
@@ -181,6 +233,9 @@ uv run lottery analyze all --output json
 uv run lottery recommend --budget 1 --output json
 uv run lottery recommend --budget 50 --evaluate openai --output json
 uv run lottery audit all --output json
+uv run lottery audit all cashpop --evaluate openai --output json
+uv run lottery low-share powerball --output json
+uv run lottery low-share powerball --evaluate openai --output json
 ```
 
 ## Ticket Ledger

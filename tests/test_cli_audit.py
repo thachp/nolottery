@@ -403,3 +403,80 @@ def test_audit_pick3_pairs_preserve_front_and_back_positions(tmp_path):
     assert back_pair_12["observed"] == 1
     assert back_pair_11["combination"] == "11"
     assert back_pair_11["observed"] == 1
+
+
+def test_audit_all_can_ask_openai_to_explain_compact_results(
+    tmp_path,
+    monkeypatch,
+):
+    data_dir = tmp_path / "data"
+    fixture = tmp_path / "cashpop.html"
+    fixture.write_text(
+        _drawings_html(
+            ("Mon, May 04, 2026", ("01",)),
+            ("Tue, May 05, 2026", ("02",)),
+            ("Wed, May 06, 2026", ("01",)),
+        ),
+        encoding="utf-8",
+    )
+    fetch_result = runner.invoke(
+        app,
+        [
+            "--data-dir",
+            str(data_dir),
+            "fetch",
+            "cashpop",
+            "--source-file",
+            str(fixture),
+        ],
+    )
+    assert fetch_result.exit_code == 0, fetch_result.output
+    call = {}
+
+    def fake_explain(payload, model):
+        call["payload"] = payload
+        call["model"] = model
+        return {
+            "summary": "The audits are too sparse to support a bias conclusion.",
+            "overall_status": "INSUFFICIENT_DATA",
+            "notable_findings": ["Expected bucket counts are below reliable thresholds."],
+            "limitations": ["Historical audits do not predict future winning numbers."],
+            "recommended_next_steps": ["Fetch more historical draw data."],
+            "facts_used": {
+                "audit_count": payload["facts"]["audit_count"],
+                "warn_count": payload["facts"]["warn_count"],
+                "insufficient_data_count": payload["facts"]["insufficient_data_count"],
+                "not_applicable_count": payload["facts"]["not_applicable_count"],
+                "max_draw_count": payload["facts"]["max_draw_count"],
+            },
+        }
+
+    monkeypatch.setattr("nolottery.cli.explain_audits_with_openai", fake_explain)
+    result = runner.invoke(
+        app,
+        [
+            "--data-dir",
+            str(data_dir),
+            "audit",
+            "all",
+            "cashpop",
+            "--evaluate",
+            "openai",
+            "--openai-model",
+            "gpt-test",
+            "--output",
+            "json",
+        ],
+    )
+
+    assert result.exit_code == 0, result.output
+    payload = json.loads(result.output)
+    assert payload["evaluation"]["overall_status"] == "INSUFFICIENT_DATA"
+    assert call["model"] == "gpt-test"
+    assert call["payload"]["facts"]["audit_count"] == 5
+    assert call["payload"]["facts"]["max_draw_count"] == 3
+    assert "Historical audit results do not identify winning future numbers." in json.dumps(
+        call["payload"]
+    )
+    assert '"buckets":' not in json.dumps(call["payload"])
+    assert "notable_buckets" in json.dumps(call["payload"])
