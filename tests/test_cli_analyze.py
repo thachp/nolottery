@@ -106,7 +106,7 @@ def test_recommend_defaults_to_best_small_budget_hit_rate(tmp_path):
     assert "Daily Keno" in result.output
     assert "4-Spot" in result.output
     assert "1:3.86" in result.output
-    assert "Example" in result.output
+    assert "Example" not in result.output
     assert "Prediction method" in result.output
     assert "no odds advantage" in result.output
 

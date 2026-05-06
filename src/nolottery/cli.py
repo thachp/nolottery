@@ -271,7 +271,6 @@ def _print_recommendation_table(
     table.add_column("Cost", justify="right")
     table.add_column("Hit Rate", justify="right")
     table.add_column("Net EV", justify="right")
-    table.add_column("Example Numbers")
     table.add_column("Quick Pick Prediction")
     for rank, recommendation in enumerate(recommendations, start=1):
         option = recommendation.option
@@ -282,7 +281,6 @@ def _print_recommendation_table(
             f"${option.ticket_cost:.2f}",
             _format_probability(displayed_hit_rate(recommendation)),
             f"${option.net_after_tax_ev:.2f}",
-            recommendation.number_selection_label,
             recommendation.prediction_label,
         )
     console.print(table)

@@ -9,7 +9,7 @@ The Python package is `nolottery`; the installed CLI command is `lottery`.
 - "Which game has the best expected value after ticket cost and taxes?"
 - "If I have a small budget, which play gives me the highest chance to win any prize?"
 
-It does not predict lucky numbers with an edge. For fair lottery drawings, one valid number selection has the same odds as any other valid selection. Suggested numbers are deterministic examples so the CLI can produce a complete ticket recommendation. Quick Pick predictions are random valid selections and are labeled as having no odds advantage.
+It does not predict lucky numbers with an edge. For fair lottery drawings, one valid number selection has the same odds as any other valid selection. Quick Pick predictions are random valid selections and are labeled as having no odds advantage.
 
 ## Supported Games
 
@@ -72,10 +72,7 @@ uv run lottery recommend --budget 1
 
 For a $1 budget, this currently recommends a Daily Keno 4-Spot play because it has the highest chance of winning any prize among supported single-ticket options within that budget.
 
-The recommendation output includes two number fields:
-
-- `Example Numbers`: a deterministic valid selection for the play style
-- `Quick Pick Prediction`: a random valid selection with no odds advantage
+The recommendation output includes a `Quick Pick Prediction` field: a random valid selection with no odds advantage.
 
 ## Fetching Draw Data
 
