@@ -74,6 +74,14 @@ For a $1 budget, this currently recommends a Daily Keno 4-Spot play because it h
 
 The recommendation output includes a `Quick Pick Prediction` field: a random valid selection with no odds advantage.
 
+Ask OpenAI to evaluate the recommendation and return a strict JSON decision:
+
+```bash
+OPENAI_API_KEY=... uv run lottery recommend --budget 50 --evaluate openai --output json
+```
+
+OpenAI receives a reduced decision payload: budget, affordable candidates, hit rates, ticket costs, net after-tax EV, and deterministic `PLAY`/`SKIP` facts. Quick-pick numbers are omitted because they have no odds advantage. The OpenAI evaluator may return `SKIP`, `PLAY`, or `PLAY_FOR_ENTERTAINMENT`; it must not change the calculated odds or expected values.
+
 ## Fetching Draw Data
 
 Fetch one game's official past drawing page. By default this uses the Washington Lottery `Past 180 Days` view:
@@ -141,6 +149,7 @@ Use JSON output for scripting or downstream analysis:
 uv run lottery analyze cashpop --output json
 uv run lottery analyze all --output json
 uv run lottery recommend --budget 1 --output json
+uv run lottery recommend --budget 50 --evaluate openai --output json
 ```
 
 ## Ticket Ledger

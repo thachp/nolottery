@@ -15,6 +15,9 @@ from .ledger import LedgerEntry
 from .ledger import add_entry as add_ledger_entry
 from .ledger import summarize as summarize_ledger
 from .metadata import GameMetadata
+from .openai_eval import DEFAULT_OPENAI_MODEL
+from .openai_eval import OpenAIEvaluationError
+from .openai_eval import evaluate_recommendations_with_openai
 from .recommend import Recommendation, displayed_hit_rate, recommend_highest_hit_rate
 from .settings import AppSettings
 
@@ -205,32 +208,53 @@ def recommend(
         str,
         typer.Option("--output", "-o", help="Output format: table or json."),
     ] = "table",
+    evaluate: Annotated[
+        str,
+        typer.Option("--evaluate", help="Optional evaluator: none or openai."),
+    ] = "none",
+    openai_model: Annotated[
+        str,
+        typer.Option("--openai-model", help="OpenAI model used with --evaluate openai."),
+    ] = DEFAULT_OPENAI_MODEL,
 ) -> None:
     """Recommend the highest hit-rate play style within a small budget."""
     conn = db.connect(ctx.obj["data_dir"])
     games = _load_games(conn)
-    recommendations = recommend_highest_hit_rate(games, AppSettings(), budget)
+    settings = AppSettings()
+    recommendations = recommend_highest_hit_rate(games, settings, budget)
     if not recommendations:
         raise typer.BadParameter("budget is below the cheapest supported wager")
-
-    if output == "json":
-        console.print_json(
-            json.dumps(
-                {
-                    "budget": budget,
-                    "best": _recommendation_to_dict(recommendations[0]),
-                    "recommendations": [
-                        _recommendation_to_dict(recommendation)
-                        for recommendation in recommendations
-                    ],
-                }
-            )
-        )
-        return
-    if output != "table":
+    if evaluate not in {"none", "openai"}:
+        raise typer.BadParameter("evaluate must be none or openai")
+    if output not in {"table", "json"}:
         raise typer.BadParameter("output must be table or json")
 
+    response_payload: dict[str, object] = {
+        "budget": budget,
+        "best": _recommendation_to_dict(recommendations[0]),
+        "recommendations": [
+            _recommendation_to_dict(recommendation)
+            for recommendation in recommendations
+        ],
+    }
+    evaluation = None
+    if evaluate == "openai":
+        try:
+            evaluation = evaluate_recommendations_with_openai(
+                _openai_recommendation_payload(recommendations, settings, budget),
+                model=openai_model,
+            )
+        except OpenAIEvaluationError as exc:
+            raise typer.BadParameter(str(exc)) from exc
+        response_payload["evaluation"] = evaluation
+
+    if output == "json":
+        console.print_json(json.dumps(response_payload))
+        return
+
     _print_recommendation_table(recommendations, budget)
+    if evaluation is not None:
+        _print_openai_evaluation(evaluation)
 
 
 def _print_analysis_table(result: AnalysisResult) -> None:
@@ -288,6 +312,12 @@ def _print_recommendation_table(
     console.print("Prediction method: quick-pick random; no odds advantage.")
 
 
+def _print_openai_evaluation(evaluation: dict[str, object]) -> None:
+    console.print(f"OpenAI decision: {evaluation['decision']}")
+    console.print(f"Confidence: {evaluation['confidence']}")
+    console.print(f"Rationale: {evaluation['rationale']}")
+
+
 def _analysis_to_dict(result: AnalysisResult) -> dict[str, object]:
     return {
         "game_slug": result.game_slug,
@@ -336,6 +366,60 @@ def _recommendation_to_dict(recommendation: Recommendation) -> dict[str, object]
         "prediction_label": recommendation.prediction_label,
         "prediction_method": recommendation.prediction_method,
         "reason": recommendation.reason,
+    }
+
+
+def _openai_recommendation_payload(
+    recommendations: tuple[Recommendation, ...],
+    settings: AppSettings,
+    budget: float,
+) -> dict[str, object]:
+    candidates = [
+        _openai_candidate_to_dict(recommendation)
+        for recommendation in recommendations
+    ]
+    best_hit_rate = candidates[0]
+    best_ev = max(candidates, key=lambda candidate: candidate["net_after_tax_ev"])
+    required_edge = best_ev["ticket_cost"] * settings.bankroll.min_edge_percent
+    deterministic_decision = (
+        "PLAY" if best_ev["net_after_tax_ev"] > required_edge else "SKIP"
+    )
+    deterministic_reason = (
+        "at least one affordable option has positive net after-tax expected value"
+        if deterministic_decision == "PLAY"
+        else "all affordable options have non-positive net after-tax expected value"
+    )
+    return {
+        "budget": budget,
+        "objective": (
+            "Make the optimal decision for the budget. SKIP is allowed. "
+            "A play recommendation can be overridden subjectively only as entertainment."
+        ),
+        "deterministic_decision": deterministic_decision,
+        "deterministic_reason": deterministic_reason,
+        "best_hit_rate_option": best_hit_rate,
+        "best_ev_option": best_ev,
+        "constraints": [
+            "Do not change candidate costs, hit rates, or expected values.",
+            "If all net expected values are negative, SKIP is the mathematically optimal decision.",
+            "PLAY_FOR_ENTERTAINMENT is allowed only when the rationale clearly accepts expected loss.",
+            "Quick-pick numbers are intentionally omitted because they have no odds advantage.",
+        ],
+        "candidates": candidates,
+    }
+
+
+def _openai_candidate_to_dict(recommendation: Recommendation) -> dict[str, object]:
+    option = recommendation.option
+    return {
+        "candidate_slug": f"{recommendation.game_slug}:{option.option_slug}",
+        "game_slug": recommendation.game_slug,
+        "game": recommendation.game_name,
+        "option_slug": option.option_slug,
+        "option": option.option_label,
+        "ticket_cost": option.ticket_cost,
+        "hit_rate": displayed_hit_rate(recommendation),
+        "net_after_tax_ev": option.net_after_tax_ev,
     }
 
 

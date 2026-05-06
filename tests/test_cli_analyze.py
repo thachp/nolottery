@@ -166,3 +166,55 @@ def test_recommend_recognizes_cashpop_all_numbers_as_guaranteed(tmp_path):
     assert payload["best"]["option_slug"] == "15-pop"
     assert payload["best"]["hit_rate"] == 1.0
     assert payload["best"]["number_selection"] == list(range(1, 16))
+
+
+def test_recommend_can_ask_openai_to_evaluate_reduced_payload(tmp_path, monkeypatch):
+    call = {}
+
+    def fake_evaluate(payload, model):
+        call["payload"] = payload
+        call["model"] = model
+        return {
+            "decision": "SKIP",
+            "selected_option_slug": None,
+            "confidence": "high",
+            "rationale": "All affordable options have negative expected value.",
+            "tradeoffs": ["Cash Pop has the highest hit rate but loses money in EV."],
+            "facts_used": {
+                "budget": 50.0,
+                "deterministic_decision": "SKIP",
+                "best_hit_rate_option": "cashpop:10-pop",
+                "best_hit_rate": 0.6666170961836361,
+                "best_net_after_tax_ev": -17.193247429939447,
+            },
+        }
+
+    monkeypatch.setattr(
+        "nolottery.cli.evaluate_recommendations_with_openai",
+        fake_evaluate,
+    )
+    result = runner.invoke(
+        app,
+        [
+            "--data-dir",
+            str(tmp_path),
+            "recommend",
+            "--budget",
+            "50",
+            "--evaluate",
+            "openai",
+            "--openai-model",
+            "gpt-test",
+            "--output",
+            "json",
+        ],
+    )
+
+    assert result.exit_code == 0, result.output
+    output = json.loads(result.output)
+    assert output["evaluation"]["decision"] == "SKIP"
+    assert call["model"] == "gpt-test"
+    assert call["payload"]["deterministic_decision"] == "SKIP"
+    assert call["payload"]["best_hit_rate_option"]["candidate_slug"] == "cashpop:10-pop"
+    assert "prediction" not in json.dumps(call["payload"])
+    assert "number_selection" not in json.dumps(call["payload"])
