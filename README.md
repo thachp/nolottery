@@ -1,13 +1,27 @@
-# nolottery
+# Nolottery
 
 Legal Washington Lottery expected-value analysis console app.
 
-`nolottery` helps answer two different questions:
+`nolottery` helps answer two core questions:
 
 - "Which game has the best expected value after ticket cost and taxes?"
 - "If I have a small budget, which play gives me the highest chance to win any prize?"
 
 It does not predict lucky numbers with an edge. For fair lottery drawings, one valid number selection has the same odds as any other valid selection. Quick Pick predictions are random valid selections and are labeled as having no odds advantage.
+
+## Questions It Can Help Answer
+
+Beyond the two core questions above, `nolottery` can also help answer:
+
+- "Which Washington Lottery games are least bad by expected value?"
+- "How much does ticket cost and estimated tax change the economics of a game?"
+- "Which affordable play style gives me the best hit rate for a specific budget?"
+- "If I am going to play for entertainment, which valid numbers are less likely to overlap with common human-picked patterns?"
+- "What winning numbers have been drawn recently, based on locally fetched official data?"
+- "Do stored draw histories show unusual frequency, pair, triple, or gap patterns worth reviewing?"
+- "How much have I spent, won, lost, or earned back over time on real tickets?"
+
+These answers are for EV analysis, budgeting, recordkeeping, and audit-style review. They do not create a way to predict future winning numbers or improve fair drawing odds.
 
 ## Supported Games
 
@@ -24,19 +38,19 @@ Washington draw games currently supported:
 
 ## Features
 
-| Feature | Command | What it is for |
-| --- | --- | --- |
-| Expected-value analysis | `analyze` | Calculates gross EV, after-tax EV, net EV after ticket cost, hit rate, and a conservative `PLAY` or `SKIP` decision for one game or every supported game. |
-| Game ranking | `rank` | Compares supported games by their best wager option so you can see which games are least bad by EV and which have higher hit rates. |
-| Budget recommendation | `recommend` | Finds the affordable play style with the highest chance of winning any prize for a single ticket budget. It also includes a random valid Quick Pick example with no odds advantage. |
-| Low-share pick generation | `low-share` | Generates valid number selections that avoid common human picking patterns. This is for reducing likely jackpot/prize sharing if a ticket wins, not for improving draw odds. |
-| Official draw fetching | `fetch` | Downloads or imports Washington Lottery past-drawing HTML, stores source snapshots, and persists parsed draw results in SQLite for local review and audits. |
-| Recent draw browser | `draws` | Shows the most recent stored winning numbers, either for one game or all games, with table or JSON output. |
-| Randomness audits | `audit` | Runs screening tests over stored draw history: frequency, chi-square, pair, triple, and gap audits. These are diagnostics, not prediction tools. |
-| OpenAI review | `--evaluate openai` | Optional second-pass explanation or decision review for recommendations, audits, and low-share picks using a reduced facts-only payload. Requires `OPENAI_API_KEY`. |
-| Ticket ledger | `ledger` | Records real tickets, cost, winnings, numbers, multiplier/use details, and summarizes spend, profit, and ROI over time. |
-| Offline fixtures | `fetch --source-file` / `--source-dir` | Imports already-downloaded official HTML for tests, reproducible analysis, or no-network workflows. |
-| JSON output | `--output json` | Produces machine-readable output for scripting, saved reports, or downstream analysis. |
+| Feature                   | Command                                | What it is for                                                                                                                                                                      |
+| ------------------------- | -------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Expected-value analysis   | `analyze`                              | Calculates gross EV, after-tax EV, net EV after ticket cost, hit rate, and a conservative `PLAY` or `SKIP` decision for one game or every supported game.                           |
+| Game ranking              | `rank`                                 | Compares supported games by their best wager option so you can see which games are least bad by EV and which have higher hit rates.                                                 |
+| Budget recommendation     | `recommend`                            | Finds the affordable play style with the highest chance of winning any prize for a single ticket budget. It also includes a random valid Quick Pick example with no odds advantage. |
+| Low-share pick generation | `low-share`                            | Generates valid number selections that avoid common human picking patterns. This is for reducing likely jackpot/prize sharing if a ticket wins, not for improving draw odds.        |
+| Official draw fetching    | `fetch`                                | Downloads or imports Washington Lottery past-drawing HTML, stores source snapshots, and persists parsed draw results in SQLite for local review and audits.                         |
+| Recent draw browser       | `draws`                                | Shows the most recent stored winning numbers, either for one game or all games, with table or JSON output.                                                                          |
+| Randomness audits         | `audit`                                | Runs screening tests over stored draw history: frequency, chi-square, pair, triple, and gap audits. These are diagnostics, not prediction tools.                                    |
+| OpenAI review             | `--evaluate openai`                    | Optional second-pass explanation or decision review for recommendations, audits, and low-share picks using a reduced facts-only payload. Requires `OPENAI_API_KEY`.                 |
+| Ticket ledger             | `ledger`                               | Records real tickets, cost, winnings, numbers, multiplier/use details, and summarizes spend, profit, and ROI over time.                                                             |
+| Offline fixtures          | `fetch --source-file` / `--source-dir` | Imports already-downloaded official HTML for tests, reproducible analysis, or no-network workflows.                                                                                 |
+| JSON output               | `--output json`                        | Produces machine-readable output for scripting, saved reports, or downstream analysis.                                                                                              |
 
 ## How It Works
 
