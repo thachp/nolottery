@@ -10,10 +10,11 @@ from rich.table import Table
 
 from . import db
 from .ev import AnalysisResult, analyze_game
-from .fetch import fetch_game
+from .fetch import FetchResult, fetch_game
 from .ledger import LedgerEntry
 from .ledger import add_entry as add_ledger_entry
 from .ledger import summarize as summarize_ledger
+from .metadata import GameMetadata
 from .recommend import Recommendation, displayed_hit_rate, recommend_highest_hit_rate
 from .settings import AppSettings
 
@@ -53,6 +54,23 @@ def analyze(
 ) -> None:
     """Analyze expected value for a supported Washington Lottery game."""
     conn = db.connect(ctx.obj["data_dir"])
+    if game == "all":
+        results = tuple(
+            analyze_game(metadata, AppSettings()) for metadata in _load_games(conn)
+        )
+        if output == "json":
+            console.print_json(
+                json.dumps(
+                    {"games": [_analysis_to_dict(result) for result in results]}
+                )
+            )
+            return
+        if output != "table":
+            raise typer.BadParameter("output must be table or json")
+        for result in results:
+            _print_analysis_table(result)
+        return
+
     metadata = db.get_game(conn, game)
     if metadata is None:
         raise typer.BadParameter(f"unknown game: {game}")
@@ -78,14 +96,42 @@ def fetch(
             help="Read an already downloaded official HTML page instead of making a network request.",
         ),
     ] = None,
+    source_dir: Annotated[
+        Path | None,
+        typer.Option(
+            "--source-dir",
+            help="For 'all', read <game-slug>.html files from this directory.",
+        ),
+    ] = None,
 ) -> None:
     """Fetch official past drawing data and persist a local snapshot."""
     conn = db.connect(ctx.obj["data_dir"])
+    if game == "all":
+        if source_file is not None:
+            raise typer.BadParameter("--source-file cannot be used with game 'all'")
+        results = []
+        for metadata in _load_games(conn):
+            game_source_file = (
+                source_dir / f"{metadata.slug}.html" if source_dir is not None else None
+            )
+            results.append(fetch_game(conn, metadata, game_source_file))
+        for result in results:
+            _print_fetch_result(result)
+        console.print(f"{len(results)} games fetched")
+        return
+
+    if source_dir is not None:
+        raise typer.BadParameter("--source-dir can only be used with game 'all'")
+
     metadata = db.get_game(conn, game)
     if metadata is None:
         raise typer.BadParameter(f"unknown game: {game}")
 
     result = fetch_game(conn, metadata, source_file)
+    _print_fetch_result(result)
+
+
+def _print_fetch_result(result: FetchResult) -> None:
     console.print(
         f"{result.game_name}: fetched {result.draw_count} draw"
         f"{'' if result.draw_count == 1 else 's'} and "
@@ -272,7 +318,7 @@ def _recommendation_to_dict(recommendation: Recommendation) -> dict[str, object]
     }
 
 
-def _load_games(conn) -> tuple:
+def _load_games(conn) -> tuple[GameMetadata, ...]:
     games = []
     for slug in db.list_game_slugs(conn):
         metadata = db.get_game(conn, slug)

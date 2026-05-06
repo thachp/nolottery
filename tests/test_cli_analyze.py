@@ -76,6 +76,26 @@ def test_analyze_supports_all_washington_draw_games(tmp_path):
         assert payload["options"]
 
 
+def test_analyze_all_outputs_every_supported_game(tmp_path):
+    result = runner.invoke(
+        app,
+        ["--data-dir", str(tmp_path), "analyze", "all", "--output", "json"],
+    )
+
+    assert result.exit_code == 0, result.output
+    payload = json.loads(result.output)
+    assert [game["game_slug"] for game in payload["games"]] == [
+        "cashpop",
+        "daily-keno",
+        "hit-5",
+        "lotto",
+        "match-4",
+        "mega-millions",
+        "pick-3",
+        "powerball",
+    ]
+
+
 def test_recommend_defaults_to_best_small_budget_hit_rate(tmp_path):
     result = runner.invoke(
         app,
