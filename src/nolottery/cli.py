@@ -9,6 +9,7 @@ from rich.console import Console
 from rich.table import Table
 
 from . import db
+from .audit import chi_square_audit, combination_audit, frequency_audit, gap_audit
 from .ev import AnalysisResult, analyze_game
 from .fetch import FetchResult, fetch_game, fetch_game_backfill
 from .ledger import LedgerEntry
@@ -23,7 +24,9 @@ from .settings import AppSettings
 
 
 app = typer.Typer(no_args_is_help=True)
+audit_app = typer.Typer(help="Audit stored draw randomness statistics.")
 ledger_app = typer.Typer(help="Track purchased tickets and realized winnings.")
+app.add_typer(audit_app, name="audit")
 app.add_typer(ledger_app, name="ledger")
 console = Console()
 
@@ -257,6 +260,253 @@ def recommend(
         _print_openai_evaluation(evaluation)
 
 
+@audit_app.command("frequency")
+def audit_frequency(
+    ctx: typer.Context,
+    game: Annotated[str, typer.Argument(help="Game slug, such as cashpop.")],
+    output: Annotated[
+        str,
+        typer.Option("--output", "-o", help="Output format: table or json."),
+    ] = "table",
+    last: Annotated[
+        int | None,
+        typer.Option("--last", min=1, help="Audit only the most recent N valid draws."),
+    ] = None,
+) -> None:
+    """Audit observed number frequencies against perfect uniform randomness."""
+    if output not in {"table", "json"}:
+        raise typer.BadParameter("output must be table or json")
+    conn = db.connect(ctx.obj["data_dir"])
+    if game == "all":
+        results = [
+            result
+            for slug in db.list_game_slugs(conn)
+            for result in frequency_audit(conn, slug, last=last)
+        ]
+        if output == "json":
+            console.print_json(json.dumps({"audits": results}))
+            return
+        _print_audit_summary_table(results)
+        return
+
+    if db.get_game(conn, game) is None:
+        raise typer.BadParameter(f"unknown game: {game}")
+    results = frequency_audit(conn, game, last=last)
+    if output == "json":
+        payload: dict[str, object]
+        if len(results) == 1:
+            payload = results[0]
+        else:
+            payload = {"game_slug": game, "audits": results}
+        console.print_json(json.dumps(payload))
+        return
+    _print_frequency_audit_tables(results)
+
+
+@audit_app.command("chi-square")
+def audit_chi_square(
+    ctx: typer.Context,
+    game: Annotated[str, typer.Argument(help="Game slug, such as powerball.")],
+    output: Annotated[
+        str,
+        typer.Option("--output", "-o", help="Output format: table or json."),
+    ] = "table",
+    last: Annotated[
+        int | None,
+        typer.Option("--last", min=1, help="Audit only the most recent N valid draws."),
+    ] = None,
+) -> None:
+    """Run chi-square tests against perfect uniform randomness."""
+    if output not in {"table", "json"}:
+        raise typer.BadParameter("output must be table or json")
+    conn = db.connect(ctx.obj["data_dir"])
+    if game == "all":
+        results = [
+            result
+            for slug in db.list_game_slugs(conn)
+            for result in chi_square_audit(conn, slug, last=last)
+        ]
+    else:
+        if db.get_game(conn, game) is None:
+            raise typer.BadParameter(f"unknown game: {game}")
+        results = chi_square_audit(conn, game, last=last)
+    if output == "json":
+        console.print_json(json.dumps({"audits": results}))
+        return
+    _print_audit_summary_table(results)
+
+
+@audit_app.command("all")
+def audit_all(
+    ctx: typer.Context,
+    game: Annotated[
+        str,
+        typer.Argument(help="Game slug or 'all'."),
+    ] = "all",
+    output: Annotated[
+        str,
+        typer.Option("--output", "-o", help="Output format: table or json."),
+    ] = "table",
+    last: Annotated[
+        int | None,
+        typer.Option("--last", min=1, help="Audit only the most recent N valid draws."),
+    ] = None,
+    details: Annotated[
+        bool,
+        typer.Option("--details", help="Include full bucket and value details in JSON."),
+    ] = False,
+) -> None:
+    """Run every randomness audit type across one game or all games."""
+    if output not in {"table", "json"}:
+        raise typer.BadParameter("output must be table or json")
+    conn = db.connect(ctx.obj["data_dir"])
+    if game == "all":
+        slugs = db.list_game_slugs(conn)
+    else:
+        if db.get_game(conn, game) is None:
+            raise typer.BadParameter(f"unknown game: {game}")
+        slugs = (game,)
+    games = []
+    summary_results = []
+    for slug in slugs:
+        audits = _all_audits_for_game(conn, slug, last)
+        summary_results.extend(audits)
+        games.append(
+            {
+                "game_slug": slug,
+                "audits": audits if details else [_compact_audit(audit) for audit in audits],
+            }
+        )
+    if output == "json":
+        console.print_json(json.dumps({"games": games}))
+        return
+    _print_audit_summary_table(
+        summary_results if details else [_compact_audit(audit) for audit in summary_results]
+    )
+
+
+@audit_app.command("pairs")
+def audit_pairs(
+    ctx: typer.Context,
+    game: Annotated[str, typer.Argument(help="Game slug, such as hit-5.")],
+    output: Annotated[
+        str,
+        typer.Option("--output", "-o", help="Output format: table or json."),
+    ] = "table",
+    last: Annotated[
+        int | None,
+        typer.Option("--last", min=1, help="Audit only the most recent N valid draws."),
+    ] = None,
+) -> None:
+    """Audit within-draw pair distributions."""
+    _run_combination_command(ctx, game, output, last, size=2)
+
+
+@audit_app.command("triples")
+def audit_triples(
+    ctx: typer.Context,
+    game: Annotated[str, typer.Argument(help="Game slug, such as hit-5.")],
+    output: Annotated[
+        str,
+        typer.Option("--output", "-o", help="Output format: table or json."),
+    ] = "table",
+    last: Annotated[
+        int | None,
+        typer.Option("--last", min=1, help="Audit only the most recent N valid draws."),
+    ] = None,
+) -> None:
+    """Audit within-draw triple distributions."""
+    _run_combination_command(ctx, game, output, last, size=3)
+
+
+@audit_app.command("gaps")
+def audit_gaps(
+    ctx: typer.Context,
+    game: Annotated[str, typer.Argument(help="Game slug, such as cashpop.")],
+    output: Annotated[
+        str,
+        typer.Option("--output", "-o", help="Output format: table or json."),
+    ] = "table",
+    last: Annotated[
+        int | None,
+        typer.Option("--last", min=1, help="Audit only the most recent N valid draws."),
+    ] = None,
+) -> None:
+    """Audit draw intervals between number appearances."""
+    if output not in {"table", "json"}:
+        raise typer.BadParameter("output must be table or json")
+    conn = db.connect(ctx.obj["data_dir"])
+    if game == "all":
+        results = [
+            result
+            for slug in db.list_game_slugs(conn)
+            for result in gap_audit(conn, slug, last=last)
+        ]
+    else:
+        if db.get_game(conn, game) is None:
+            raise typer.BadParameter(f"unknown game: {game}")
+        results = gap_audit(conn, game, last=last)
+    if output == "json":
+        if len(results) == 1:
+            console.print_json(json.dumps(results[0]))
+        else:
+            console.print_json(json.dumps({"audits": results}))
+        return
+    _print_gap_audit_tables(results)
+
+
+def _run_combination_command(
+    ctx: typer.Context,
+    game: str,
+    output: str,
+    last: int | None,
+    *,
+    size: int,
+) -> None:
+    if output not in {"table", "json"}:
+        raise typer.BadParameter("output must be table or json")
+    conn = db.connect(ctx.obj["data_dir"])
+    if game == "all":
+        results = [
+            result
+            for slug in db.list_game_slugs(conn)
+            for result in combination_audit(conn, slug, size=size, last=last)
+        ]
+    else:
+        if db.get_game(conn, game) is None:
+            raise typer.BadParameter(f"unknown game: {game}")
+        results = combination_audit(conn, game, size=size, last=last)
+    if output == "json":
+        if len(results) == 1:
+            console.print_json(json.dumps(results[0]))
+        else:
+            console.print_json(json.dumps({"audits": results}))
+        return
+    _print_combination_audit_tables(results)
+
+
+def _all_audits_for_game(
+    conn,
+    slug: str,
+    last: int | None,
+) -> list[dict[str, object]]:
+    return [
+        *frequency_audit(conn, slug, last=last),
+        *chi_square_audit(conn, slug, last=last),
+        *combination_audit(conn, slug, size=2, last=last),
+        *combination_audit(conn, slug, size=3, last=last),
+        *gap_audit(conn, slug, last=last),
+    ]
+
+
+def _compact_audit(audit: dict[str, object]) -> dict[str, object]:
+    return {
+        key: value
+        for key, value in audit.items()
+        if key not in {"buckets", "values", "gap_buckets"}
+    }
+
+
 def _print_analysis_table(result: AnalysisResult) -> None:
     console.print(result.game_name)
     console.print(f"Decision: {result.decision}")
@@ -316,6 +566,134 @@ def _print_openai_evaluation(evaluation: dict[str, object]) -> None:
     console.print(f"OpenAI decision: {evaluation['decision']}")
     console.print(f"Confidence: {evaluation['confidence']}")
     console.print(f"Rationale: {evaluation['rationale']}")
+
+
+def _print_frequency_audit_tables(results: list[dict[str, object]]) -> None:
+    for result in results:
+        console.print(
+            f"{result['game_slug']} / {result['pool']} frequency: "
+            f"{result['status']}"
+        )
+        console.print(f"Draws: {result['draw_count']}")
+        console.print(f"p-value: {_format_optional_float(result['p_value'])}")
+        for warning in result["warnings"]:
+            console.print(f"Warning: {warning}")
+        table = Table()
+        table.add_column("Value", justify="right")
+        table.add_column("Observed", justify="right")
+        table.add_column("Expected", justify="right")
+        table.add_column("Delta", justify="right")
+        for bucket in result["buckets"]:
+            table.add_row(
+                str(bucket["value"]),
+                str(bucket["observed"]),
+                f"{bucket['expected']:.2f}",
+                f"{bucket['delta']:.2f}",
+            )
+        console.print(table)
+
+
+def _print_audit_summary_table(results: list[dict[str, object]]) -> None:
+    table = Table()
+    table.add_column("Game", no_wrap=True)
+    table.add_column("Pool", no_wrap=True)
+    table.add_column("Test", no_wrap=True)
+    table.add_column("Draws", justify="right")
+    table.add_column("Status", no_wrap=True)
+    table.add_column("p-value", justify="right")
+    table.add_column("Expected", justify="right")
+    for result in results:
+        table.add_row(
+            str(result["game_slug"]),
+            str(result["pool"]),
+            str(result["test"]),
+            str(result["draw_count"]),
+            str(result["status"]),
+            _format_optional_float(result.get("p_value")),
+            _format_optional_count(result.get("expected_per_bucket")),
+        )
+    console.print(table)
+    console.print(
+        "Statistical warnings are screening signals, not proof of non-random drawing behavior."
+    )
+
+
+def _print_combination_audit_tables(results: list[dict[str, object]]) -> None:
+    for result in results:
+        console.print(
+            f"{result['game_slug']} / {result['pool']} {result['test']}: "
+            f"{result['status']}"
+        )
+        console.print(f"Draws: {result['draw_count']}")
+        console.print(f"p-value: {_format_optional_float(result['p_value'])}")
+        for warning in result["warnings"]:
+            console.print(f"Warning: {warning}")
+        table = Table()
+        table.add_column("Combination")
+        table.add_column("Observed", justify="right")
+        table.add_column("Expected", justify="right")
+        top_buckets = sorted(
+            result["buckets"],
+            key=lambda bucket: bucket["observed"],
+            reverse=True,
+        )[:20]
+        for bucket in top_buckets:
+            combination = bucket["combination"]
+            label = (
+                ", ".join(str(value) for value in combination)
+                if isinstance(combination, list)
+                else str(combination)
+            )
+            table.add_row(
+                label,
+                str(bucket["observed"]),
+                f"{bucket['expected']:.2f}",
+            )
+        console.print(table)
+
+
+def _print_gap_audit_tables(results: list[dict[str, object]]) -> None:
+    for result in results:
+        console.print(
+            f"{result['game_slug']} / {result['pool']} gaps: "
+            f"{result['status']}"
+        )
+        console.print(f"Draws: {result['draw_count']}")
+        console.print(f"Completed gaps: {result['completed_gap_count']}")
+        console.print(f"p-value: {_format_optional_float(result['p_value'])}")
+        for warning in result["warnings"]:
+            console.print(f"Warning: {warning}")
+        table = Table()
+        table.add_column("Value", justify="right")
+        table.add_column("Appearances", justify="right")
+        table.add_column("Current Gap", justify="right")
+        table.add_column("Max Gap", justify="right")
+        table.add_column("Average Gap", justify="right")
+        for value in result["values"]:
+            table.add_row(
+                str(value["value"]),
+                str(value["appearances"]),
+                str(value["current_gap"]),
+                str(value["max_gap"] if value["max_gap"] is not None else "n/a"),
+                (
+                    f"{value['average_gap']:.2f}"
+                    if value["average_gap"] is not None
+                    else "n/a"
+                ),
+            )
+        console.print(table)
+
+
+def _format_optional_float(value: object) -> str:
+    if value is None:
+        return "n/a"
+    return f"{float(value):.6g}"
+
+
+def _format_optional_count(value: object) -> str:
+    if value is None:
+        return "n/a"
+    return f"{float(value):.2f}"
 
 
 def _analysis_to_dict(result: AnalysisResult) -> dict[str, object]:

@@ -139,6 +139,38 @@ daily-keno-2026.html
 daily-keno-2025.html
 ```
 
+## Randomness Audits
+
+Audit commands inspect stored draw history from `draw_results`. Fetch or backfill draw data first, then run audits against perfect uniform randomness:
+
+```bash
+uv run lottery audit frequency cashpop
+uv run lottery audit chi-square powerball
+uv run lottery audit pairs hit-5
+uv run lottery audit triples daily-keno
+uv run lottery audit gaps cashpop
+uv run lottery audit all
+```
+
+Every focused audit command accepts a game slug or `all`, plus `--output table|json` and `--last N`. `--last N` uses the most recent N valid parsed draws after malformed rows are skipped.
+
+`audit all` runs frequency, chi-square, pair distribution, triple distribution, and draw-gap audits across every supported game by default. You can scope it to one game:
+
+```bash
+uv run lottery audit all cashpop
+```
+
+JSON output for `audit all` is compact by default. Add `--details` to include full buckets and per-number gap values:
+
+```bash
+uv run lottery audit all --output json
+uv run lottery audit all --output json --details
+```
+
+Audit statuses are `OK`, `WARN`, `INSUFFICIENT_DATA`, or `NOT_APPLICABLE`. Chi-square tests use SciPy p-values and mark `WARN` when `p < 0.01`; sparse tests are marked `INSUFFICIENT_DATA` when expected bucket counts are below 5. Pair and triple audits include chi-square summaries, but they are often sparse for large games. Gap audits report per-number gap statistics and use a pooled geometric chi-square test over completed gaps only.
+
+Statistical warnings are screening signals, not proof of non-random drawing behavior.
+
 ## JSON Output
 
 Use JSON output for scripting or downstream analysis:
@@ -148,6 +180,7 @@ uv run lottery analyze cashpop --output json
 uv run lottery analyze all --output json
 uv run lottery recommend --budget 1 --output json
 uv run lottery recommend --budget 50 --evaluate openai --output json
+uv run lottery audit all --output json
 ```
 
 ## Ticket Ledger
