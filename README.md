@@ -22,6 +22,22 @@ Washington draw games currently supported:
 - Cash Pop
 - Daily Keno
 
+## Features
+
+| Feature | Command | What it is for |
+| --- | --- | --- |
+| Expected-value analysis | `analyze` | Calculates gross EV, after-tax EV, net EV after ticket cost, hit rate, and a conservative `PLAY` or `SKIP` decision for one game or every supported game. |
+| Game ranking | `rank` | Compares supported games by their best wager option so you can see which games are least bad by EV and which have higher hit rates. |
+| Budget recommendation | `recommend` | Finds the affordable play style with the highest chance of winning any prize for a single ticket budget. It also includes a random valid Quick Pick example with no odds advantage. |
+| Low-share pick generation | `low-share` | Generates valid number selections that avoid common human picking patterns. This is for reducing likely jackpot/prize sharing if a ticket wins, not for improving draw odds. |
+| Official draw fetching | `fetch` | Downloads or imports Washington Lottery past-drawing HTML, stores source snapshots, and persists parsed draw results in SQLite for local review and audits. |
+| Recent draw browser | `draws` | Shows the most recent stored winning numbers, either for one game or all games, with table or JSON output. |
+| Randomness audits | `audit` | Runs screening tests over stored draw history: frequency, chi-square, pair, triple, and gap audits. These are diagnostics, not prediction tools. |
+| OpenAI review | `--evaluate openai` | Optional second-pass explanation or decision review for recommendations, audits, and low-share picks using a reduced facts-only payload. Requires `OPENAI_API_KEY`. |
+| Ticket ledger | `ledger` | Records real tickets, cost, winnings, numbers, multiplier/use details, and summarizes spend, profit, and ROI over time. |
+| Offline fixtures | `fetch --source-file` / `--source-dir` | Imports already-downloaded official HTML for tests, reproducible analysis, or no-network workflows. |
+| JSON output | `--output json` | Produces machine-readable output for scripting, saved reports, or downstream analysis. |
+
 ## How It Works
 
 The app has built-in Washington Lottery prize and odds metadata for each supported game. It uses that metadata to calculate:
@@ -34,7 +50,14 @@ The app has built-in Washington Lottery prize and odds metadata for each support
 
 The default decision is conservative: if the best option is still negative expected value, the app says `SKIP`.
 
-The app can also fetch official Washington Lottery past drawing pages and persist local snapshots in SQLite. Fetching is useful for keeping source HTML and parsed draw results locally, but the EV calculations are based on the configured odds and prize tables.
+The app can also fetch official Washington Lottery past drawing pages and persist local snapshots in SQLite. Fetching is useful for keeping source HTML and parsed draw results locally, powering recent-draw views, avoiding exact recent winning combinations in low-share generation, and running randomness audits. The EV calculations still come from the configured odds and prize tables, not from historical draw frequency.
+
+Important limits:
+
+- The app does not predict future winning numbers.
+- Historical frequency, pair, triple, or gap results do not create an odds edge.
+- Low-share picks do not make a combination more likely to be drawn.
+- OpenAI evaluation is constrained to explain or choose among calculated facts; it must not alter odds or expected values.
 
 ## Quickstart
 
@@ -62,6 +85,13 @@ Rank games by best after-tax expected value:
 uv run lottery rank
 ```
 
+Analyze one game or all games as JSON:
+
+```bash
+uv run lottery analyze cashpop --output json
+uv run lottery analyze all --output json
+```
+
 Find the highest hit-rate play within a small budget:
 
 ```bash
@@ -71,6 +101,18 @@ uv run lottery recommend --budget 1
 For a $1 budget, this currently recommends a Daily Keno 4-Spot play because it has the highest chance of winning any prize among supported single-ticket options within that budget.
 
 The recommendation output includes a `Quick Pick Prediction` field: a random valid selection with no odds advantage.
+
+For budgets under $1, the recommender can select eligible lower-cost options, such as Pick 3 pair plays. For larger budgets, it may select high-hit-rate multi-number wager styles, while still reporting the net after-tax EV and conservative decision.
+
+Ask OpenAI to evaluate the recommendation and return a strict JSON decision:
+
+```bash
+OPENAI_API_KEY=... uv run lottery recommend --budget 50 --evaluate openai --output json
+```
+
+OpenAI receives a reduced decision payload: budget, affordable candidates, hit rates, ticket costs, net after-tax EV, and deterministic `PLAY`/`SKIP` facts. Quick-pick numbers are omitted because they have no odds advantage. The OpenAI evaluator may return `SKIP`, `PLAY`, or `PLAY_FOR_ENTERTAINMENT`; it must not change the calculated odds or expected values.
+
+## Low-Share Picks
 
 Generate lower-share-risk number picks:
 
@@ -102,8 +144,7 @@ OpenAI receives the generated candidates, their low-share scores, and the
 heuristic reasons. It is instructed that low-share scores are not draw-odds
 advantages and may only select a candidate as an entertainment choice.
 
-You can optionally exclude exact winning combinations already stored in local
-draw history:
+You can optionally exclude exact winning combinations already stored in local draw history:
 
 ```bash
 uv run lottery low-share powerball --avoid-recent-winning-combos
@@ -113,13 +154,27 @@ uv run lottery low-share powerball --avoid-recent-winning-combos --last 180
 This history filter is duplicate avoidance only. It does not make any remaining
 combination more likely to be drawn.
 
-Ask OpenAI to evaluate the recommendation and return a strict JSON decision:
+## Expected-Value Commands
+
+Use `analyze` when you want the detailed economics for one game or every supported game:
 
 ```bash
-OPENAI_API_KEY=... uv run lottery recommend --budget 50 --evaluate openai --output json
+uv run lottery analyze powerball
+uv run lottery analyze all --output json
 ```
 
-OpenAI receives a reduced decision payload: budget, affordable candidates, hit rates, ticket costs, net after-tax EV, and deterministic `PLAY`/`SKIP` facts. Quick-pick numbers are omitted because they have no odds advantage. The OpenAI evaluator may return `SKIP`, `PLAY`, or `PLAY_FOR_ENTERTAINMENT`; it must not change the calculated odds or expected values.
+Use `rank` when you want a quick cross-game comparison:
+
+```bash
+uv run lottery rank
+```
+
+Use `recommend` when you have a single-ticket budget and care about the highest hit rate rather than best EV:
+
+```bash
+uv run lottery recommend --budget 0.50
+uv run lottery recommend --budget 75 --output json
+```
 
 ## Fetching Draw Data
 
@@ -137,6 +192,8 @@ uv run lottery fetch all
 
 Regular fetches keep prior draw rows and persist only draw results newer than the
 latest stored draw date for that game.
+
+The parser handles current Washington Lottery table variants, including draw tables with no prize rows and tables that contain extra `game-balls` cells in prize rows. In those cases it still stores the draw date and first winning-number cell, while reporting zero prize rows when prize data is absent.
 
 Show recent stored winning numbers:
 
@@ -165,15 +222,16 @@ uv run lottery fetch all --backfill
 
 Backfill mode first reads the normal past-drawings page, discovers the year options published by Washington Lottery, then fetches each yearly page. Stored draw rows for that game are replaced by the combined parsed yearly results.
 
-For tests or offline analysis, fetch commands can read local HTML files from a directory. Current-window files are named by game slug:
+For tests or offline analysis, fetch commands can read local HTML files from a single file or a directory:
 
 ```bash
+uv run lottery fetch cashpop --source-file ./fixtures/cashpop.html
 uv run lottery fetch all --source-dir ./fixtures
 ```
 
-Expected file names include:
+Current-window directory files are named by game slug:
 
-```text
+```bash
 cashpop.html
 daily-keno.html
 hit-5.html
@@ -193,6 +251,16 @@ daily-keno-2026.html
 daily-keno-2025.html
 ```
 
+## Recent Draws
+
+Use `draws` to inspect parsed winning numbers already stored in the local database:
+
+```bash
+uv run lottery draws
+uv run lottery draws all --limit 5
+uv run lottery draws powerball --limit 20 --output json
+```
+
 ## Randomness Audits
 
 Audit commands inspect stored draw history from `draw_results`. Fetch or backfill draw data first, then run audits against perfect uniform randomness:
@@ -205,6 +273,15 @@ uv run lottery audit triples daily-keno
 uv run lottery audit gaps cashpop
 uv run lottery audit all
 ```
+
+What each audit is for:
+
+- `frequency`: counts how often each number or number pool appears, then compares observed counts with a uniform expectation.
+- `chi-square`: reports the same uniformity test as a focused chi-square command, split by game-specific pools such as white balls and bonus balls.
+- `pairs`: checks within-draw pair distributions, useful for spotting unusual pair concentration in games where the sample size is large enough.
+- `triples`: checks within-draw triple distributions. This is often sparse for large games and may be marked `INSUFFICIENT_DATA`.
+- `gaps`: reviews draw intervals between appearances for each number and uses a pooled geometric chi-square screen over completed gaps.
+- `all`: runs the full audit matrix across one game or every supported game.
 
 Every focused audit command accepts a game slug or `all`, plus `--output table|json` and `--last N`. `--last N` uses the most recent N valid parsed draws after malformed rows are skipped.
 
@@ -235,6 +312,24 @@ signals as proof of bias or as a way to predict future winning numbers.
 Audit statuses are `OK`, `WARN`, `INSUFFICIENT_DATA`, or `NOT_APPLICABLE`. Chi-square tests use SciPy p-values and mark `WARN` when `p < 0.01`; sparse tests are marked `INSUFFICIENT_DATA` when expected bucket counts are below 5. Pair and triple audits include chi-square summaries, but they are often sparse for large games. Gap audits report per-number gap statistics and use a pooled geometric chi-square test over completed gaps only.
 
 Statistical warnings are screening signals, not proof of non-random drawing behavior.
+
+## OpenAI Evaluation
+
+OpenAI evaluation is optional and available on:
+
+```bash
+uv run lottery recommend --evaluate openai
+uv run lottery low-share powerball --evaluate openai
+uv run lottery audit all cashpop --evaluate openai
+```
+
+Use it when you want a concise narrative explanation or a constrained entertainment decision over already-calculated facts. Set `OPENAI_API_KEY` in the environment and optionally choose a model:
+
+```bash
+OPENAI_API_KEY=... uv run lottery audit all --evaluate openai --openai-model gpt-5.2 --output json
+```
+
+The OpenAI payloads intentionally omit or constrain data that could imply false precision. Recommendation evaluation omits Quick Pick numbers. Low-share evaluation includes candidate scores and reasons but labels them as no-odds-advantage. Audit explanation includes p-values, statuses, warnings, and notable buckets, with instructions not to present audit signals as proof of bias or predictability.
 
 ## JSON Output
 
@@ -267,6 +362,8 @@ Summarize spending, winnings, profit, and ROI:
 ```bash
 uv run lottery ledger summary
 ```
+
+The add flow prompts for purchase date, game, draw date, cost, winnings, option, multiplier/use details, numbers, whether the ticket followed the recommendation, retailer, and notes. The summary aggregates total tickets, total spent, total won, profit, and ROI percentage.
 
 ## Data Storage
 
