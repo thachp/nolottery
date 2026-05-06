@@ -1,0 +1,237 @@
+┏━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃ Game          ┃ Wager                 ┃ Pick                                                           ┃ Low-Share Score ┃ Reasons                                          ┃
+┡━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┩
+│ Cash Pop      │ 10 POPs               │ 1, 2, 5, 6, 8, 9, 11, 12, 14, 15                               │              78 │ no sequential run; wide spread                   │
+│ Cash Pop      │ 10 POPs               │ 1, 2, 4, 5, 7, 8, 10, 12, 14, 15                               │              78 │ no sequential run; wide spread                   │
+│ Cash Pop      │ 10 POPs               │ 1, 3, 4, 6, 7, 9, 11, 12, 14, 15                               │              66 │ no sequential run; wide spread                   │
+│ Cash Pop      │ 10 POPs               │ 1, 3, 4, 6, 7, 9, 10, 12, 13, 15                               │              66 │ no sequential run; wide spread                   │
+│ Cash Pop      │ 10 POPs               │ 1, 2, 4, 5, 7, 8, 10, 12, 13, 15                               │              66 │ no sequential run; wide spread                   │
+│ Cash Pop      │ 11 POPs               │ 2, 3, 4, 5, 6, 8, 9, 10, 13, 14, 15                            │              60 │ wide spread; no arithmetic pattern               │
+│ Cash Pop      │ 11 POPs               │ 1, 2, 4, 5, 6, 8, 9, 10, 13, 14, 15                            │              60 │ wide spread; no arithmetic pattern               │
+│ Cash Pop      │ 11 POPs               │ 1, 2, 3, 5, 7, 8, 9, 10, 12, 14, 15                            │              60 │ wide spread; no arithmetic pattern               │
+│ Cash Pop      │ 11 POPs               │ 1, 2, 3, 6, 8, 9, 10, 11, 12, 14, 15                           │              60 │ wide spread; no arithmetic pattern               │
+│ Cash Pop      │ 11 POPs               │ 1, 2, 3, 4, 6, 8, 9, 10, 11, 12, 14                            │              60 │ wide spread; no arithmetic pattern               │
+│ Cash Pop      │ 12 POPs               │ 2, 3, 4, 5, 6, 8, 9, 10, 11, 12, 14, 15                        │              60 │ wide spread; no arithmetic pattern               │
+│ Cash Pop      │ 12 POPs               │ 1, 2, 4, 5, 6, 8, 9, 10, 11, 12, 14, 15                        │              60 │ wide spread; no arithmetic pattern               │
+│ Cash Pop      │ 12 POPs               │ 1, 2, 3, 4, 5, 6, 9, 10, 11, 12, 14, 15                        │              60 │ wide spread; no arithmetic pattern               │
+│ Cash Pop      │ 12 POPs               │ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 15                          │              60 │ wide spread; no arithmetic pattern               │
+│ Cash Pop      │ 12 POPs               │ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 14                          │              60 │ wide spread; no arithmetic pattern               │
+│ Cash Pop      │ 13 POPs               │ 1, 2, 3, 4, 5, 6, 8, 9, 10, 11, 12, 14, 15                     │              60 │ wide spread; no arithmetic pattern               │
+│ Cash Pop      │ 13 POPs               │ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 14, 15                      │              60 │ wide spread; no arithmetic pattern               │
+│ Cash Pop      │ 13 POPs               │ 1, 2, 3, 4, 5, 6, 8, 9, 10, 12, 13, 14, 15                     │              60 │ wide spread; no arithmetic pattern               │
+│ Cash Pop      │ 13 POPs               │ 1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 12, 14, 15                      │              48 │ wide spread; no arithmetic pattern               │
+│ Cash Pop      │ 13 POPs               │ 2, 3, 4, 5, 6, 7, 8, 10, 11, 12, 13, 14, 15                    │              48 │ wide spread; no arithmetic pattern               │
+│ Cash Pop      │ 14 POPs               │ 1, 2, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15                 │              48 │ wide spread; no arithmetic pattern               │
+│ Cash Pop      │ 14 POPs               │ 1, 2, 3, 4, 5, 6, 7, 8, 10, 11, 12, 13, 14, 15                 │              48 │ wide spread; no arithmetic pattern               │
+│ Cash Pop      │ 14 POPs               │ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 13, 14, 15                  │              48 │ wide spread; no arithmetic pattern               │
+│ Cash Pop      │ 14 POPs               │ 1, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15                 │              48 │ wide spread; no arithmetic pattern               │
+│ Cash Pop      │ 14 POPs               │ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 13, 14, 15                  │              48 │ wide spread; no arithmetic pattern               │
+│ Cash Pop      │ 15 POPs               │ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15              │              32 │ wide spread                                      │
+│ Cash Pop      │ 2 POPs                │ 9, 12                                                          │              92 │ no sequential run; wide spread                   │
+│ Cash Pop      │ 2 POPs                │ 10, 11                                                         │              92 │ no sequential run; wide spread                   │
+│ Cash Pop      │ 2 POPs                │ 3, 12                                                          │              92 │ no sequential run; wide spread                   │
+│ Cash Pop      │ 2 POPs                │ 5, 12                                                          │              92 │ no sequential run; wide spread                   │
+│ Cash Pop      │ 2 POPs                │ 8, 11                                                          │              92 │ no sequential run; wide spread                   │
+│ Cash Pop      │ 3 POPs                │ 3, 4, 10                                                       │              92 │ no sequential run; wide spread                   │
+│ Cash Pop      │ 3 POPs                │ 8, 12, 14                                                      │              92 │ no sequential run; wide spread                   │
+│ Cash Pop      │ 3 POPs                │ 2, 4, 8                                                        │              92 │ no sequential run; wide spread                   │
+│ Cash Pop      │ 3 POPs                │ 1, 3, 15                                                       │              92 │ no sequential run; wide spread                   │
+│ Cash Pop      │ 3 POPs                │ 3, 5, 11                                                       │              92 │ no sequential run; wide spread                   │
+│ Cash Pop      │ 4 POPs                │ 3, 6, 9, 15                                                    │              78 │ no sequential run; wide spread                   │
+│ Cash Pop      │ 4 POPs                │ 2, 5, 6, 11                                                    │              78 │ no sequential run; wide spread                   │
+│ Cash Pop      │ 4 POPs                │ 1, 2, 6, 7                                                     │              78 │ no sequential run; wide spread                   │
+│ Cash Pop      │ 4 POPs                │ 2, 3, 9, 15                                                    │              78 │ no sequential run; wide spread                   │
+│ Cash Pop      │ 4 POPs                │ 2, 5, 10, 15                                                   │              78 │ no sequential run; wide spread                   │
+│ Cash Pop      │ 5 POPs                │ 1, 6, 9, 11, 12                                                │              78 │ no sequential run; wide spread                   │
+│ Cash Pop      │ 5 POPs                │ 1, 5, 8, 10, 12                                                │              78 │ no sequential run; wide spread                   │
+│ Cash Pop      │ 5 POPs                │ 4, 6, 8, 9, 13                                                 │              78 │ no sequential run; wide spread                   │
+│ Cash Pop      │ 5 POPs                │ 1, 3, 9, 13, 15                                                │              78 │ no sequential run; wide spread                   │
+│ Cash Pop      │ 5 POPs                │ 3, 7, 9, 14, 15                                                │              78 │ no sequential run; wide spread                   │
+│ Cash Pop      │ 6 POPs                │ 1, 3, 4, 11, 12, 15                                            │              78 │ no sequential run; wide spread                   │
+│ Cash Pop      │ 6 POPs                │ 3, 5, 6, 9, 13, 14                                             │              78 │ no sequential run; wide spread                   │
+│ Cash Pop      │ 6 POPs                │ 3, 5, 7, 8, 14, 15                                             │              78 │ no sequential run; wide spread                   │
+│ Cash Pop      │ 6 POPs                │ 1, 3, 5, 10, 11, 15                                            │              78 │ no sequential run; wide spread                   │
+│ Cash Pop      │ 6 POPs                │ 1, 2, 9, 10, 12, 14                                            │              78 │ no sequential run; wide spread                   │
+│ Cash Pop      │ 7 POPs                │ 3, 4, 6, 8, 10, 14, 15                                         │              78 │ no sequential run; wide spread                   │
+│ Cash Pop      │ 7 POPs                │ 3, 5, 7, 9, 10, 12, 15                                         │              78 │ no sequential run; wide spread                   │
+│ Cash Pop      │ 7 POPs                │ 1, 3, 5, 8, 9, 12, 14                                          │              78 │ no sequential run; wide spread                   │
+│ Cash Pop      │ 7 POPs                │ 3, 5, 6, 8, 9, 12, 14                                          │              78 │ no sequential run; wide spread                   │
+│ Cash Pop      │ 7 POPs                │ 1, 3, 4, 8, 12, 14, 15                                         │              78 │ no sequential run; wide spread                   │
+│ Cash Pop      │ 8 POPs                │ 1, 2, 4, 9, 10, 12, 13, 15                                     │              78 │ no sequential run; wide spread                   │
+│ Cash Pop      │ 8 POPs                │ 3, 4, 6, 9, 10, 12, 14, 15                                     │              78 │ no sequential run; wide spread                   │
+│ Cash Pop      │ 8 POPs                │ 1, 3, 5, 6, 10, 11, 14, 15                                     │              78 │ no sequential run; wide spread                   │
+│ Cash Pop      │ 8 POPs                │ 2, 3, 5, 6, 11, 12, 14, 15                                     │              78 │ no sequential run; wide spread                   │
+│ Cash Pop      │ 8 POPs                │ 1, 2, 4, 6, 9, 10, 14, 15                                      │              78 │ no sequential run; wide spread                   │
+│ Cash Pop      │ 9 POPs                │ 1, 2, 4, 6, 7, 9, 10, 12, 14                                   │              78 │ no sequential run; wide spread                   │
+│ Cash Pop      │ 9 POPs                │ 1, 3, 4, 6, 9, 10, 12, 13, 15                                  │              78 │ no sequential run; wide spread                   │
+│ Cash Pop      │ 9 POPs                │ 2, 4, 5, 7, 9, 10, 12, 14, 15                                  │              78 │ no sequential run; wide spread                   │
+│ Cash Pop      │ 9 POPs                │ 1, 2, 4, 6, 8, 10, 12, 14, 15                                  │              78 │ no sequential run; wide spread                   │
+│ Cash Pop      │ 9 POPs                │ 2, 3, 5, 7, 8, 10, 12, 14, 15                                  │              78 │ no sequential run; wide spread                   │
+│ Cash Pop      │ 1 POP                 │ 9                                                              │              92 │ no sequential run; no arithmetic pattern         │
+│ Cash Pop      │ 1 POP                 │ 10                                                             │              92 │ no sequential run; no arithmetic pattern         │
+│ Cash Pop      │ 1 POP                 │ 15                                                             │              92 │ no sequential run; no arithmetic pattern         │
+│ Cash Pop      │ 1 POP                 │ 11                                                             │              92 │ no sequential run; no arithmetic pattern         │
+│ Cash Pop      │ 1 POP                 │ 13                                                             │              92 │ no sequential run; no arithmetic pattern         │
+│ Daily Keno    │ 1-Spot $1             │ 49                                                             │             100 │ no sequential run; no arithmetic pattern         │
+│ Daily Keno    │ 1-Spot $1             │ 59                                                             │             100 │ no sequential run; no arithmetic pattern         │
+│ Daily Keno    │ 1-Spot $1             │ 53                                                             │             100 │ no sequential run; no arithmetic pattern         │
+│ Daily Keno    │ 1-Spot $1             │ 50                                                             │             100 │ no sequential run; no arithmetic pattern         │
+│ Daily Keno    │ 1-Spot $1             │ 75                                                             │             100 │ no sequential run; no arithmetic pattern         │
+│ Daily Keno    │ 10-Spot $1            │ 6, 9, 21, 26, 28, 29, 31, 32, 35, 65                           │             100 │ few birthday-range numbers; no sequential run    │
+│ Daily Keno    │ 10-Spot $1            │ 11, 22, 25, 26, 32, 36, 49, 68, 70, 76                         │             100 │ few birthday-range numbers; no sequential run    │
+│ Daily Keno    │ 10-Spot $1            │ 5, 6, 12, 30, 50, 53, 64, 67, 72, 80                           │             100 │ few birthday-range numbers; no sequential run    │
+│ Daily Keno    │ 10-Spot $1            │ 4, 5, 14, 25, 32, 43, 45, 60, 71, 77                           │             100 │ few birthday-range numbers; no sequential run    │
+│ Daily Keno    │ 10-Spot $1            │ 7, 9, 14, 18, 20, 25, 47, 59, 62, 78                           │             100 │ few birthday-range numbers; no sequential run    │
+│ Daily Keno    │ 2-Spot $1             │ 28, 45                                                         │             100 │ no sequential run; wide spread                   │
+│ Daily Keno    │ 2-Spot $1             │ 55, 64                                                         │             100 │ no sequential run; wide spread                   │
+│ Daily Keno    │ 2-Spot $1             │ 3, 77                                                          │             100 │ no sequential run; wide spread                   │
+│ Daily Keno    │ 2-Spot $1             │ 21, 39                                                         │             100 │ no sequential run; wide spread                   │
+│ Daily Keno    │ 2-Spot $1             │ 52, 67                                                         │             100 │ no sequential run; wide spread                   │
+│ Daily Keno    │ 3-Spot $1             │ 16, 61, 79                                                     │             100 │ no sequential run; wide spread                   │
+│ Daily Keno    │ 3-Spot $1             │ 51, 52, 77                                                     │             100 │ no sequential run; wide spread                   │
+│ Daily Keno    │ 3-Spot $1             │ 19, 40, 60                                                     │             100 │ no sequential run; wide spread                   │
+│ Daily Keno    │ 3-Spot $1             │ 14, 15, 47                                                     │             100 │ no sequential run; wide spread                   │
+│ Daily Keno    │ 3-Spot $1             │ 22, 26, 49                                                     │             100 │ no sequential run; wide spread                   │
+│ Daily Keno    │ 4-Spot $1             │ 3, 18, 58, 59                                                  │             100 │ few birthday-range numbers; no sequential run    │
+│ Daily Keno    │ 4-Spot $1             │ 24, 48, 60, 65                                                 │             100 │ few birthday-range numbers; no sequential run    │
+│ Daily Keno    │ 4-Spot $1             │ 4, 11, 34, 43                                                  │             100 │ few birthday-range numbers; no sequential run    │
+│ Daily Keno    │ 4-Spot $1             │ 17, 30, 33, 54                                                 │             100 │ few birthday-range numbers; no sequential run    │
+│ Daily Keno    │ 4-Spot $1             │ 6, 30, 35, 60                                                  │             100 │ few birthday-range numbers; no sequential run    │
+│ Daily Keno    │ 5-Spot $1             │ 6, 31, 47, 66, 72                                              │             100 │ few birthday-range numbers; no sequential run    │
+│ Daily Keno    │ 5-Spot $1             │ 9, 17, 35, 64, 70                                              │             100 │ few birthday-range numbers; no sequential run    │
+│ Daily Keno    │ 5-Spot $1             │ 10, 41, 43, 44, 57                                             │             100 │ few birthday-range numbers; no sequential run    │
+│ Daily Keno    │ 5-Spot $1             │ 4, 17, 19, 74, 80                                              │             100 │ few birthday-range numbers; no sequential run    │
+│ Daily Keno    │ 5-Spot $1             │ 1, 5, 10, 55, 57                                               │             100 │ few birthday-range numbers; no sequential run    │
+│ Daily Keno    │ 6-Spot $1             │ 6, 9, 11, 34, 51, 68                                           │             100 │ few birthday-range numbers; no sequential run    │
+│ Daily Keno    │ 6-Spot $1             │ 13, 14, 33, 52, 68, 77                                         │             100 │ few birthday-range numbers; no sequential run    │
+│ Daily Keno    │ 6-Spot $1             │ 3, 35, 37, 54, 57, 73                                          │             100 │ few birthday-range numbers; no sequential run    │
+│ Daily Keno    │ 6-Spot $1             │ 12, 23, 38, 53, 67, 78                                         │             100 │ few birthday-range numbers; no sequential run    │
+│ Daily Keno    │ 6-Spot $1             │ 8, 17, 31, 44, 61, 71                                          │             100 │ few birthday-range numbers; no sequential run    │
+│ Daily Keno    │ 7-Spot $1             │ 3, 9, 27, 42, 45, 59, 69                                       │             100 │ few birthday-range numbers; no sequential run    │
+│ Daily Keno    │ 7-Spot $1             │ 1, 27, 29, 47, 66, 72, 80                                      │             100 │ few birthday-range numbers; no sequential run    │
+│ Daily Keno    │ 7-Spot $1             │ 2, 3, 7, 31, 60, 69, 73                                        │             100 │ few birthday-range numbers; no sequential run    │
+│ Daily Keno    │ 7-Spot $1             │ 4, 9, 16, 20, 30, 53, 77                                       │             100 │ few birthday-range numbers; no sequential run    │
+│ Daily Keno    │ 7-Spot $1             │ 16, 26, 27, 33, 46, 61, 66                                     │             100 │ few birthday-range numbers; no sequential run    │
+│ Daily Keno    │ 8-Spot $1             │ 6, 16, 32, 37, 51, 57, 65, 66                                  │             100 │ few birthday-range numbers; no sequential run    │
+│ Daily Keno    │ 8-Spot $1             │ 10, 17, 24, 34, 38, 45, 62, 64                                 │             100 │ few birthday-range numbers; no sequential run    │
+│ Daily Keno    │ 8-Spot $1             │ 9, 13, 14, 17, 55, 57, 76, 79                                  │             100 │ few birthday-range numbers; no sequential run    │
+│ Daily Keno    │ 8-Spot $1             │ 37, 45, 50, 55, 62, 63, 76, 79                                 │             100 │ few birthday-range numbers; no sequential run    │
+│ Daily Keno    │ 8-Spot $1             │ 23, 40, 41, 46, 50, 52, 63, 74                                 │             100 │ few birthday-range numbers; no sequential run    │
+│ Daily Keno    │ 9-Spot $1             │ 5, 12, 14, 28, 31, 46, 58, 64, 70                              │             100 │ few birthday-range numbers; no sequential run    │
+│ Daily Keno    │ 9-Spot $1             │ 2, 8, 9, 34, 35, 42, 47, 56, 60                                │             100 │ few birthday-range numbers; no sequential run    │
+│ Daily Keno    │ 9-Spot $1             │ 10, 24, 33, 42, 46, 48, 60, 65, 69                             │             100 │ few birthday-range numbers; no sequential run    │
+│ Daily Keno    │ 9-Spot $1             │ 7, 9, 25, 28, 38, 42, 43, 54, 79                               │             100 │ few birthday-range numbers; no sequential run    │
+│ Daily Keno    │ 9-Spot $1             │ 5, 10, 37, 39, 41, 51, 63, 71, 74                              │             100 │ few birthday-range numbers; no sequential run    │
+│ Hit 5         │ Standard $1           │ 7, 30, 37, 40, 41                                              │             100 │ few birthday-range numbers; no sequential run    │
+│ Hit 5         │ Standard $1           │ 6, 9, 13, 40, 41                                               │             100 │ few birthday-range numbers; no sequential run    │
+│ Hit 5         │ Standard $1           │ 15, 28, 29, 33, 36                                             │             100 │ few birthday-range numbers; no sequential run    │
+│ Hit 5         │ Standard $1           │ 3, 4, 21, 38, 42                                               │             100 │ few birthday-range numbers; no sequential run    │
+│ Hit 5         │ Standard $1           │ 6, 20, 30, 34, 38                                              │             100 │ few birthday-range numbers; no sequential run    │
+│ Lotto         │ Two Plays $1          │ Play 1: 8, 13, 17, 18, 35, 47; Play 2: 3, 6, 8, 18, 34, 43     │             100 │ few birthday-range numbers; no sequential run    │
+│ Lotto         │ Two Plays $1          │ Play 1: 9, 24, 34, 38, 42, 48; Play 2: 1, 3, 6, 7, 40, 43      │             100 │ few birthday-range numbers; no sequential run    │
+│ Lotto         │ Two Plays $1          │ Play 1: 17, 20, 28, 33, 38, 48; Play 2: 20, 30, 32, 37, 41, 43 │             100 │ few birthday-range numbers; no sequential run    │
+│ Lotto         │ Two Plays $1          │ Play 1: 16, 28, 30, 36, 43, 45; Play 2: 4, 18, 19, 22, 46, 47  │             100 │ few birthday-range numbers; no sequential run    │
+│ Lotto         │ Two Plays $1          │ Play 1: 6, 7, 22, 28, 34, 40; Play 2: 8, 17, 28, 29, 37, 46    │             100 │ few birthday-range numbers; no sequential run    │
+│ Match 4       │ Standard $2           │ 2, 7, 17, 19                                                   │              78 │ no sequential run; wide spread                   │
+│ Match 4       │ Standard $2           │ 2, 4, 6, 19                                                    │              78 │ no sequential run; wide spread                   │
+│ Match 4       │ Standard $2           │ 5, 13, 18, 24                                                  │              78 │ no sequential run; wide spread                   │
+│ Match 4       │ Standard $2           │ 2, 10, 11, 19                                                  │              78 │ no sequential run; wide spread                   │
+│ Match 4       │ Standard $2           │ 1, 6, 16, 20                                                   │              78 │ no sequential run; wide spread                   │
+│ Mega Millions │ Standard $5           │ White: 6, 31, 41, 50, 59; Mega Ball: 3                         │             100 │ few birthday-range numbers; no sequential run    │
+│ Mega Millions │ Standard $5           │ White: 16, 21, 37, 41, 69; Mega Ball: 8                        │             100 │ few birthday-range numbers; no sequential run    │
+│ Mega Millions │ Standard $5           │ White: 25, 47, 50, 58, 60; Mega Ball: 19                       │             100 │ few birthday-range numbers; no sequential run    │
+│ Mega Millions │ Standard $5           │ White: 14, 16, 23, 36, 48; Mega Ball: 1                        │             100 │ few birthday-range numbers; no sequential run    │
+│ Mega Millions │ Standard $5           │ White: 17, 19, 45, 51, 59; Mega Ball: 18                       │             100 │ few birthday-range numbers; no sequential run    │
+│ Pick 3        │ Back Pair $1          │ 4, 1                                                           │             100 │ no repeated digits; avoids obvious digit pattern │
+│ Pick 3        │ Back Pair $1          │ 8, 6                                                           │             100 │ no repeated digits; avoids obvious digit pattern │
+│ Pick 3        │ Back Pair $1          │ 2, 8                                                           │             100 │ no repeated digits; avoids obvious digit pattern │
+│ Pick 3        │ Back Pair $1          │ 6, 9                                                           │             100 │ no repeated digits; avoids obvious digit pattern │
+│ Pick 3        │ Back Pair $1          │ 2, 9                                                           │             100 │ no repeated digits; avoids obvious digit pattern │
+│ Pick 3        │ Back Pair $0.50       │ 5, 1                                                           │             100 │ no repeated digits; avoids obvious digit pattern │
+│ Pick 3        │ Back Pair $0.50       │ 5, 9                                                           │             100 │ no repeated digits; avoids obvious digit pattern │
+│ Pick 3        │ Back Pair $0.50       │ 9, 1                                                           │             100 │ no repeated digits; avoids obvious digit pattern │
+│ Pick 3        │ Back Pair $0.50       │ 1, 2                                                           │             100 │ no repeated digits; avoids obvious digit pattern │
+│ Pick 3        │ Back Pair $0.50       │ 6, 9                                                           │             100 │ no repeated digits; avoids obvious digit pattern │
+│ Pick 3        │ 3-Way Box $1          │ 1, 5, 5                                                        │             100 │ avoids obvious digit pattern; not a palindrome   │
+│ Pick 3        │ 3-Way Box $1          │ 2, 2, 1                                                        │             100 │ avoids obvious digit pattern; not a palindrome   │
+│ Pick 3        │ 3-Way Box $1          │ 4, 4, 1                                                        │             100 │ avoids obvious digit pattern; not a palindrome   │
+│ Pick 3        │ 3-Way Box $1          │ 1, 9, 9                                                        │             100 │ avoids obvious digit pattern; not a palindrome   │
+│ Pick 3        │ 3-Way Box $1          │ 9, 9, 5                                                        │             100 │ avoids obvious digit pattern; not a palindrome   │
+│ Pick 3        │ 3-Way Box $0.50       │ 1, 5, 5                                                        │             100 │ avoids obvious digit pattern; not a palindrome   │
+│ Pick 3        │ 3-Way Box $0.50       │ 4, 4, 9                                                        │             100 │ avoids obvious digit pattern; not a palindrome   │
+│ Pick 3        │ 3-Way Box $0.50       │ 1, 1, 5                                                        │             100 │ avoids obvious digit pattern; not a palindrome   │
+│ Pick 3        │ 3-Way Box $0.50       │ 9, 9, 4                                                        │             100 │ avoids obvious digit pattern; not a palindrome   │
+│ Pick 3        │ 3-Way Box $0.50       │ 6, 8, 8                                                        │             100 │ avoids obvious digit pattern; not a palindrome   │
+│ Pick 3        │ 6-Way Box $1          │ 4, 8, 9                                                        │             100 │ no repeated digits; avoids obvious digit pattern │
+│ Pick 3        │ 6-Way Box $1          │ 1, 9, 6                                                        │             100 │ no repeated digits; avoids obvious digit pattern │
+│ Pick 3        │ 6-Way Box $1          │ 2, 1, 8                                                        │             100 │ no repeated digits; avoids obvious digit pattern │
+│ Pick 3        │ 6-Way Box $1          │ 5, 9, 4                                                        │             100 │ no repeated digits; avoids obvious digit pattern │
+│ Pick 3        │ 6-Way Box $1          │ 8, 2, 4                                                        │             100 │ no repeated digits; avoids obvious digit pattern │
+│ Pick 3        │ 6-Way Box $0.50       │ 1, 8, 6                                                        │             100 │ no repeated digits; avoids obvious digit pattern │
+│ Pick 3        │ 6-Way Box $0.50       │ 1, 8, 5                                                        │             100 │ no repeated digits; avoids obvious digit pattern │
+│ Pick 3        │ 6-Way Box $0.50       │ 9, 4, 1                                                        │             100 │ no repeated digits; avoids obvious digit pattern │
+│ Pick 3        │ 6-Way Box $0.50       │ 8, 4, 5                                                        │             100 │ no repeated digits; avoids obvious digit pattern │
+│ Pick 3        │ 6-Way Box $0.50       │ 4, 1, 2                                                        │             100 │ no repeated digits; avoids obvious digit pattern │
+│ Pick 3        │ Front Pair $1         │ 5, 8                                                           │             100 │ no repeated digits; avoids obvious digit pattern │
+│ Pick 3        │ Front Pair $1         │ 4, 5                                                           │             100 │ no repeated digits; avoids obvious digit pattern │
+│ Pick 3        │ Front Pair $1         │ 9, 6                                                           │             100 │ no repeated digits; avoids obvious digit pattern │
+│ Pick 3        │ Front Pair $1         │ 2, 4                                                           │             100 │ no repeated digits; avoids obvious digit pattern │
+│ Pick 3        │ Front Pair $1         │ 6, 5                                                           │             100 │ no repeated digits; avoids obvious digit pattern │
+│ Pick 3        │ Front Pair $0.50      │ 4, 6                                                           │             100 │ no repeated digits; avoids obvious digit pattern │
+│ Pick 3        │ Front Pair $0.50      │ 4, 2                                                           │             100 │ no repeated digits; avoids obvious digit pattern │
+│ Pick 3        │ Front Pair $0.50      │ 1, 5                                                           │             100 │ no repeated digits; avoids obvious digit pattern │
+│ Pick 3        │ Front Pair $0.50      │ 8, 4                                                           │             100 │ no repeated digits; avoids obvious digit pattern │
+│ Pick 3        │ Front Pair $0.50      │ 9, 8                                                           │             100 │ no repeated digits; avoids obvious digit pattern │
+│ Pick 3        │ Straight $1           │ 5, 8, 9                                                        │             100 │ no repeated digits; avoids obvious digit pattern │
+│ Pick 3        │ Straight $1           │ 6, 1, 1                                                        │             100 │ avoids obvious digit pattern; not a palindrome   │
+│ Pick 3        │ Straight $1           │ 8, 1, 1                                                        │             100 │ avoids obvious digit pattern; not a palindrome   │
+│ Pick 3        │ Straight $1           │ 9, 6, 6                                                        │             100 │ avoids obvious digit pattern; not a palindrome   │
+│ Pick 3        │ Straight $1           │ 5, 4, 9                                                        │             100 │ no repeated digits; avoids obvious digit pattern │
+│ Pick 3        │ Straight $0.50        │ 8, 1, 4                                                        │             100 │ no repeated digits; avoids obvious digit pattern │
+│ Pick 3        │ Straight $0.50        │ 4, 6, 1                                                        │             100 │ no repeated digits; avoids obvious digit pattern │
+│ Pick 3        │ Straight $0.50        │ 4, 8, 8                                                        │             100 │ avoids obvious digit pattern; not a palindrome   │
+│ Pick 3        │ Straight $0.50        │ 8, 9, 4                                                        │             100 │ no repeated digits; avoids obvious digit pattern │
+│ Pick 3        │ Straight $0.50        │ 1, 1, 8                                                        │             100 │ avoids obvious digit pattern; not a palindrome   │
+│ Pick 3        │ 3-Way Straight/Box $1 │ 5, 8, 8                                                        │             100 │ avoids obvious digit pattern; not a palindrome   │
+│ Pick 3        │ 3-Way Straight/Box $1 │ 6, 6, 1                                                        │             100 │ avoids obvious digit pattern; not a palindrome   │
+│ Pick 3        │ 3-Way Straight/Box $1 │ 1, 9, 9                                                        │             100 │ avoids obvious digit pattern; not a palindrome   │
+│ Pick 3        │ 3-Way Straight/Box $1 │ 1, 1, 9                                                        │             100 │ avoids obvious digit pattern; not a palindrome   │
+│ Pick 3        │ 3-Way Straight/Box $1 │ 6, 4, 4                                                        │             100 │ avoids obvious digit pattern; not a palindrome   │
+│ Pick 3        │ 6-Way Straight/Box $1 │ 5, 8, 1                                                        │             100 │ no repeated digits; avoids obvious digit pattern │
+│ Pick 3        │ 6-Way Straight/Box $1 │ 6, 2, 8                                                        │             100 │ no repeated digits; avoids obvious digit pattern │
+│ Pick 3        │ 6-Way Straight/Box $1 │ 1, 2, 6                                                        │             100 │ no repeated digits; avoids obvious digit pattern │
+│ Pick 3        │ 6-Way Straight/Box $1 │ 6, 9, 4                                                        │             100 │ no repeated digits; avoids obvious digit pattern │
+│ Pick 3        │ 6-Way Straight/Box $1 │ 2, 1, 6                                                        │             100 │ no repeated digits; avoids obvious digit pattern │
+│ Pick 3        │ 3-Way Superbox $1.50  │ 2, 2, 1                                                        │             100 │ avoids obvious digit pattern; not a palindrome   │
+│ Pick 3        │ 3-Way Superbox $1.50  │ 5, 1, 1                                                        │             100 │ avoids obvious digit pattern; not a palindrome   │
+│ Pick 3        │ 3-Way Superbox $1.50  │ 8, 5, 5                                                        │             100 │ avoids obvious digit pattern; not a palindrome   │
+│ Pick 3        │ 3-Way Superbox $1.50  │ 5, 2, 2                                                        │             100 │ avoids obvious digit pattern; not a palindrome   │
+│ Pick 3        │ 3-Way Superbox $1.50  │ 1, 1, 5                                                        │             100 │ avoids obvious digit pattern; not a palindrome   │
+│ Pick 3        │ 3-Way Superbox $3     │ 4, 4, 1                                                        │             100 │ avoids obvious digit pattern; not a palindrome   │
+│ Pick 3        │ 3-Way Superbox $3     │ 1, 8, 8                                                        │             100 │ avoids obvious digit pattern; not a palindrome   │
+│ Pick 3        │ 3-Way Superbox $3     │ 5, 9, 9                                                        │             100 │ avoids obvious digit pattern; not a palindrome   │
+│ Pick 3        │ 3-Way Superbox $3     │ 5, 5, 4                                                        │             100 │ avoids obvious digit pattern; not a palindrome   │
+│ Pick 3        │ 3-Way Superbox $3     │ 1, 5, 5                                                        │             100 │ avoids obvious digit pattern; not a palindrome   │
+│ Pick 3        │ 6-Way Superbox $3     │ 5, 2, 4                                                        │             100 │ no repeated digits; avoids obvious digit pattern │
+│ Pick 3        │ 6-Way Superbox $3     │ 1, 5, 6                                                        │             100 │ no repeated digits; avoids obvious digit pattern │
+│ Pick 3        │ 6-Way Superbox $3     │ 9, 6, 8                                                        │             100 │ no repeated digits; avoids obvious digit pattern │
+│ Pick 3        │ 6-Way Superbox $3     │ 4, 6, 8                                                        │             100 │ no repeated digits; avoids obvious digit pattern │
+│ Pick 3        │ 6-Way Superbox $3     │ 9, 8, 1                                                        │             100 │ no repeated digits; avoids obvious digit pattern │
+│ Pick 3        │ 6-Way Superbox $6     │ 9, 6, 8                                                        │             100 │ no repeated digits; avoids obvious digit pattern │
+│ Pick 3        │ 6-Way Superbox $6     │ 6, 9, 2                                                        │             100 │ no repeated digits; avoids obvious digit pattern │
+│ Pick 3        │ 6-Way Superbox $6     │ 4, 6, 5                                                        │             100 │ no repeated digits; avoids obvious digit pattern │
+│ Pick 3        │ 6-Way Superbox $6     │ 1, 5, 2                                                        │             100 │ no repeated digits; avoids obvious digit pattern │
+│ Pick 3        │ 6-Way Superbox $6     │ 8, 9, 4                                                        │             100 │ no repeated digits; avoids obvious digit pattern │
+│ Powerball     │ Standard $2           │ White: 6, 27, 35, 46, 47; Powerball: 20                        │             100 │ few birthday-range numbers; no sequential run    │
+│ Powerball     │ Standard $2           │ White: 2, 10, 11, 48, 64; Powerball: 22                        │             100 │ few birthday-range numbers; no sequential run    │
+│ Powerball     │ Standard $2           │ White: 2, 15, 31, 54, 63; Powerball: 8                         │             100 │ few birthday-range numbers; no sequential run    │
+│ Powerball     │ Standard $2           │ White: 13, 40, 45, 49, 56; Powerball: 24                       │             100 │ few birthday-range numbers; no sequential run    │
+│ Powerball     │ Standard $2           │ White: 4, 42, 43, 46, 49; Powerball: 10                        │             100 │ few birthday-range numbers; no sequential run    │
+└───────────────┴───────────────────────┴────────────────────────────────────────────────────────────────┴─────────────────┴──────────────────────────────────────────────────┘
+Low-share picks do not improve draw odds; they only aim to reduce common-player-pattern overlap.
+Warning: Cash Pop / 15 POPs: requested 5 picks but only 1 unique candidates were available
+OpenAI decision: PLAY_FOR_ENTERTAINMENT
+Selected candidate: daily-keno:1-spot:1
+Confidence: high
+Rationale: Selected the provided best low-share candidate (daily-keno:1-spot:1, number 49) as an entertainment-only pick because its low_share_score is 100 and its stated reasons indicate 
+reduced overlap with common player patterns (no sequential run, no arithmetic pattern, avoids popular numbers). This does not imply any advantage in draw odds.

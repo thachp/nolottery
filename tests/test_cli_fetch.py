@@ -1,3 +1,4 @@
+import json
 import sqlite3
 
 from typer.testing import CliRunner
@@ -259,3 +260,117 @@ def test_fetch_all_backfill_reads_yearly_pages_for_every_game(tmp_path):
     assert "Powerball" in result.output
     assert "2 pages" in result.output
     assert "8 games fetched" in result.output
+
+
+def test_draws_lists_recent_numbers_newest_first_and_deduped(tmp_path):
+    data_dir = tmp_path / "data"
+    fixture = tmp_path / "cashpop.html"
+    fixture.write_text(DRAWING_HTML, encoding="utf-8")
+    first_fetch = runner.invoke(
+        app,
+        [
+            "--data-dir",
+            str(data_dir),
+            "fetch",
+            "cashpop",
+            "--source-file",
+            str(fixture),
+        ],
+    )
+    assert first_fetch.exit_code == 0, first_fetch.output
+
+    fixture.write_text(
+        _drawing_html("Tue, May 05, 2026", "05"),
+        encoding="utf-8",
+    )
+    second_fetch = runner.invoke(
+        app,
+        [
+            "--data-dir",
+            str(data_dir),
+            "fetch",
+            "cashpop",
+            "--source-file",
+            str(fixture),
+        ],
+    )
+    assert second_fetch.exit_code == 0, second_fetch.output
+
+    result = runner.invoke(
+        app,
+        [
+            "--data-dir",
+            str(data_dir),
+            "draws",
+            "cashpop",
+            "--output",
+            "json",
+        ],
+    )
+
+    assert result.exit_code == 0, result.output
+    payload = json.loads(result.output)
+    draws = payload["games"][0]["draws"]
+    assert draws == [
+        {"draw_date": "Tue, May 05, 2026", "winning_number": "05"},
+        {"draw_date": "Mon, May 04, 2026", "winning_number": "04"},
+    ]
+
+
+def test_draws_all_includes_each_supported_game(tmp_path):
+    fixtures = tmp_path / "fixtures"
+    fixtures.mkdir()
+    for game in [
+        "cashpop",
+        "daily-keno",
+        "hit-5",
+        "lotto",
+        "match-4",
+        "mega-millions",
+        "pick-3",
+        "powerball",
+    ]:
+        (fixtures / f"{game}.html").write_text(
+            _drawing_html("Mon, May 04, 2026", "04"),
+            encoding="utf-8",
+        )
+    fetch_result = runner.invoke(
+        app,
+        [
+            "--data-dir",
+            str(tmp_path / "data"),
+            "fetch",
+            "all",
+            "--source-dir",
+            str(fixtures),
+        ],
+    )
+    assert fetch_result.exit_code == 0, fetch_result.output
+
+    result = runner.invoke(
+        app,
+        [
+            "--data-dir",
+            str(tmp_path / "data"),
+            "draws",
+            "all",
+            "--limit",
+            "1",
+            "--output",
+            "json",
+        ],
+    )
+
+    assert result.exit_code == 0, result.output
+    payload = json.loads(result.output)
+    assert [game["game_slug"] for game in payload["games"]] == [
+        "cashpop",
+        "daily-keno",
+        "hit-5",
+        "lotto",
+        "match-4",
+        "mega-millions",
+        "pick-3",
+        "powerball",
+    ]
+    assert all(game["draws"] for game in payload["games"])

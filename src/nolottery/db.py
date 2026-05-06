@@ -1,9 +1,21 @@
 from __future__ import annotations
 
 import sqlite3
+from dataclasses import dataclass
+from datetime import date, datetime
 from pathlib import Path
 
 from .metadata import DEFAULT_GAMES, GameMetadata, PrizeTier, WagerOption
+
+_DRAW_DATE_FORMAT = "%a, %b %d, %Y"
+
+
+@dataclass(frozen=True)
+class StoredDraw:
+    game_slug: str
+    game_name: str
+    draw_date: str
+    winning_number: str
 
 
 def database_path(data_dir: Path) -> Path:
@@ -212,3 +224,52 @@ def get_game(conn: sqlite3.Connection, slug: str) -> GameMetadata | None:
 def list_game_slugs(conn: sqlite3.Connection) -> tuple[str, ...]:
     rows = conn.execute("select slug from games order by slug").fetchall()
     return tuple(row["slug"] for row in rows)
+
+
+def recent_draws(
+    conn: sqlite3.Connection,
+    game_slug: str,
+    *,
+    limit: int,
+) -> tuple[StoredDraw, ...]:
+    rows = conn.execute(
+        """
+        select
+            min(draw_results.id) as first_id,
+            draw_results.game_slug,
+            games.name as game_name,
+            draw_results.draw_date,
+            draw_results.winning_number
+        from draw_results
+        join games on games.slug = draw_results.game_slug
+        where draw_results.game_slug = ?
+        group by
+            draw_results.game_slug,
+            games.name,
+            draw_results.draw_date,
+            draw_results.winning_number
+        """,
+        (game_slug,),
+    ).fetchall()
+    sorted_rows = sorted(
+        rows,
+        key=lambda row: _draw_sort_key(row["draw_date"], row["first_id"]),
+        reverse=True,
+    )
+    return tuple(
+        StoredDraw(
+            game_slug=row["game_slug"],
+            game_name=row["game_name"],
+            draw_date=row["draw_date"],
+            winning_number=row["winning_number"],
+        )
+        for row in sorted_rows[:limit]
+    )
+
+
+def _draw_sort_key(draw_date: str, first_id: int) -> tuple[bool, date, int]:
+    try:
+        parsed = datetime.strptime(draw_date, _DRAW_DATE_FORMAT).date()
+    except ValueError:
+        return (False, date.min, first_id)
+    return (True, parsed, first_id)

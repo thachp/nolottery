@@ -138,6 +138,19 @@ uv run lottery fetch all
 Regular fetches keep prior draw rows and persist only draw results newer than the
 latest stored draw date for that game.
 
+Show recent stored winning numbers:
+
+```bash
+uv run lottery draws all
+uv run lottery draws cashpop --limit 10
+```
+
+Use JSON output for scripting:
+
+```bash
+uv run lottery draws all --output json
+```
+
 Backfill all available yearly pages for one game:
 
 ```bash
@@ -232,6 +245,7 @@ uv run lottery analyze cashpop --output json
 uv run lottery analyze all --output json
 uv run lottery recommend --budget 1 --output json
 uv run lottery recommend --budget 50 --evaluate openai --output json
+uv run lottery draws all --output json
 uv run lottery audit all --output json
 uv run lottery audit all cashpop --evaluate openai --output json
 uv run lottery low-share powerball --output json

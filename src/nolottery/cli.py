@@ -155,6 +155,48 @@ def fetch(
     _print_fetch_result(result)
 
 
+@app.command()
+def draws(
+    ctx: typer.Context,
+    game: Annotated[str, typer.Argument(help="Game slug, or all.")] = "all",
+    limit: Annotated[
+        int,
+        typer.Option(
+            "--limit",
+            "-n",
+            min=1,
+            help="Number of recent draws to show per game.",
+        ),
+    ] = 5,
+    output: Annotated[
+        str,
+        typer.Option("--output", "-o", help="Output format: table or json."),
+    ] = "table",
+) -> None:
+    """Show recent stored drawing numbers."""
+    if output not in {"table", "json"}:
+        raise typer.BadParameter("output must be table or json")
+
+    conn = db.connect(ctx.obj["data_dir"])
+    if game == "all":
+        games = _load_games(conn)
+    else:
+        metadata = db.get_game(conn, game)
+        if metadata is None:
+            raise typer.BadParameter(f"unknown game: {game}")
+        games = (metadata,)
+
+    draws_by_game = {
+        metadata.slug: db.recent_draws(conn, metadata.slug, limit=limit)
+        for metadata in games
+    }
+    if output == "json":
+        console.print_json(json.dumps(_draws_to_dict(games, draws_by_game, limit)))
+        return
+
+    _print_draws_table(games, draws_by_game)
+
+
 def _print_fetch_result(result: FetchResult) -> None:
     console.print(
         f"{result.game_name}: fetched {result.draw_count} draw"
@@ -951,6 +993,26 @@ def _print_low_share_table(results: tuple[LowShareOptionResult, ...]) -> None:
         console.print(f"Warning: {warning}")
 
 
+def _print_draws_table(
+    games: tuple[GameMetadata, ...],
+    draws_by_game: dict[str, tuple[db.StoredDraw, ...]],
+) -> None:
+    table = Table()
+    table.add_column("Game", no_wrap=True)
+    table.add_column("Draw Date", no_wrap=True)
+    table.add_column("Winning Numbers")
+    for metadata in games:
+        draws = draws_by_game[metadata.slug]
+        if not draws:
+            table.add_row(metadata.name, "No stored draws", "")
+            continue
+        for draw in draws:
+            table.add_row(draw.game_name, draw.draw_date, draw.winning_number)
+    console.print(table)
+    if not any(draws_by_game.values()):
+        console.print("No stored draw data. Run `lottery fetch all` first.")
+
+
 def _print_openai_evaluation(evaluation: dict[str, object]) -> None:
     if "summary" in evaluation:
         console.print(f"OpenAI summary: {evaluation['summary']}")
@@ -1184,6 +1246,30 @@ def _low_share_results_to_dict(
             dict.fromkeys([*game_payload["warnings"], *result.warnings])
         )
     return list(games.values())
+
+
+def _draws_to_dict(
+    games: tuple[GameMetadata, ...],
+    draws_by_game: dict[str, tuple[db.StoredDraw, ...]],
+    limit: int,
+) -> dict[str, object]:
+    return {
+        "limit": limit,
+        "games": [
+            {
+                "game_slug": metadata.slug,
+                "game": metadata.name,
+                "draws": [
+                    {
+                        "draw_date": draw.draw_date,
+                        "winning_number": draw.winning_number,
+                    }
+                    for draw in draws_by_game[metadata.slug]
+                ],
+            }
+            for metadata in games
+        ],
+    }
 
 
 def _low_share_warnings(results: tuple[LowShareOptionResult, ...]) -> tuple[str, ...]:
