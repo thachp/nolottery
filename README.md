@@ -2,8 +2,6 @@
 
 Legal Washington Lottery expected-value analysis console app.
 
-The Python package is `nolottery`; the installed CLI command is `lottery`.
-
 `nolottery` helps answer two different questions:
 
 - "Which game has the best expected value after ticket cost and taxes?"
