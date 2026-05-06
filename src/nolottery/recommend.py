@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import re
+import random
 from dataclasses import dataclass
 
 from .ev import OptionResult, analyze_game
@@ -15,6 +16,9 @@ class Recommendation:
     option: OptionResult
     number_selection: tuple[int, ...]
     number_selection_label: str
+    prediction: tuple[int, ...]
+    prediction_label: str
+    prediction_method: str
     reason: str
 
 
@@ -29,16 +33,9 @@ def recommend_highest_hit_rate(
         for option in analysis.options:
             if option.ticket_cost <= budget:
                 recommendations.append(
-                    Recommendation(
-                        game_slug=game.slug,
-                        game_name=game.name,
-                        option=option,
-                        number_selection=suggest_numbers(game.slug, option.option_slug),
-                        number_selection_label=suggest_number_label(
-                            game.slug,
-                            option.option_slug,
-                        ),
-                        reason=_reason(game.slug, option),
+                    _recommendation(
+                        game,
+                        option,
                     )
                 )
 
@@ -53,6 +50,89 @@ def recommend_highest_hit_rate(
             reverse=True,
         )
     )
+
+
+def _recommendation(game: GameMetadata, option: OptionResult) -> Recommendation:
+    prediction = predict_numbers(game.slug, option.option_slug)
+    return Recommendation(
+        game_slug=game.slug,
+        game_name=game.name,
+        option=option,
+        number_selection=suggest_numbers(game.slug, option.option_slug),
+        number_selection_label=suggest_number_label(
+            game.slug,
+            option.option_slug,
+        ),
+        prediction=prediction,
+        prediction_label=format_number_label(game.slug, option.option_slug, prediction),
+        prediction_method="quick-pick-random-no-edge",
+        reason=_reason(game.slug, option),
+    )
+
+
+def predict_numbers(game_slug: str, option_slug: str) -> tuple[int, ...]:
+    rng = random.SystemRandom()
+    if game_slug == "cashpop":
+        count = _selection_count(option_slug)
+        if count >= 15:
+            return tuple(range(1, 16))
+        return tuple(sorted(rng.sample(range(1, 16), count)))
+    if game_slug == "daily-keno":
+        count = _selection_count(option_slug)
+        return tuple(sorted(rng.sample(range(1, 81), count)))
+    if game_slug == "powerball":
+        white = sorted(rng.sample(range(1, 70), 5))
+        return (*white, rng.randrange(1, 27))
+    if game_slug == "mega-millions":
+        white = sorted(rng.sample(range(1, 71), 5))
+        return (*white, rng.randrange(1, 25))
+    if game_slug == "lotto":
+        play_one = sorted(rng.sample(range(1, 50), 6))
+        play_two = sorted(rng.sample(range(1, 50), 6))
+        return tuple(play_one + play_two)
+    if game_slug == "hit-5":
+        return tuple(sorted(rng.sample(range(1, 43), 5)))
+    if game_slug == "match-4":
+        return tuple(sorted(rng.sample(range(1, 25), 4)))
+    if game_slug == "pick-3":
+        if "-3-way-" in option_slug:
+            digit = rng.randrange(0, 10)
+            other = _different_digit(rng, digit)
+            return tuple(sorted((digit, digit, other)))
+        if "pair" in option_slug:
+            return (rng.randrange(0, 10), rng.randrange(0, 10))
+        return tuple(rng.randrange(0, 10) for _ in range(3))
+    return ()
+
+
+def format_number_label(
+    game_slug: str,
+    option_slug: str,
+    numbers: tuple[int, ...],
+) -> str:
+    if game_slug == "powerball" and len(numbers) == 6:
+        return f"White: {_join_numbers(numbers[:5])}; Powerball: {numbers[5]}"
+    if game_slug == "mega-millions" and len(numbers) == 6:
+        return f"White: {_join_numbers(numbers[:5])}; Mega Ball: {numbers[5]}"
+    if game_slug == "lotto" and len(numbers) == 12:
+        return (
+            f"Play 1: {_join_numbers(numbers[:6])}; "
+            f"Play 2: {_join_numbers(numbers[6:])}"
+        )
+    if numbers:
+        return _join_numbers(numbers)
+    return "n/a"
+
+
+def _different_digit(rng: random.SystemRandom, digit: int) -> int:
+    other = rng.randrange(0, 10)
+    while other == digit:
+        other = rng.randrange(0, 10)
+    return other
+
+
+def _join_numbers(numbers: tuple[int, ...]) -> str:
+    return ", ".join(str(number) for number in numbers)
 
 
 def suggest_numbers(game_slug: str, option_slug: str) -> tuple[int, ...]:
@@ -83,17 +163,7 @@ def suggest_numbers(game_slug: str, option_slug: str) -> tuple[int, ...]:
 
 def suggest_number_label(game_slug: str, option_slug: str) -> str:
     numbers = suggest_numbers(game_slug, option_slug)
-    if game_slug == "powerball":
-        return "White: 1, 2, 3, 4, 5; Powerball: 1"
-    if game_slug == "mega-millions":
-        return "White: 1, 2, 3, 4, 5; Mega Ball: 1"
-    if game_slug == "lotto":
-        return "Play 1: 1, 2, 3, 4, 5, 6; Play 2: 7, 8, 9, 10, 11, 12"
-    if game_slug == "pick-3" and "pair" in option_slug:
-        return "1, 2"
-    if numbers:
-        return ", ".join(str(number) for number in numbers)
-    return "n/a"
+    return format_number_label(game_slug, option_slug, numbers)
 
 
 def displayed_hit_rate(recommendation: Recommendation) -> float:

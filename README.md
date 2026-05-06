@@ -9,7 +9,7 @@ The Python package is `nolottery`; the installed CLI command is `lottery`.
 - "Which game has the best expected value after ticket cost and taxes?"
 - "If I have a small budget, which play gives me the highest chance to win any prize?"
 
-It does not predict lucky numbers. For fair lottery drawings, one valid number selection has the same odds as any other valid selection. Suggested numbers are deterministic examples so the CLI can produce a complete ticket recommendation.
+It does not predict lucky numbers with an edge. For fair lottery drawings, one valid number selection has the same odds as any other valid selection. Suggested numbers are deterministic examples so the CLI can produce a complete ticket recommendation. Quick Pick predictions are random valid selections and are labeled as having no odds advantage.
 
 ## Supported Games
 
@@ -72,9 +72,14 @@ uv run lottery recommend --budget 1
 
 For a $1 budget, this currently recommends a Daily Keno 4-Spot play because it has the highest chance of winning any prize among supported single-ticket options within that budget.
 
+The recommendation output includes two number fields:
+
+- `Example Numbers`: a deterministic valid selection for the play style
+- `Quick Pick Prediction`: a random valid selection with no odds advantage
+
 ## Fetching Draw Data
 
-Fetch one game's official past drawing page:
+Fetch one game's official past drawing page. By default this uses the Washington Lottery `Past 180 Days` view:
 
 ```bash
 uv run lottery fetch cashpop
@@ -86,7 +91,24 @@ Fetch every supported game:
 uv run lottery fetch all
 ```
 
-For tests or offline analysis, `fetch all` can read local HTML files from a directory. Files must be named by game slug:
+Regular fetches keep prior draw rows and persist only draw results newer than the
+latest stored draw date for that game.
+
+Backfill all available yearly pages for one game:
+
+```bash
+uv run lottery fetch cashpop --backfill
+```
+
+Backfill all available yearly pages for every supported game:
+
+```bash
+uv run lottery fetch all --backfill
+```
+
+Backfill mode first reads the normal past-drawings page, discovers the year options published by Washington Lottery, then fetches each yearly page. Stored draw rows for that game are replaced by the combined parsed yearly results.
+
+For tests or offline analysis, fetch commands can read local HTML files from a directory. Current-window files are named by game slug:
 
 ```bash
 uv run lottery fetch all --source-dir ./fixtures
@@ -103,6 +125,15 @@ match-4.html
 mega-millions.html
 pick-3.html
 powerball.html
+```
+
+Backfill fixture files add the year to the file name:
+
+```text
+cashpop-2026.html
+cashpop-2025.html
+daily-keno-2026.html
+daily-keno-2025.html
 ```
 
 ## JSON Output

@@ -10,7 +10,7 @@ from rich.table import Table
 
 from . import db
 from .ev import AnalysisResult, analyze_game
-from .fetch import FetchResult, fetch_game
+from .fetch import FetchResult, fetch_game, fetch_game_backfill
 from .ledger import LedgerEntry
 from .ledger import add_entry as add_ledger_entry
 from .ledger import summarize as summarize_ledger
@@ -100,9 +100,16 @@ def fetch(
         Path | None,
         typer.Option(
             "--source-dir",
-            help="For 'all', read <game-slug>.html files from this directory.",
+            help="Read fixture HTML files from this directory.",
         ),
     ] = None,
+    backfill: Annotated[
+        bool,
+        typer.Option(
+            "--backfill",
+            help="Fetch every available yearly past-drawings page.",
+        ),
+    ] = False,
 ) -> None:
     """Fetch official past drawing data and persist a local snapshot."""
     conn = db.connect(ctx.obj["data_dir"])
@@ -114,20 +121,28 @@ def fetch(
             game_source_file = (
                 source_dir / f"{metadata.slug}.html" if source_dir is not None else None
             )
-            results.append(fetch_game(conn, metadata, game_source_file))
+            if backfill:
+                results.append(fetch_game_backfill(conn, metadata, source_dir))
+            else:
+                results.append(fetch_game(conn, metadata, game_source_file))
         for result in results:
             _print_fetch_result(result)
         console.print(f"{len(results)} games fetched")
         return
 
-    if source_dir is not None:
-        raise typer.BadParameter("--source-dir can only be used with game 'all'")
+    if source_dir is not None and not backfill:
+        raise typer.BadParameter("--source-dir can only be used with game 'all' or --backfill")
+    if source_file is not None and backfill:
+        raise typer.BadParameter("--source-file cannot be used with --backfill")
 
     metadata = db.get_game(conn, game)
     if metadata is None:
         raise typer.BadParameter(f"unknown game: {game}")
 
-    result = fetch_game(conn, metadata, source_file)
+    if backfill:
+        result = fetch_game_backfill(conn, metadata, source_dir)
+    else:
+        result = fetch_game(conn, metadata, source_file)
     _print_fetch_result(result)
 
 
@@ -136,6 +151,8 @@ def _print_fetch_result(result: FetchResult) -> None:
         f"{result.game_name}: fetched {result.draw_count} draw"
         f"{'' if result.draw_count == 1 else 's'} and "
         f"{result.prize_row_count} prize rows"
+        f" from {result.page_count} page"
+        f"{'' if result.page_count == 1 else 's'}"
     )
 
 
@@ -223,7 +240,7 @@ def _print_analysis_table(result: AnalysisResult) -> None:
 
     table = Table()
     table.add_column("Rank", justify="right")
-    table.add_column("Wager")
+    table.add_column("Wager", no_wrap=True)
     table.add_column("Gross EV", justify="right")
     table.add_column("After-tax EV", justify="right")
     table.add_column("Net EV", justify="right")
@@ -249,12 +266,13 @@ def _print_recommendation_table(
     console.print(f"Highest hit-rate recommendations under ${budget:.2f}")
     table = Table()
     table.add_column("Rank", justify="right")
-    table.add_column("Game")
+    table.add_column("Game", no_wrap=True)
     table.add_column("Wager")
     table.add_column("Cost", justify="right")
     table.add_column("Hit Rate", justify="right")
     table.add_column("Net EV", justify="right")
-    table.add_column("Numbers")
+    table.add_column("Example Numbers")
+    table.add_column("Quick Pick Prediction")
     for rank, recommendation in enumerate(recommendations, start=1):
         option = recommendation.option
         table.add_row(
@@ -265,9 +283,11 @@ def _print_recommendation_table(
             _format_probability(displayed_hit_rate(recommendation)),
             f"${option.net_after_tax_ev:.2f}",
             recommendation.number_selection_label,
+            recommendation.prediction_label,
         )
     console.print(table)
     console.print(f"Recommended: {recommendations[0].reason}")
+    console.print("Prediction method: quick-pick random; no odds advantage.")
 
 
 def _analysis_to_dict(result: AnalysisResult) -> dict[str, object]:
@@ -314,6 +334,9 @@ def _recommendation_to_dict(recommendation: Recommendation) -> dict[str, object]
         "net_after_tax_ev": option.net_after_tax_ev,
         "number_selection": list(recommendation.number_selection),
         "number_selection_label": recommendation.number_selection_label,
+        "prediction": list(recommendation.prediction),
+        "prediction_label": recommendation.prediction_label,
+        "prediction_method": recommendation.prediction_method,
         "reason": recommendation.reason,
     }
 

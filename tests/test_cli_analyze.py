@@ -104,9 +104,11 @@ def test_recommend_defaults_to_best_small_budget_hit_rate(tmp_path):
 
     assert result.exit_code == 0, result.output
     assert "Daily Keno" in result.output
-    assert "4-Spot $1" in result.output
+    assert "4-Spot" in result.output
     assert "1:3.86" in result.output
-    assert "1, 2, 3, 4" in result.output
+    assert "Example" in result.output
+    assert "Prediction method" in result.output
+    assert "no odds advantage" in result.output
 
 
 def test_recommend_can_return_json(tmp_path):
@@ -122,6 +124,21 @@ def test_recommend_can_return_json(tmp_path):
     assert payload["best"]["option_slug"] == "4-spot"
     assert payload["best"]["number_selection"] == [1, 2, 3, 4]
     assert payload["best"]["number_selection_label"] == "1, 2, 3, 4"
+
+
+def test_recommend_includes_quick_pick_prediction_with_no_edge_label(tmp_path):
+    result = runner.invoke(
+        app,
+        ["--data-dir", str(tmp_path), "recommend", "--output", "json"],
+    )
+
+    assert result.exit_code == 0, result.output
+    payload = json.loads(result.output)
+    prediction = payload["best"]["prediction"]
+    assert payload["best"]["prediction_method"] == "quick-pick-random-no-edge"
+    assert len(prediction) == 4
+    assert len(set(prediction)) == 4
+    assert all(1 <= number <= 80 for number in prediction)
 
 
 def test_recommend_can_use_pick3_when_budget_is_under_one_dollar(tmp_path):
