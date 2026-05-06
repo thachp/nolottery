@@ -71,6 +71,61 @@ def _drawings_html(*draws: tuple[str, str]) -> str:
     """
 
 
+def _drawings_without_prizes_html(date: str, *numbers: str) -> str:
+    return f"""
+    <html>
+      <body>
+        <table class="table-viewport-large">
+          <thead>
+            <tr>
+              <th><p class="h2-like">{date}</p></th>
+              <th>Prize Amount</th><th>WA Winners</th><th>Total</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="game-balls"><ul>{''.join(f'<li>{number}</li>' for number in numbers)}</ul></td>
+            </tr>
+          </tbody>
+        </table>
+      </body>
+    </html>
+    """
+
+
+def _drawing_with_extra_ball_cell_html(
+    date: str,
+    primary_numbers: tuple[str, ...],
+    extra_numbers: tuple[str, ...],
+) -> str:
+    primary_items = "".join(f"<li>{number}</li>" for number in primary_numbers)
+    extra_items = "".join(f"<li>{number}</li>" for number in extra_numbers)
+    return f"""
+    <html>
+      <body>
+        <table class="table-viewport-large">
+          <thead>
+            <tr>
+              <th><p class="h2-like">{date}</p></th>
+              <th>Prize Amount</th><th>WA Winners</th><th>Total</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="game-balls"><ul>{primary_items}</ul></td>
+              <td>$4</td><td>1</td><td>$4</td>
+            </tr>
+            <tr>
+              <td class="game-balls"><ul>{extra_items}</ul></td>
+              <td>$4</td><td>1</td><td>$4</td>
+            </tr>
+          </tbody>
+        </table>
+      </body>
+    </html>
+    """
+
+
 def test_fetch_cashpop_persists_official_page_snapshot_and_draws(tmp_path):
     fixture = tmp_path / "cashpop.html"
     fixture.write_text(DRAWING_HTML, encoding="utf-8")
@@ -91,6 +146,103 @@ def test_fetch_cashpop_persists_official_page_snapshot_and_draws(tmp_path):
     assert "Cash Pop" in result.output
     assert "1 draw" in result.output
     assert "2 prize rows" in result.output
+
+
+def test_fetch_persists_draw_numbers_when_prize_rows_are_absent(tmp_path):
+    data_dir = tmp_path / "data"
+    fixture = tmp_path / "powerball.html"
+    fixture.write_text(
+        _drawings_without_prizes_html(
+            "Mon, May 04, 2026",
+            "01",
+            "02",
+            "03",
+            "04",
+            "05",
+            "06",
+        ),
+        encoding="utf-8",
+    )
+
+    fetch_result = runner.invoke(
+        app,
+        [
+            "--data-dir",
+            str(data_dir),
+            "fetch",
+            "powerball",
+            "--source-file",
+            str(fixture),
+        ],
+    )
+    assert fetch_result.exit_code == 0, fetch_result.output
+    assert "1 draw" in fetch_result.output
+    assert "0 prize rows" in fetch_result.output
+
+    draws_result = runner.invoke(
+        app,
+        [
+            "--data-dir",
+            str(data_dir),
+            "draws",
+            "powerball",
+            "--output",
+            "json",
+        ],
+    )
+
+    assert draws_result.exit_code == 0, draws_result.output
+    payload = json.loads(draws_result.output)
+    assert payload["games"][0]["draws"] == [
+        {
+            "draw_date": "Mon, May 04, 2026",
+            "winning_number": "01, 02, 03, 04, 05, 06",
+        }
+    ]
+
+
+def test_fetch_uses_first_ball_cell_when_a_draw_table_has_extra_ball_cells(tmp_path):
+    data_dir = tmp_path / "data"
+    fixture = tmp_path / "powerball.html"
+    fixture.write_text(
+        _drawing_with_extra_ball_cell_html(
+            "Mon, May 04, 2026",
+            ("01", "02", "03", "04", "05", "06"),
+            ("07", "08", "09", "10", "11", "12"),
+        ),
+        encoding="utf-8",
+    )
+
+    fetch_result = runner.invoke(
+        app,
+        [
+            "--data-dir",
+            str(data_dir),
+            "fetch",
+            "powerball",
+            "--source-file",
+            str(fixture),
+        ],
+    )
+    assert fetch_result.exit_code == 0, fetch_result.output
+
+    draws_result = runner.invoke(
+        app,
+        [
+            "--data-dir",
+            str(data_dir),
+            "draws",
+            "powerball",
+            "--output",
+            "json",
+        ],
+    )
+
+    assert draws_result.exit_code == 0, draws_result.output
+    payload = json.loads(draws_result.output)
+    assert payload["games"][0]["draws"][0]["winning_number"] == (
+        "01, 02, 03, 04, 05, 06"
+    )
 
 
 def test_fetch_all_accepts_one_fixture_directory_for_all_games(tmp_path):

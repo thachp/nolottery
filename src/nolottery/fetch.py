@@ -124,7 +124,8 @@ def parse_available_years(raw_html: str) -> tuple[int, ...]:
 
 def _parse_large_table(table: Tag) -> ParsedDraw | None:
     date_node = table.select_one("thead .h2-like")
-    ball_nodes = table.select("td.game-balls li")
+    ball_cell = table.select_one("td.game-balls")
+    ball_nodes = ball_cell.select("li") if ball_cell is not None else []
     body_rows = table.select("tbody > tr")
     if date_node is None or not ball_nodes or not body_rows:
         return None
@@ -280,7 +281,8 @@ def _insert_draw_results(
     draws: tuple[ParsedDraw, ...],
 ) -> None:
     for draw in draws:
-        for prize in draw.prizes:
+        prize_rows = draw.prizes or (PrizeRow(0.0, 0, 0.0),)
+        for prize in prize_rows:
             conn.execute(
                 """
                 insert into draw_results (

@@ -1,0 +1,105 @@
+┏━━━━━━━━━━━━━━━┳━━━━━━━━━━━━┳━━━━━━━━━━━━┳━━━━━━━┳━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━┳━━━━━━━━━━┓
+┃ Game          ┃ Pool       ┃ Test       ┃ Draws ┃ Status            ┃      p-value ┃ Expected ┃
+┡━━━━━━━━━━━━━━━╇━━━━━━━━━━━━╇━━━━━━━━━━━━╇━━━━━━━╇━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━╇━━━━━━━━━━┩
+│ cashpop       │ numbers    │ frequency  │   926 │ OK                │     0.943787 │    61.73 │
+│ cashpop       │ numbers    │ chi-square │   926 │ OK                │     0.943787 │    61.73 │
+│ cashpop       │ numbers    │ pairs      │   926 │ NOT_APPLICABLE    │          n/a │      n/a │
+│ cashpop       │ numbers    │ triples    │   926 │ NOT_APPLICABLE    │          n/a │      n/a │
+│ cashpop       │ numbers    │ gaps       │   926 │ INSUFFICIENT_DATA │            0 │      n/a │
+│ daily-keno    │ numbers    │ frequency  │ 12222 │ OK                │     0.523784 │  3055.50 │
+│ daily-keno    │ numbers    │ chi-square │ 12222 │ OK                │     0.523784 │  3055.50 │
+│ daily-keno    │ numbers    │ pairs      │ 12222 │ OK                │    0.0309836 │   734.87 │
+│ daily-keno    │ numbers    │ triples    │ 12222 │ WARN              │  2.07689e-07 │   169.58 │
+│ daily-keno    │ numbers    │ gaps       │ 12222 │ INSUFFICIENT_DATA │            0 │      n/a │
+│ hit-5         │ numbers    │ frequency  │  4181 │ WARN              │  2.40538e-69 │   497.74 │
+│ hit-5         │ numbers    │ chi-square │  4181 │ WARN              │  2.40538e-69 │   497.74 │
+│ hit-5         │ numbers    │ pairs      │  4181 │ WARN              │ 6.14174e-166 │    48.56 │
+│ hit-5         │ numbers    │ triples    │  4181 │ INSUFFICIENT_DATA │  4.26384e-55 │     3.64 │
+│ hit-5         │ numbers    │ gaps       │  4181 │ INSUFFICIENT_DATA │    0.0494789 │      n/a │
+│ lotto         │ numbers    │ frequency  │  5142 │ WARN              │   0.00876452 │   629.63 │
+│ lotto         │ numbers    │ chi-square │  5142 │ WARN              │   0.00876452 │   629.63 │
+│ lotto         │ numbers    │ pairs      │  5142 │ OK                │    0.0174289 │    65.59 │
+│ lotto         │ numbers    │ triples    │  5142 │ OK                │     0.127606 │     5.58 │
+│ lotto         │ numbers    │ gaps       │  5142 │ INSUFFICIENT_DATA │    0.0193126 │      n/a │
+│ match-4       │ numbers    │ frequency  │  6485 │ OK                │     0.978021 │  1080.83 │
+│ match-4       │ numbers    │ chi-square │  6485 │ OK                │     0.978021 │  1080.83 │
+│ match-4       │ numbers    │ pairs      │  6485 │ OK                │     0.843737 │   140.98 │
+│ match-4       │ numbers    │ triples    │  6485 │ OK                │     0.383158 │    12.82 │
+│ match-4       │ numbers    │ gaps       │  6485 │ INSUFFICIENT_DATA │    0.0139276 │      n/a │
+│ mega-millions │ white      │ frequency  │  1744 │ WARN              │  2.66571e-45 │   124.57 │
+│ mega-millions │ mega_ball  │ frequency  │  1744 │ WARN              │   0.00598509 │    72.67 │
+│ mega-millions │ white      │ chi-square │  1744 │ WARN              │  2.66571e-45 │   124.57 │
+│ mega-millions │ mega_ball  │ chi-square │  1744 │ WARN              │   0.00598509 │    72.67 │
+│ mega-millions │ white      │ pairs      │  1744 │ WARN              │   9.8523e-62 │     7.22 │
+│ mega-millions │ mega_ball  │ pairs      │  1744 │ NOT_APPLICABLE    │          n/a │      n/a │
+│ mega-millions │ white      │ triples    │  1744 │ INSUFFICIENT_DATA │  9.99044e-14 │     0.32 │
+│ mega-millions │ mega_ball  │ triples    │  1744 │ NOT_APPLICABLE    │          n/a │      n/a │
+│ mega-millions │ white      │ gaps       │  1744 │ INSUFFICIENT_DATA │    0.0212863 │      n/a │
+│ mega-millions │ mega_ball  │ gaps       │  1744 │ INSUFFICIENT_DATA │            0 │      n/a │
+│ pick-3        │ position_1 │ frequency  │  6334 │ OK                │     0.627816 │   633.40 │
+│ pick-3        │ position_2 │ frequency  │  6334 │ OK                │     0.369678 │   633.40 │
+│ pick-3        │ position_3 │ frequency  │  6334 │ OK                │     0.256834 │   633.40 │
+│ pick-3        │ position_1 │ chi-square │  6334 │ OK                │     0.627816 │   633.40 │
+│ pick-3        │ position_2 │ chi-square │  6334 │ OK                │     0.369678 │   633.40 │
+│ pick-3        │ position_3 │ chi-square │  6334 │ OK                │     0.256834 │   633.40 │
+│ pick-3        │ front_pair │ pairs      │  6334 │ OK                │     0.989557 │    63.34 │
+│ pick-3        │ back_pair  │ pairs      │  6334 │ OK                │     0.529757 │    63.34 │
+│ pick-3        │ triple     │ triples    │  6334 │ OK                │     0.358682 │     6.33 │
+│ pick-3        │ position_1 │ gaps       │  6334 │ INSUFFICIENT_DATA │  1.16815e-07 │      n/a │
+│ pick-3        │ position_2 │ gaps       │  6334 │ INSUFFICIENT_DATA │    0.0975992 │      n/a │
+│ pick-3        │ position_3 │ gaps       │  6334 │ INSUFFICIENT_DATA │  1.67664e-11 │      n/a │
+│ powerball     │ white      │ frequency  │  1769 │ WARN              │  2.02498e-05 │   128.19 │
+│ powerball     │ powerball  │ frequency  │  1769 │ OK                │     0.895031 │    68.04 │
+│ powerball     │ white      │ chi-square │  1769 │ WARN              │  2.02498e-05 │   128.19 │
+│ powerball     │ powerball  │ chi-square │  1769 │ OK                │     0.895031 │    68.04 │
+│ powerball     │ white      │ pairs      │  1769 │ WARN              │    0.0013604 │     7.54 │
+│ powerball     │ powerball  │ pairs      │  1769 │ NOT_APPLICABLE    │          n/a │      n/a │
+│ powerball     │ white      │ triples    │  1769 │ INSUFFICIENT_DATA │    0.0104077 │     0.34 │
+│ powerball     │ powerball  │ triples    │  1769 │ NOT_APPLICABLE    │          n/a │      n/a │
+│ powerball     │ white      │ gaps       │  1769 │ INSUFFICIENT_DATA │   0.00294391 │      n/a │
+│ powerball     │ powerball  │ gaps       │  1769 │ INSUFFICIENT_DATA │   0.00646674 │      n/a │
+└───────────────┴────────────┴────────────┴───────┴───────────────────┴──────────────┴──────────┘
+Statistical warnings are screening signals, not proof of non-random drawing behavior.
+OpenAI summary: Across 57 audits, most results are OK, with 14 WARN screenings and 15 INSUFFICIENT_DATA outcomes. OK results indicate the observed patterns are broadly consistent with 
+randomness for the tested feature at the available draw counts. WARN results are a signal to review that specific test/pool (often due to low p-values or notable deviations), but they are not
+proof of bias or predictability. INSUFFICIENT_DATA results mean the test’s assumptions are not met (e.g., very small expected bucket counts in gaps/triples), so the p-value and chi-square 
+should not be used for strong conclusions. NOT_APPLICABLE indicates a test wasn’t meaningfully run for that game/pool configuration. None of these historical audits identify or predict future
+winning numbers.
+Overall status: MIXED
+Finding: cashpop: frequency and chi-square audits are OK (p_value=0.9437869560269444, draw_count=926, expected_per_bucket=61.733333333333334). Pairs and triples are NOT_APPLICABLE. Gaps is 
+INSUFFICIENT_DATA (p_value=0.0) with warning: "minimum expected gap bucket count 0.00 is below 5".
+Finding: daily-keno (draw_count=12222): frequency and chi-square are OK (p_value=0.5237842248894243, expected_per_bucket=3055.5). Pairs is OK (p_value=0.03098356809984764). Triples is WARN 
+with very small p_value=2.076891820552057e-07. Gaps is INSUFFICIENT_DATA (p_value=0.0) with warning: "minimum expected gap bucket count 0.00 is below 5".
+Finding: hit-5 (draw_count=4181): frequency and chi-square are WARN (p_value=2.4053755882155927e-69, expected_per_bucket=497.73809523809524). Pairs is WARN (p_value=6.141742660841224e-166). 
+Triples is INSUFFICIENT_DATA because expected_per_bucket=3.6419860627177703 is below 5 (p_value=4.2638371620793545e-55; warning: "expected count per bucket 3.64 is below 5"). Gaps is 
+INSUFFICIENT_DATA (p_value=0.049478850322613566) with warning: "minimum expected gap bucket count 0.11 is below 5".
+Finding: lotto (draw_count=5142): frequency and chi-square are WARN (p_value=0.008764518800975557). Pairs is OK (p_value=0.017428933446325137). Triples is OK (p_value=0.1276063755155308). 
+Gaps is INSUFFICIENT_DATA (p_value=0.019312634715381867) with warning: "minimum expected gap bucket count 0.04 is below 5".
+Finding: match-4 (draw_count=6485): frequency and chi-square are OK (p_value=0.9780205534135721). Pairs is OK (p_value=0.8437365848621918). Triples is OK (p_value=0.3831580314002307). Gaps is
+INSUFFICIENT_DATA (p_value=0.013927580731919837) with warning: "minimum expected gap bucket count 0.04 is below 5".
+Finding: mega-millions (draw_count=1744): multiple WARN results for white and mega_ball frequency/chi-square (white p_value=2.6657066673521626e-45; mega_ball p_value=0.005985093075997518) and
+white pairs (p_value=9.852303683586228e-62). Several audits include the immutable data-quality warning: "726 draws had unparseable or invalid winning_number values". White triples is 
+INSUFFICIENT_DATA (expected_per_bucket=0.31859700401899893; p_value=9.99044296776315e-14; warning includes "expected count per bucket 0.32 is below 5"). Mega_ball pairs/triples are 
+NOT_APPLICABLE. Gaps for both pools are INSUFFICIENT_DATA with minimum-expected-bucket warnings.
+Finding: pick-3 (draw_count=6334): position-based frequency and chi-square are OK for position_1 (p_value=0.6278162454315663), position_2 (p_value=0.36967758109215343), and position_3 
+(p_value=0.2568343345367292). Pair-style audits (front_pair p_value=0.9895573406020796; back_pair p_value=0.5297567352345467) and triple audit (p_value=0.3586821329634597) are OK. All three 
+gaps audits (position_1 p_value=1.1681464344539962e-07; position_2 p_value=0.09759924080145023; position_3 p_value=1.676640358173269e-11) are INSUFFICIENT_DATA with warnings about minimum 
+expected gap bucket count below 5.
+Finding: powerball (draw_count=1769): white frequency and chi-square are WARN (p_value=2.024979528656116e-05) and white pairs is WARN (p_value=0.0013604020330954742). powerball (red ball) 
+frequency and chi-square are OK (p_value=0.895031416633256). White triples is INSUFFICIENT_DATA (expected_per_bucket=0.3376340802381952; p_value=0.010407721250652166; warning includes 
+"expected count per bucket 0.34 is below 5"). Powerball pairs/triples are NOT_APPLICABLE. Gaps for both pools are INSUFFICIENT_DATA with minimum-expected-bucket warnings and the immutable 
+data-quality warning: "173 draws had unparseable or invalid winning_number values".
+Limitation: WARN is a screening signal (e.g., low p-values or notable deviations) and is not proof of biased drawing or a guarantee that the game is non-random.
+Limitation: INSUFFICIENT_DATA indicates the test is too sparse for reliable inference (commonly because the minimum expected bucket count is below 5 or the expected count per bucket is below 
+5), so those outputs should not be treated as strong evidence for or against randomness.
+Limitation: Some results include immutable data-quality warnings (e.g., "726 draws had unparseable or invalid winning_number values" for mega-millions and "173 draws had unparseable or 
+invalid winning_number values" for powerball), which can affect audit reliability.
+Limitation: Historical audit outcomes describe past draws only and do not identify, predict, or improve chances of future winning numbers.
+Next step: For each WARN audit, review the underlying data extraction/parsing and game rule consistency first (especially where warnings mention unparseable or invalid winning_number values),
+then consider repeating the audit on a cleaned/validated dataset.
+Next step: For INSUFFICIENT_DATA audits, avoid strong conclusions; either aggregate more draws or redesign the bucketization/model so expected counts meet common chi-square assumptions (e.g.,
+expected bucket counts at least 5).
+Next step: Prioritize follow-up on repeated WARNs within the same game/pool (e.g., hit-5 frequency/chi-square and pairs; powerball white frequency/chi-square and pairs; mega-millions 
+white/mega_ball frequency/chi-square and white pairs), while treating them as prompts for investigation rather than proof of bias.
+Next step: If comparing many audits at once, consider a multiple-testing review process (since many tests can produce some low p-values by chance), while keeping the original 
+p-values/statuses unchanged.
