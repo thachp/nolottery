@@ -96,13 +96,20 @@ def test_analyze_all_outputs_every_supported_game(tmp_path):
     ]
 
 
-def test_recommend_defaults_to_best_small_budget_hit_rate(tmp_path):
+def test_recommend_defaults_to_best_small_budget_hit_rate(tmp_path, monkeypatch):
+    monkeypatch.setattr(
+        "nolottery.cli._generated_at",
+        lambda: "2026-05-06T14:32:10-07:00",
+        raising=False,
+    )
+
     result = runner.invoke(
         app,
         ["--data-dir", str(tmp_path), "recommend"],
     )
 
     assert result.exit_code == 0, result.output
+    assert "Generated at: 2026-05-06T14:32:10-07:00" in result.output
     assert "Daily Keno" in result.output
     assert "4-Spot" in result.output
     assert "1:3.86" in result.output
@@ -111,7 +118,13 @@ def test_recommend_defaults_to_best_small_budget_hit_rate(tmp_path):
     assert "no odds advantage" in result.output
 
 
-def test_recommend_can_return_json(tmp_path):
+def test_recommend_can_return_json(tmp_path, monkeypatch):
+    monkeypatch.setattr(
+        "nolottery.cli._generated_at",
+        lambda: "2026-05-06T14:32:10-07:00",
+        raising=False,
+    )
+
     result = runner.invoke(
         app,
         ["--data-dir", str(tmp_path), "recommend", "--output", "json"],
@@ -119,6 +132,7 @@ def test_recommend_can_return_json(tmp_path):
 
     assert result.exit_code == 0, result.output
     payload = json.loads(result.output)
+    assert payload["generated_at"] == "2026-05-06T14:32:10-07:00"
     assert payload["budget"] == 1.0
     assert payload["best"]["game_slug"] == "daily-keno"
     assert payload["best"]["option_slug"] == "4-spot"
@@ -170,6 +184,11 @@ def test_recommend_recognizes_cashpop_all_numbers_as_guaranteed(tmp_path):
 
 def test_recommend_can_ask_openai_to_evaluate_reduced_payload(tmp_path, monkeypatch):
     call = {}
+    monkeypatch.setattr(
+        "nolottery.cli._generated_at",
+        lambda: "2026-05-06T14:32:10-07:00",
+        raising=False,
+    )
 
     def fake_evaluate(payload, model):
         call["payload"] = payload
@@ -212,8 +231,10 @@ def test_recommend_can_ask_openai_to_evaluate_reduced_payload(tmp_path, monkeypa
 
     assert result.exit_code == 0, result.output
     output = json.loads(result.output)
+    assert output["generated_at"] == "2026-05-06T14:32:10-07:00"
     assert output["evaluation"]["decision"] == "SKIP"
     assert call["model"] == "gpt-test"
+    assert call["payload"]["generated_at"] == "2026-05-06T14:32:10-07:00"
     assert call["payload"]["deterministic_decision"] == "SKIP"
     assert call["payload"]["best_hit_rate_option"]["candidate_slug"] == "cashpop:10-pop"
     assert "prediction" not in json.dumps(call["payload"])

@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from datetime import datetime
 import json
 from pathlib import Path
 from typing import Annotated
@@ -269,6 +270,7 @@ def recommend(
     conn = db.connect(ctx.obj["data_dir"])
     games = _load_games(conn)
     settings = AppSettings()
+    generated_at = _generated_at()
     recommendations = recommend_highest_hit_rate(games, settings, budget)
     if not recommendations:
         raise typer.BadParameter("budget is below the cheapest supported wager")
@@ -278,6 +280,7 @@ def recommend(
         raise typer.BadParameter("output must be table or json")
 
     response_payload: dict[str, object] = {
+        "generated_at": generated_at,
         "budget": budget,
         "best": _recommendation_to_dict(recommendations[0]),
         "recommendations": [
@@ -289,7 +292,12 @@ def recommend(
     if evaluate == "openai":
         try:
             evaluation = evaluate_recommendations_with_openai(
-                _openai_recommendation_payload(recommendations, settings, budget),
+                _openai_recommendation_payload(
+                    recommendations,
+                    settings,
+                    budget,
+                    generated_at,
+                ),
                 model=openai_model,
             )
         except OpenAIEvaluationError as exc:
@@ -300,9 +308,13 @@ def recommend(
         console.print_json(json.dumps(response_payload))
         return
 
-    _print_recommendation_table(recommendations, budget)
+    _print_recommendation_table(recommendations, budget, generated_at)
     if evaluation is not None:
         _print_openai_evaluation(evaluation)
+
+
+def _generated_at() -> str:
+    return datetime.now().astimezone().isoformat(timespec="seconds")
 
 
 @app.command("low-share")
@@ -942,7 +954,9 @@ def _print_analysis_table(result: AnalysisResult) -> None:
 def _print_recommendation_table(
     recommendations: tuple[Recommendation, ...],
     budget: float,
+    generated_at: str,
 ) -> None:
+    console.print(f"Generated at: {generated_at}")
     console.print(f"Highest hit-rate recommendations under ${budget:.2f}")
     table = Table()
     table.add_column("Rank", justify="right")
@@ -1337,6 +1351,7 @@ def _openai_recommendation_payload(
     recommendations: tuple[Recommendation, ...],
     settings: AppSettings,
     budget: float,
+    generated_at: str,
 ) -> dict[str, object]:
     candidates = [
         _openai_candidate_to_dict(recommendation)
@@ -1354,6 +1369,7 @@ def _openai_recommendation_payload(
         else "all affordable options have non-positive net after-tax expected value"
     )
     return {
+        "generated_at": generated_at,
         "budget": budget,
         "objective": (
             "Make the optimal decision for the budget. SKIP is allowed. "

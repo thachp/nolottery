@@ -114,7 +114,7 @@ uv run lottery recommend --budget 1
 
 For a $1 budget, this currently recommends a Daily Keno 4-Spot play because it has the highest chance of winning any prize among supported single-ticket options within that budget.
 
-The recommendation output includes a `Quick Pick Prediction` field: a random valid selection with no odds advantage.
+The recommendation output includes a `Generated at` timestamp and a `Quick Pick Prediction` field. The timestamp is a full ISO 8601 local-time snapshot for the recommendation run; the Quick Pick Prediction is a random valid selection with no odds advantage and can change between runs.
 
 For budgets under $1, the recommender can select eligible lower-cost options, such as Pick 3 pair plays. For larger budgets, it may select high-hit-rate multi-number wager styles, while still reporting the net after-tax EV and conservative decision.
 
@@ -124,7 +124,7 @@ Ask OpenAI to evaluate the recommendation and return a strict JSON decision:
 OPENAI_API_KEY=... uv run lottery recommend --budget 50 --evaluate openai --output json
 ```
 
-OpenAI receives a reduced decision payload: budget, affordable candidates, hit rates, ticket costs, net after-tax EV, and deterministic `PLAY`/`SKIP` facts. Quick-pick numbers are omitted because they have no odds advantage. The OpenAI evaluator may return `SKIP`, `PLAY`, or `PLAY_FOR_ENTERTAINMENT`; it must not change the calculated odds or expected values.
+OpenAI receives a reduced decision payload: `generated_at`, budget, affordable candidates, hit rates, ticket costs, net after-tax EV, and deterministic `PLAY`/`SKIP` facts. Quick-pick numbers are omitted because they have no odds advantage. The OpenAI evaluator may return `SKIP`, `PLAY`, or `PLAY_FOR_ENTERTAINMENT`; it must not change the calculated odds or expected values.
 
 ## Low-Share Picks
 
@@ -189,6 +189,8 @@ Use `recommend` when you have a single-ticket budget and care about the highest 
 uv run lottery recommend --budget 0.50
 uv run lottery recommend --budget 75 --output json
 ```
+
+Recommendation JSON includes a top-level `generated_at` timestamp in full ISO 8601 local time with offset, captured once for the whole response.
 
 ## Fetching Draw Data
 
