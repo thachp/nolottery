@@ -185,6 +185,7 @@ def test_coverage_reports_florida_and_new_york_ev_supported_games(tmp_path):
         ("al", "Alabama"),
         ("hi", "Hawaii"),
         ("nv", "Nevada"),
+        ("ut", "Utah"),
     ],
 )
 def test_coverage_reports_state_without_lottery_as_supported_jurisdiction(
@@ -222,6 +223,29 @@ def test_coverage_reports_pending_state_catalog_as_supported_jurisdiction(tmp_pa
             str(tmp_path),
             "coverage",
             "-j",
+            "vt",
+            "--output",
+            "json",
+        ],
+    )
+
+    assert result.exit_code == 0, result.output
+    payload = json.loads(result.output)
+    assert payload["jurisdiction_code"] == "vt"
+    assert payload["jurisdiction"] == "Vermont"
+    assert payload["jurisdiction_support_statuses"] == ["catalog_pending"]
+    assert payload["blocking_reason"] == "Lottery jurisdiction offering catalog pending"
+    assert payload["games"] == []
+
+
+def test_coverage_reports_tennessee_full_draw_game_catalog(tmp_path):
+    result = runner.invoke(
+        app,
+        [
+            "--data-dir",
+            str(tmp_path),
+            "coverage",
+            "-j",
             "tn",
             "--output",
             "json",
@@ -232,9 +256,26 @@ def test_coverage_reports_pending_state_catalog_as_supported_jurisdiction(tmp_pa
     payload = json.loads(result.output)
     assert payload["jurisdiction_code"] == "tn"
     assert payload["jurisdiction"] == "Tennessee"
-    assert payload["jurisdiction_support_statuses"] == ["catalog_pending"]
-    assert payload["blocking_reason"] == "Lottery jurisdiction offering catalog pending"
-    assert payload["games"] == []
+    games = {game["game_slug"]: game for game in payload["games"]}
+    assert set(games) == {
+        "cash4life",
+        "lotto-america",
+        "mega-millions",
+        "millionaire-for-life",
+        "powerball",
+        "tennessee-cash",
+        "tennessee-cash-3",
+        "tennessee-cash-4",
+        "tennessee-daily-jackpot",
+        "tennessee-keno-to-go",
+    }
+    assert games["cash4life"]["blocking_reason"] == (
+        "Retired after February 2026; historical adapter pending"
+    )
+    assert games["tennessee-cash"]["support_statuses"] == ["cataloged"]
+    assert games["tennessee-cash"]["blocking_reason"] == (
+        "Rules and fetch adapter pending"
+    )
 
 
 def test_coverage_reports_new_hampshire_full_draw_game_catalog(tmp_path):

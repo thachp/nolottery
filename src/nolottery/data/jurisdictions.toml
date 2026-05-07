@@ -1999,8 +1999,62 @@ blocking_reason = 'Rules and fetch adapter pending'
 [[jurisdictions]]
 code = 'tn'
 name = 'Tennessee'
-support_statuses = ['catalog_pending']
-blocking_reason = 'Lottery jurisdiction offering catalog pending'
+blocking_reason = 'Tennessee local draw-game rules and adapters pending'
+
+[[jurisdictions.offerings]]
+game_slug = 'powerball'
+source_url = 'https://tnlottery.com/games/drawing-style-games/'
+support_statuses = ['cataloged']
+blocking_reason = 'Rules and fetch adapter pending'
+
+[[jurisdictions.offerings]]
+game_slug = 'mega-millions'
+source_url = 'https://tnlottery.com/games/drawing-style-games/'
+support_statuses = ['cataloged']
+blocking_reason = 'Rules and fetch adapter pending'
+
+[[jurisdictions.offerings]]
+game_slug = 'millionaire-for-life'
+source_url = 'https://tnlottery.com/games/drawing-style-games/'
+support_statuses = ['cataloged']
+blocking_reason = 'Rules and fetch adapter pending'
+
+[[jurisdictions.offerings]]
+game_slug = 'lotto-america'
+source_url = 'https://tnlottery.com/games/drawing-style-games/'
+support_statuses = ['cataloged']
+blocking_reason = 'Rules and fetch adapter pending'
+
+[[jurisdictions.offerings]]
+game_slug = 'tennessee-cash'
+support_statuses = ['cataloged']
+blocking_reason = 'Rules and fetch adapter pending'
+
+[[jurisdictions.offerings]]
+game_slug = 'tennessee-daily-jackpot'
+support_statuses = ['cataloged']
+blocking_reason = 'Rules and fetch adapter pending'
+
+[[jurisdictions.offerings]]
+game_slug = 'tennessee-cash-3'
+support_statuses = ['cataloged']
+blocking_reason = 'Rules and fetch adapter pending'
+
+[[jurisdictions.offerings]]
+game_slug = 'tennessee-cash-4'
+support_statuses = ['cataloged']
+blocking_reason = 'Rules and fetch adapter pending'
+
+[[jurisdictions.offerings]]
+game_slug = 'tennessee-keno-to-go'
+support_statuses = ['cataloged']
+blocking_reason = 'Rules and fetch adapter pending'
+
+[[jurisdictions.offerings]]
+game_slug = 'cash4life'
+source_url = 'https://tnlottery.com/games/drawing-style-games/'
+support_statuses = ['cataloged']
+blocking_reason = 'Retired after February 2026; historical adapter pending'
 
 [[jurisdictions]]
 code = 'tx'

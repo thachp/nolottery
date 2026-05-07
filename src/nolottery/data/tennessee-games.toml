@@ -1,0 +1,31 @@
+# Tennessee active draw-game catalog entries.
+
+[[games]]
+slug = 'tennessee-cash'
+name = 'Tennessee Cash'
+source_url = 'https://tnlottery.com/games/drawing-style-games/'
+reviewed_on = '2026-05-07'
+
+[[games]]
+slug = 'tennessee-daily-jackpot'
+name = 'Daily TN Jackpot'
+source_url = 'https://tnlottery.com/games/drawing-style-games/'
+reviewed_on = '2026-05-07'
+
+[[games]]
+slug = 'tennessee-cash-3'
+name = 'Cash 3'
+source_url = 'https://tnlottery.com/games/drawing-style-games/'
+reviewed_on = '2026-05-07'
+
+[[games]]
+slug = 'tennessee-cash-4'
+name = 'Cash 4'
+source_url = 'https://tnlottery.com/games/drawing-style-games/'
+reviewed_on = '2026-05-07'
+
+[[games]]
+slug = 'tennessee-keno-to-go'
+name = 'Keno To Go'
+source_url = 'https://tnlottery.com/games/drawing-style-games/'
+reviewed_on = '2026-05-07'
