@@ -1,0 +1,31 @@
+# Delaware active draw-game catalog entries.
+
+[[games]]
+slug = 'delaware-play-3'
+name = 'Play 3'
+source_url = 'https://www.delottery.com/Drawing-Games/Play-3'
+reviewed_on = '2026-05-07'
+
+[[games]]
+slug = 'delaware-play-4'
+name = 'Play 4'
+source_url = 'https://www.delottery.com/Drawing-Games/Play-4'
+reviewed_on = '2026-05-07'
+
+[[games]]
+slug = 'delaware-play-5'
+name = 'Play 5'
+source_url = 'https://www.delottery.com/Drawing-Games/Play-5'
+reviewed_on = '2026-05-07'
+
+[[games]]
+slug = 'delaware-multi-win-lotto'
+name = 'Multi-Win Lotto'
+source_url = 'https://www.delottery.com/Drawing-Games/Multi-Win-Lotto'
+reviewed_on = '2026-05-07'
+
+[[games]]
+slug = 'delaware-keno'
+name = 'KENO'
+source_url = 'https://www.delottery.com/Keno/Winning-Numbers'
+reviewed_on = '2026-05-07'

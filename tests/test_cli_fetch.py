@@ -341,6 +341,68 @@ def _connecticut_mega_millions_history_html() -> str:
     """
 
 
+def _delaware_powerball_history_html() -> str:
+    return """
+    <html>
+      <body>
+        <table class="table-winning-numbers-search-results">
+          <tbody>
+            <tr>
+              <td data-label="Game">
+                Powerball
+                <p><strong>Powerball</strong> is indicated in Red.</p>
+              </td>
+              <td data-label="Date">05/06/26</td>
+              <td data-label="Winning Numbers">
+                <ul>
+                  <li>18</li><li>27</li><li>51</li><li>65</li><li>68</li>
+                  <li class="ball-color-red">05</li>
+                </ul>
+              </td>
+            </tr>
+            <tr>
+              <td data-label="Game">Powerball</td>
+              <td data-label="Date">05/04/26</td>
+              <td data-label="Winning Numbers">
+                <ul>
+                  <li>30</li><li>36</li><li>42</li><li>60</li><li>63</li>
+                  <li class="ball-color-red">13</li>
+                </ul>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </body>
+    </html>
+    """
+
+
+def _delaware_mega_millions_history_html() -> str:
+    return """
+    <html>
+      <body>
+        <table class="table-winning-numbers-search-results">
+          <tbody>
+            <tr>
+              <td data-label="Game">
+                Mega Millions
+                <p><strong>Mega Ball</strong> is indicated in Gold.</p>
+              </td>
+              <td data-label="Date">05/05/26</td>
+              <td data-label="Winning Numbers">
+                <ul>
+                  <li>12</li><li>22</li><li>50</li><li>51</li><li>55</li>
+                  <li class="ball-color-yellow-orange">10</li>
+                </ul>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </body>
+    </html>
+    """
+
+
 def test_fetch_cashpop_persists_official_page_snapshot_and_draws(tmp_path):
     fixture = tmp_path / "cashpop.html"
     fixture.write_text(DRAWING_HTML, encoding="utf-8")
@@ -1271,6 +1333,119 @@ def test_fetch_connecticut_mega_millions_backfill_reads_official_ajax_fixture(
     assert payload["games"][0]["draws"] == [
         {
             "jurisdiction_code": "ct",
+            "draw_date": "Tue, May 05, 2026",
+            "winning_number": "12, 22, 50, 51, 55, 10 Mega Ball",
+        }
+    ]
+
+
+def test_fetch_delaware_powerball_backfill_reads_official_history_fixture(tmp_path):
+    fixtures = tmp_path / "fixtures"
+    fixtures.mkdir()
+    (fixtures / "powerball-de-backfill.html").write_text(
+        _delaware_powerball_history_html(),
+        encoding="utf-8",
+    )
+
+    result = runner.invoke(
+        app,
+        [
+            "--data-dir",
+            str(tmp_path / "data"),
+            "fetch",
+            "powerball",
+            "-j",
+            "de",
+            "--backfill",
+            "--source-dir",
+            str(fixtures),
+        ],
+    )
+
+    assert result.exit_code == 0, result.output
+    assert "Powerball" in result.output
+    assert "2 draws" in result.output
+    assert "1 page" in result.output
+
+    draws_result = runner.invoke(
+        app,
+        [
+            "--data-dir",
+            str(tmp_path / "data"),
+            "draws",
+            "powerball",
+            "-j",
+            "de",
+            "--output",
+            "json",
+        ],
+    )
+
+    assert draws_result.exit_code == 0, draws_result.output
+    payload = json.loads(draws_result.output)
+    assert payload["games"][0]["draws"] == [
+        {
+            "jurisdiction_code": "de",
+            "draw_date": "Wed, May 06, 2026",
+            "winning_number": "18, 27, 51, 65, 68, 05 Powerball",
+        },
+        {
+            "jurisdiction_code": "de",
+            "draw_date": "Mon, May 04, 2026",
+            "winning_number": "30, 36, 42, 60, 63, 13 Powerball",
+        },
+    ]
+
+
+def test_fetch_delaware_mega_millions_backfill_reads_official_history_fixture(
+    tmp_path,
+):
+    fixtures = tmp_path / "fixtures"
+    fixtures.mkdir()
+    (fixtures / "mega-millions-de-backfill.html").write_text(
+        _delaware_mega_millions_history_html(),
+        encoding="utf-8",
+    )
+
+    result = runner.invoke(
+        app,
+        [
+            "--data-dir",
+            str(tmp_path / "data"),
+            "fetch",
+            "mega-millions",
+            "-j",
+            "de",
+            "--backfill",
+            "--source-dir",
+            str(fixtures),
+        ],
+    )
+
+    assert result.exit_code == 0, result.output
+    assert "Mega Millions" in result.output
+    assert "1 draw" in result.output
+    assert "1 page" in result.output
+
+    draws_result = runner.invoke(
+        app,
+        [
+            "--data-dir",
+            str(tmp_path / "data"),
+            "draws",
+            "mega-millions",
+            "-j",
+            "de",
+            "--output",
+            "json",
+        ],
+    )
+
+    assert draws_result.exit_code == 0, draws_result.output
+    payload = json.loads(draws_result.output)
+    assert payload["games"][0]["draws"] == [
+        {
+            "jurisdiction_code": "de",
             "draw_date": "Tue, May 05, 2026",
             "winning_number": "12, 22, 50, 51, 55, 10 Mega Ball",
         }

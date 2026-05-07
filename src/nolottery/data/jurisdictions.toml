@@ -449,8 +449,58 @@ blocking_reason = 'Rules and fetch adapter pending'
 [[jurisdictions]]
 code = 'de'
 name = 'Delaware'
-support_statuses = ['catalog_pending']
-blocking_reason = 'Lottery jurisdiction offering catalog pending'
+blocking_reason = 'Delaware local draw-game rules and adapters pending'
+
+[[jurisdictions.offerings]]
+game_slug = 'powerball'
+source_url = 'https://www.delottery.com/Winning-Numbers/Search-Winners/2026/5/POWERBALL'
+support_statuses = ['cataloged', 'rules_verified', 'ev_supported', 'fetch_supported', 'audit_supported', 'low_share_supported']
+results_adapter = 'de_search_winners'
+blocking_reason = ''
+
+[[jurisdictions.offerings]]
+game_slug = 'mega-millions'
+source_url = 'https://www.delottery.com/Winning-Numbers/Search-Winners/2026/5/MEGA-MILLIONS'
+support_statuses = ['cataloged', 'rules_verified', 'ev_supported', 'fetch_supported', 'audit_supported', 'low_share_supported']
+results_adapter = 'de_search_winners'
+blocking_reason = ''
+
+[[jurisdictions.offerings]]
+game_slug = 'lotto-america'
+source_url = 'https://www.delottery.com/Drawing-Games/Lotto-America'
+support_statuses = ['cataloged']
+blocking_reason = 'Rules and fetch adapter pending'
+
+[[jurisdictions.offerings]]
+game_slug = 'lucky-for-life'
+source_url = 'https://www.delottery.com/Drawing-Games/Lucky-For-Life'
+support_statuses = ['cataloged']
+blocking_reason = 'Rules and fetch adapter pending'
+
+[[jurisdictions.offerings]]
+game_slug = 'delaware-play-3'
+support_statuses = ['cataloged']
+blocking_reason = 'Rules and fetch adapter pending'
+
+[[jurisdictions.offerings]]
+game_slug = 'delaware-play-4'
+support_statuses = ['cataloged']
+blocking_reason = 'Rules and fetch adapter pending'
+
+[[jurisdictions.offerings]]
+game_slug = 'delaware-play-5'
+support_statuses = ['cataloged']
+blocking_reason = 'Rules and fetch adapter pending'
+
+[[jurisdictions.offerings]]
+game_slug = 'delaware-multi-win-lotto'
+support_statuses = ['cataloged']
+blocking_reason = 'Rules and fetch adapter pending'
+
+[[jurisdictions.offerings]]
+game_slug = 'delaware-keno'
+support_statuses = ['cataloged']
+blocking_reason = 'Rules and fetch adapter pending'
 
 [[jurisdictions]]
 code = 'ga'

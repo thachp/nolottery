@@ -70,6 +70,10 @@ _CONNECTICUT_WINNING_NUMBERS_GAMES = {
     "mega-millions": ("11", "MegaMillions", "Mega Ball"),
     "powerball": ("5", "Powerball", "Powerball"),
 }
+_DELAWARE_SEARCH_WINNERS_GAMES = {
+    "mega-millions": ("MEGA-MILLIONS", "Mega Millions", "Mega Ball"),
+    "powerball": ("POWERBALL", "Powerball", "Powerball"),
+}
 
 
 @dataclass(frozen=True)
@@ -101,6 +105,26 @@ def fetch_game(
     source_file: Path | None = None,
     jurisdiction_code: str = DEFAULT_JURISDICTION_CODE,
 ) -> FetchResult:
+    if (
+        source_file is None
+        and jurisdiction_code == "de"
+        and game.slug in _DELAWARE_SEARCH_WINNERS_GAMES
+    ):
+        raw_html, source_url = _delaware_search_winners_source(
+            game,
+            source_dir=None,
+        )
+        draws = parse_delaware_search_winners(raw_html, game.slug)
+        _insert_snapshot(conn, jurisdiction_code, game.slug, source_url, raw_html, draws)
+        new_draws = _filter_newer_draws(conn, jurisdiction_code, game.slug, draws)
+        _insert_draw_results(conn, jurisdiction_code, game.slug, new_draws)
+        conn.commit()
+        return FetchResult(
+            game_name=game.name,
+            source_url=source_url,
+            draw_count=len(new_draws),
+            prize_row_count=sum(len(draw.prizes) for draw in new_draws),
+        )
     if (
         source_file is None
         and jurisdiction_code == "ct"
@@ -351,6 +375,22 @@ def fetch_game_backfill(
             source_dir=source_dir,
         )
         draws = parse_connecticut_winning_numbers(raw_html, game.slug)
+        _insert_snapshot(conn, jurisdiction_code, game.slug, source_url, raw_html, draws)
+        _replace_draw_results(conn, jurisdiction_code, game.slug, draws)
+        conn.commit()
+        return FetchResult(
+            game_name=game.name,
+            source_url=source_url,
+            draw_count=len(draws),
+            prize_row_count=sum(len(draw.prizes) for draw in draws),
+            page_count=1,
+        )
+    if jurisdiction_code == "de" and game.slug in _DELAWARE_SEARCH_WINNERS_GAMES:
+        raw_html, source_url = _delaware_search_winners_source(
+            game,
+            source_dir=source_dir,
+        )
+        draws = parse_delaware_search_winners(raw_html, game.slug)
         _insert_snapshot(conn, jurisdiction_code, game.slug, source_url, raw_html, draws)
         _replace_draw_results(conn, jurisdiction_code, game.slug, draws)
         conn.commit()
@@ -894,6 +934,53 @@ def _connecticut_draw_date(raw_value: str) -> str | None:
         return None
 
 
+def parse_delaware_search_winners(
+    raw_html: str,
+    game_slug: str,
+) -> tuple[ParsedDraw, ...]:
+    _, game_name, special_number_name = _DELAWARE_SEARCH_WINNERS_GAMES[game_slug]
+    soup = BeautifulSoup(raw_html, "html.parser")
+    draws: list[ParsedDraw] = []
+    for row in soup.select("table.table-winning-numbers-search-results tbody tr"):
+        cells = row.find_all("td")
+        if len(cells) < 3:
+            continue
+        row_game = _delaware_row_game(cells[0])
+        if row_game != game_name:
+            continue
+        draw_date = _delaware_draw_date(cells[1].get_text(" ", strip=True))
+        numbers = [item.get_text(" ", strip=True) for item in cells[2].select("li")]
+        if draw_date is None or len(numbers) != 6:
+            continue
+        primary_numbers = [number for number in numbers[:5] if re.fullmatch(r"\d{1,2}", number)]
+        special_number = numbers[5]
+        if len(primary_numbers) != 5 or not re.fullmatch(r"\d{1,2}", special_number):
+            continue
+        draws.append(
+            ParsedDraw(
+                draw_date=draw_date,
+                winning_number=", ".join(
+                    [*primary_numbers, f"{special_number} {special_number_name}"]
+                ),
+                prizes=(),
+            )
+        )
+    return tuple(draws)
+
+
+def _delaware_row_game(cell: Tag) -> str:
+    for text in cell.stripped_strings:
+        return text
+    return ""
+
+
+def _delaware_draw_date(raw_value: str) -> str | None:
+    try:
+        return datetime.strptime(raw_value, "%m/%d/%y").strftime(_DRAW_DATE_FORMAT)
+    except ValueError:
+        return None
+
+
 def _new_york_draw_date(raw_value: object) -> str | None:
     if not isinstance(raw_value, str) or not raw_value:
         return None
@@ -1153,6 +1240,8 @@ def _parse_draws(
         return parse_texas_winning_numbers(raw_html, game_slug)
     if jurisdiction_code == "ct" and game_slug in _CONNECTICUT_WINNING_NUMBERS_GAMES:
         return parse_connecticut_winning_numbers(raw_html, game_slug)
+    if jurisdiction_code == "de" and game_slug in _DELAWARE_SEARCH_WINNERS_GAMES:
+        return parse_delaware_search_winners(raw_html, game_slug)
     return parse_past_drawings(raw_html)
 
 
@@ -1292,6 +1381,25 @@ def _connecticut_winning_numbers_draws_source(
     )
     response.raise_for_status()
     return response.text, str(response.url)
+
+
+def _delaware_search_winners_source(
+    game: GameMetadata,
+    source_dir: Path | None,
+) -> tuple[str, str]:
+    source_name = f"{game.slug}-de-backfill"
+    if source_dir is not None:
+        source_file = source_dir / f"{source_name}.html"
+        return source_file.read_text(encoding="utf-8"), source_file.as_uri()
+
+    game_path, _, _ = _DELAWARE_SEARCH_WINNERS_GAMES[game.slug]
+    today = date.today()
+    source_url = (
+        "https://www.delottery.com/Winning-Numbers/Search-Winners/"
+        f"{today.year}/{today.month}/{game_path}"
+    )
+    raw_html, resolved_url = _read_source(source_url, None, source_name)
+    return raw_html, resolved_url
 
 
 def _extract_pdf_text(raw_pdf: bytes) -> str:
