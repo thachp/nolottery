@@ -1,0 +1,31 @@
+# Louisiana active draw-game catalog entries.
+
+[[games]]
+slug = 'louisiana-lotto'
+name = 'Lotto'
+source_url = 'https://louisianalottery.com/draw-games/lotto/'
+reviewed_on = '2026-05-07'
+
+[[games]]
+slug = 'louisiana-easy-5'
+name = 'Easy 5'
+source_url = 'https://louisianalottery.com/draw-games/easy-5/'
+reviewed_on = '2026-05-07'
+
+[[games]]
+slug = 'louisiana-pick-5'
+name = 'Pick 5'
+source_url = 'https://louisianalottery.com/draw-games/pick-5/'
+reviewed_on = '2026-05-07'
+
+[[games]]
+slug = 'louisiana-pick-4'
+name = 'Pick 4'
+source_url = 'https://louisianalottery.com/draw-games/pick-4/'
+reviewed_on = '2026-05-07'
+
+[[games]]
+slug = 'louisiana-pick-3'
+name = 'Pick 3'
+source_url = 'https://louisianalottery.com/draw-games/pick-3/'
+reviewed_on = '2026-05-07'

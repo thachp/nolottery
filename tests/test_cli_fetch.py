@@ -696,6 +696,39 @@ def _kentucky_mega_millions_history_json() -> str:
     )
 
 
+def _louisiana_powerball_latest_draw_html() -> str:
+    return """
+    <html>
+      <body>
+        <main>
+          <h1>Powerball</h1>
+          <a>View Latest Draw: May 06, 2026</a>
+          <ul>
+            <li>18</li><li>27</li><li>51</li><li>65</li><li>68</li><li>05</li>
+          </ul>
+          <p>3x Power Play</p>
+        </main>
+      </body>
+    </html>
+    """
+
+
+def _louisiana_mega_millions_latest_draw_html() -> str:
+    return """
+    <html>
+      <body>
+        <main>
+          <h1>Mega Millions</h1>
+          <a>View Latest Draw: May 05, 2026</a>
+          <ul>
+            <li>12</li><li>22</li><li>50</li><li>51</li><li>55</li><li>10</li>
+          </ul>
+        </main>
+      </body>
+    </html>
+    """
+
+
 def test_fetch_cashpop_persists_official_page_snapshot_and_draws(tmp_path):
     fixture = tmp_path / "cashpop.html"
     fixture.write_text(DRAWING_HTML, encoding="utf-8")
@@ -2427,6 +2460,116 @@ def test_fetch_kentucky_mega_millions_backfill_reads_official_json_fixture(
     assert payload["games"][0]["draws"] == [
         {
             "jurisdiction_code": "ky",
+            "draw_date": "Tue, May 05, 2026",
+            "winning_number": "12, 22, 50, 51, 55, 10 Mega Ball",
+        }
+    ]
+
+
+def test_fetch_louisiana_powerball_backfill_reads_official_latest_draw_fixture(
+    tmp_path,
+):
+    fixtures = tmp_path / "fixtures"
+    fixtures.mkdir()
+    (fixtures / "powerball-la-backfill.html").write_text(
+        _louisiana_powerball_latest_draw_html(),
+        encoding="utf-8",
+    )
+
+    result = runner.invoke(
+        app,
+        [
+            "--data-dir",
+            str(tmp_path / "data"),
+            "fetch",
+            "powerball",
+            "-j",
+            "la",
+            "--backfill",
+            "--source-dir",
+            str(fixtures),
+        ],
+    )
+
+    assert result.exit_code == 0, result.output
+    assert "Powerball" in result.output
+    assert "1 draw" in result.output
+    assert "1 page" in result.output
+
+    draws_result = runner.invoke(
+        app,
+        [
+            "--data-dir",
+            str(tmp_path / "data"),
+            "draws",
+            "powerball",
+            "-j",
+            "la",
+            "--output",
+            "json",
+        ],
+    )
+
+    assert draws_result.exit_code == 0, draws_result.output
+    payload = json.loads(draws_result.output)
+    assert payload["games"][0]["draws"] == [
+        {
+            "jurisdiction_code": "la",
+            "draw_date": "Wed, May 06, 2026",
+            "winning_number": "18, 27, 51, 65, 68, 05 Powerball",
+        }
+    ]
+
+
+def test_fetch_louisiana_mega_millions_backfill_reads_official_latest_draw_fixture(
+    tmp_path,
+):
+    fixtures = tmp_path / "fixtures"
+    fixtures.mkdir()
+    (fixtures / "mega-millions-la-backfill.html").write_text(
+        _louisiana_mega_millions_latest_draw_html(),
+        encoding="utf-8",
+    )
+
+    result = runner.invoke(
+        app,
+        [
+            "--data-dir",
+            str(tmp_path / "data"),
+            "fetch",
+            "mega-millions",
+            "-j",
+            "la",
+            "--backfill",
+            "--source-dir",
+            str(fixtures),
+        ],
+    )
+
+    assert result.exit_code == 0, result.output
+    assert "Mega Millions" in result.output
+    assert "1 draw" in result.output
+    assert "1 page" in result.output
+
+    draws_result = runner.invoke(
+        app,
+        [
+            "--data-dir",
+            str(tmp_path / "data"),
+            "draws",
+            "mega-millions",
+            "-j",
+            "la",
+            "--output",
+            "json",
+        ],
+    )
+
+    assert draws_result.exit_code == 0, draws_result.output
+    payload = json.loads(draws_result.output)
+    assert payload["games"][0]["draws"] == [
+        {
+            "jurisdiction_code": "la",
             "draw_date": "Tue, May 05, 2026",
             "winning_number": "12, 22, 50, 51, 55, 10 Mega Ball",
         }

@@ -100,6 +100,10 @@ _KENTUCKY_WINNING_NUMBERS_GAMES = {
     "mega-millions": ("26", "MEGABALL", "Mega Ball"),
     "powerball": ("12", "POWERBALL", "Powerball"),
 }
+_LOUISIANA_LATEST_DRAW_GAMES = {
+    "mega-millions": "Mega Ball",
+    "powerball": "Powerball",
+}
 
 
 @dataclass(frozen=True)
@@ -131,6 +135,27 @@ def fetch_game(
     source_file: Path | None = None,
     jurisdiction_code: str = DEFAULT_JURISDICTION_CODE,
 ) -> FetchResult:
+    if (
+        source_file is None
+        and jurisdiction_code == "la"
+        and game.slug in _LOUISIANA_LATEST_DRAW_GAMES
+    ):
+        raw_html, source_url = _read_source(
+            game.source_url,
+            None,
+            f"{game.slug}-la-backfill",
+        )
+        draws = parse_louisiana_latest_draw_page(raw_html, game.slug)
+        _insert_snapshot(conn, jurisdiction_code, game.slug, source_url, raw_html, draws)
+        new_draws = _filter_newer_draws(conn, jurisdiction_code, game.slug, draws)
+        _insert_draw_results(conn, jurisdiction_code, game.slug, new_draws)
+        conn.commit()
+        return FetchResult(
+            game_name=game.name,
+            source_url=source_url,
+            draw_count=len(new_draws),
+            prize_row_count=sum(len(draw.prizes) for draw in new_draws),
+        )
     if (
         source_file is None
         and jurisdiction_code == "ky"
@@ -642,6 +667,23 @@ def fetch_game_backfill(
         )
         draws = parse_kentucky_winning_numbers_json(raw_json, game.slug)
         _insert_snapshot(conn, jurisdiction_code, game.slug, source_url, raw_json, draws)
+        _replace_draw_results(conn, jurisdiction_code, game.slug, draws)
+        conn.commit()
+        return FetchResult(
+            game_name=game.name,
+            source_url=source_url,
+            draw_count=len(draws),
+            prize_row_count=sum(len(draw.prizes) for draw in draws),
+            page_count=1,
+        )
+    if jurisdiction_code == "la" and game.slug in _LOUISIANA_LATEST_DRAW_GAMES:
+        raw_html, source_url = _read_source(
+            game.source_url,
+            source_dir,
+            f"{game.slug}-la-backfill",
+        )
+        draws = parse_louisiana_latest_draw_page(raw_html, game.slug)
+        _insert_snapshot(conn, jurisdiction_code, game.slug, source_url, raw_html, draws)
         _replace_draw_results(conn, jurisdiction_code, game.slug, draws)
         conn.commit()
         return FetchResult(
@@ -1560,6 +1602,45 @@ def _kentucky_draw_date(raw_value: object) -> str | None:
     )
 
 
+def parse_louisiana_latest_draw_page(
+    raw_html: str,
+    game_slug: str,
+) -> tuple[ParsedDraw, ...]:
+    special_number_name = _LOUISIANA_LATEST_DRAW_GAMES[game_slug]
+    soup = BeautifulSoup(raw_html, "html.parser")
+    content = soup.select_one("main") or soup
+    date_match = re.search(
+        r"View Latest Draw:\s*([A-Z][a-z]+ \d{1,2}, \d{4})",
+        content.get_text(" ", strip=True),
+    )
+    numbers = [
+        item.get_text(" ", strip=True)
+        for item in content.select("li")
+        if re.fullmatch(r"\d{1,2}", item.get_text(" ", strip=True))
+    ][:6]
+    if date_match is None or len(numbers) != 6:
+        return ()
+    draw_date = _louisiana_draw_date(date_match.group(1))
+    if draw_date is None:
+        return ()
+    return (
+        ParsedDraw(
+            draw_date=draw_date,
+            winning_number=", ".join(
+                [*numbers[:5], f"{numbers[5]} {special_number_name}"]
+            ),
+            prizes=(),
+        ),
+    )
+
+
+def _louisiana_draw_date(raw_value: str) -> str | None:
+    try:
+        return datetime.strptime(raw_value, "%B %d, %Y").strftime(_DRAW_DATE_FORMAT)
+    except ValueError:
+        return None
+
+
 def _new_york_draw_date(raw_value: object) -> str | None:
     if not isinstance(raw_value, str) or not raw_value:
         return None
@@ -1833,6 +1914,8 @@ def _parse_draws(
         return parse_iowa_winning_numbers_page(raw_html, game_slug)
     if jurisdiction_code == "ky" and game_slug in _KENTUCKY_WINNING_NUMBERS_GAMES:
         return parse_kentucky_winning_numbers_json(raw_html, game_slug)
+    if jurisdiction_code == "la" and game_slug in _LOUISIANA_LATEST_DRAW_GAMES:
+        return parse_louisiana_latest_draw_page(raw_html, game_slug)
     return parse_past_drawings(raw_html)
 
 

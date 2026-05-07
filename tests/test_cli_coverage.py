@@ -221,7 +221,7 @@ def test_coverage_reports_pending_state_catalog_as_supported_jurisdiction(tmp_pa
             str(tmp_path),
             "coverage",
             "-j",
-            "la",
+            "me",
             "--output",
             "json",
         ],
@@ -229,8 +229,8 @@ def test_coverage_reports_pending_state_catalog_as_supported_jurisdiction(tmp_pa
 
     assert result.exit_code == 0, result.output
     payload = json.loads(result.output)
-    assert payload["jurisdiction_code"] == "la"
-    assert payload["jurisdiction"] == "Louisiana"
+    assert payload["jurisdiction_code"] == "me"
+    assert payload["jurisdiction"] == "Maine"
     assert payload["jurisdiction_support_statuses"] == ["catalog_pending"]
     assert payload["blocking_reason"] == "Lottery jurisdiction offering catalog pending"
     assert payload["games"] == []
@@ -627,6 +627,49 @@ def test_coverage_reports_kentucky_catalog_and_supported_national_games(tmp_path
     assert games["mega-millions"]["results_adapter"] == "ky_winning_numbers_json"
     assert games["kentucky-cash-ball"]["support_statuses"] == ["cataloged"]
     assert games["kentucky-cash-ball"]["blocking_reason"] == (
+        "Rules and fetch adapter pending"
+    )
+
+
+def test_coverage_reports_louisiana_catalog_and_supported_national_games(tmp_path):
+    result = runner.invoke(
+        app,
+        [
+            "--data-dir",
+            str(tmp_path),
+            "coverage",
+            "-j",
+            "la",
+            "--output",
+            "json",
+        ],
+    )
+
+    assert result.exit_code == 0, result.output
+    payload = json.loads(result.output)
+    assert payload["jurisdiction_code"] == "la"
+    assert payload["jurisdiction"] == "Louisiana"
+    games = {game["game_slug"]: game for game in payload["games"]}
+    assert set(games) == {
+        "louisiana-easy-5",
+        "louisiana-lotto",
+        "louisiana-pick-3",
+        "louisiana-pick-4",
+        "louisiana-pick-5",
+        "mega-millions",
+        "powerball",
+    }
+    assert games["powerball"]["support_statuses"] == [
+        "cataloged",
+        "rules_verified",
+        "ev_supported",
+        "fetch_supported",
+        "audit_supported",
+        "low_share_supported",
+    ]
+    assert games["mega-millions"]["results_adapter"] == "la_latest_draw_page"
+    assert games["louisiana-lotto"]["support_statuses"] == ["cataloged"]
+    assert games["louisiana-lotto"]["blocking_reason"] == (
         "Rules and fetch adapter pending"
     )
 
