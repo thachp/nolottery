@@ -219,6 +219,19 @@ def jurisdiction_exists(conn: sqlite3.Connection, jurisdiction_code: str) -> boo
     return row is not None
 
 
+def get_jurisdiction_name(
+    conn: sqlite3.Connection,
+    jurisdiction_code: str,
+) -> str | None:
+    row = conn.execute(
+        "select name from jurisdictions where code = ?",
+        (jurisdiction_code,),
+    ).fetchone()
+    if row is None:
+        return None
+    return row["name"]
+
+
 def get_game(
     conn: sqlite3.Connection,
     slug: str,

@@ -56,6 +56,15 @@ ledger_app = typer.Typer(help="Track purchased tickets and realized winnings.")
 app.add_typer(audit_app, name="audit")
 app.add_typer(ledger_app, name="ledger")
 console = Console()
+WASHINGTON_RESULTS_ADAPTER = "wa_past_drawings"
+SUPPORTED_STATUSES = [
+    "cataloged",
+    "rules_verified",
+    "ev_supported",
+    "fetch_supported",
+    "audit_supported",
+    "low_share_supported",
+]
 JurisdictionOption = Annotated[
     str,
     typer.Option(
@@ -318,6 +327,49 @@ def rank(
             f"${option.after_tax_ev:.2f}",
             f"${option.net_after_tax_ev:.2f}",
             format_probability(option.hit_rate),
+        )
+    console.print(table)
+
+
+@app.command()
+def coverage(
+    ctx: typer.Context,
+    jurisdiction: JurisdictionOption = db.DEFAULT_JURISDICTION_CODE,
+    output: Annotated[
+        str,
+        typer.Option("--output", "-o", help="Output format: table or json."),
+    ] = "table",
+) -> None:
+    """Show draw-game support coverage for one lottery jurisdiction."""
+    if output not in {"table", "json"}:
+        raise typer.BadParameter("output must be table or json")
+    conn = db.connect(ctx.obj["data_dir"])
+    _validate_jurisdiction(conn, jurisdiction)
+    jurisdiction_name = db.get_jurisdiction_name(conn, jurisdiction)
+    games = [
+        _coverage_game(metadata, jurisdiction)
+        for metadata in _load_games(conn, jurisdiction)
+    ]
+    payload = {
+        "jurisdiction_code": jurisdiction,
+        "jurisdiction": jurisdiction_name,
+        "games": games,
+    }
+    if output == "json":
+        console.print_json(json.dumps(payload))
+        return
+
+    table = Table()
+    table.add_column("Game")
+    table.add_column("Statuses")
+    table.add_column("Results Adapter")
+    table.add_column("Reviewed")
+    for game_payload in games:
+        table.add_row(
+            str(game_payload["game"]),
+            ", ".join(str(status) for status in game_payload["support_statuses"]),
+            str(game_payload["results_adapter"]),
+            str(game_payload["reviewed_on"]),
         )
     console.print(table)
 
@@ -888,6 +940,20 @@ def _evaluate_audits_if_requested(
 def _validate_jurisdiction(conn, jurisdiction_code: str) -> None:
     if not db.jurisdiction_exists(conn, jurisdiction_code):
         raise typer.BadParameter(f"unknown jurisdiction: {jurisdiction_code}")
+
+
+def _coverage_game(metadata: GameMetadata, jurisdiction_code: str) -> dict[str, object]:
+    return {
+        "jurisdiction_code": jurisdiction_code,
+        "game_slug": metadata.slug,
+        "game": metadata.name,
+        "support_statuses": SUPPORTED_STATUSES,
+        "reviewed_on": metadata.reviewed_on,
+        "results_adapter": WASHINGTON_RESULTS_ADAPTER,
+        "rule_source_present": True,
+        "results_source_present": bool(metadata.source_url),
+        "blocking_reason": None,
+    }
 
 
 def _load_games(
