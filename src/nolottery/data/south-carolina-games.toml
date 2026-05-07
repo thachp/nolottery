@@ -1,0 +1,25 @@
+# South Carolina active draw-game catalog entries.
+
+[[games]]
+slug = 'south-carolina-palmetto-cash-5'
+name = 'Palmetto Cash 5'
+source_url = 'https://www.sceducationlottery.com/Games/PalmettoCash5'
+reviewed_on = '2026-05-07'
+
+[[games]]
+slug = 'south-carolina-pick-4'
+name = 'Pick 4 Plus FIREBALL'
+source_url = 'https://www.sceducationlottery.com/Games/Pick4'
+reviewed_on = '2026-05-07'
+
+[[games]]
+slug = 'south-carolina-pick-3'
+name = 'Pick 3 Plus FIREBALL'
+source_url = 'https://www.sceducationlottery.com/Games/Pick3'
+reviewed_on = '2026-05-07'
+
+[[games]]
+slug = 'south-carolina-cash-pop'
+name = 'CASH POP'
+source_url = 'https://www.sceducationlottery.com/Games/CashPOP'
+reviewed_on = '2026-05-07'

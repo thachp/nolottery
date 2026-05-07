@@ -222,7 +222,7 @@ def test_coverage_reports_pending_state_catalog_as_supported_jurisdiction(tmp_pa
             str(tmp_path),
             "coverage",
             "-j",
-            "sc",
+            "sd",
             "--output",
             "json",
         ],
@@ -230,8 +230,8 @@ def test_coverage_reports_pending_state_catalog_as_supported_jurisdiction(tmp_pa
 
     assert result.exit_code == 0, result.output
     payload = json.loads(result.output)
-    assert payload["jurisdiction_code"] == "sc"
-    assert payload["jurisdiction"] == "South Carolina"
+    assert payload["jurisdiction_code"] == "sd"
+    assert payload["jurisdiction"] == "South Dakota"
     assert payload["jurisdiction_support_statuses"] == ["catalog_pending"]
     assert payload["blocking_reason"] == "Lottery jurisdiction offering catalog pending"
     assert payload["games"] == []
@@ -595,6 +595,40 @@ def test_coverage_reports_rhode_island_full_draw_game_catalog(tmp_path):
         "Retired after February 2026; historical adapter pending"
     )
     assert games["rhode-island-wild-money"]["support_statuses"] == ["cataloged"]
+
+
+def test_coverage_reports_south_carolina_full_draw_game_catalog(tmp_path):
+    result = runner.invoke(
+        app,
+        [
+            "--data-dir",
+            str(tmp_path),
+            "coverage",
+            "-j",
+            "sc",
+            "--output",
+            "json",
+        ],
+    )
+
+    assert result.exit_code == 0, result.output
+    payload = json.loads(result.output)
+    assert payload["jurisdiction_code"] == "sc"
+    assert payload["jurisdiction"] == "South Carolina"
+    games = {game["game_slug"]: game for game in payload["games"]}
+    assert set(games) == {
+        "mega-millions",
+        "powerball",
+        "south-carolina-cash-pop",
+        "south-carolina-palmetto-cash-5",
+        "south-carolina-pick-3",
+        "south-carolina-pick-4",
+    }
+    assert all(game["support_statuses"] == ["cataloged"] for game in games.values())
+    assert all(
+        game["blocking_reason"] == "Rules and fetch adapter pending"
+        for game in games.values()
+    )
 
 
 def test_coverage_reports_connecticut_catalog_and_supported_national_games(tmp_path):

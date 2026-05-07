@@ -1928,8 +1928,39 @@ blocking_reason = 'Retired after February 2026; historical adapter pending'
 [[jurisdictions]]
 code = 'sc'
 name = 'South Carolina'
-support_statuses = ['catalog_pending']
-blocking_reason = 'Lottery jurisdiction offering catalog pending'
+blocking_reason = 'South Carolina draw-game rules and adapters pending'
+
+[[jurisdictions.offerings]]
+game_slug = 'powerball'
+source_url = 'https://www.sceducationlottery.com/Games/Powerball'
+support_statuses = ['cataloged']
+blocking_reason = 'Rules and fetch adapter pending'
+
+[[jurisdictions.offerings]]
+game_slug = 'mega-millions'
+source_url = 'https://www.sceducationlottery.com/Games/MegaMillions'
+support_statuses = ['cataloged']
+blocking_reason = 'Rules and fetch adapter pending'
+
+[[jurisdictions.offerings]]
+game_slug = 'south-carolina-palmetto-cash-5'
+support_statuses = ['cataloged']
+blocking_reason = 'Rules and fetch adapter pending'
+
+[[jurisdictions.offerings]]
+game_slug = 'south-carolina-pick-4'
+support_statuses = ['cataloged']
+blocking_reason = 'Rules and fetch adapter pending'
+
+[[jurisdictions.offerings]]
+game_slug = 'south-carolina-pick-3'
+support_statuses = ['cataloged']
+blocking_reason = 'Rules and fetch adapter pending'
+
+[[jurisdictions.offerings]]
+game_slug = 'south-carolina-cash-pop'
+support_statuses = ['cataloged']
+blocking_reason = 'Rules and fetch adapter pending'
 
 [[jurisdictions]]
 code = 'sd'
