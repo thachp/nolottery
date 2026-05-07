@@ -1,0 +1,43 @@
+# Connecticut active draw-game catalog entries.
+
+[[games]]
+slug = 'connecticut-keno'
+name = 'KENO'
+source_url = 'https://www.ctlottery.org/WinningNumbers/Keno'
+reviewed_on = '2026-05-07'
+
+[[games]]
+slug = 'connecticut-lotto'
+name = 'Lotto!'
+source_url = 'https://www.ctlottery.org/WinningNumbers/Lotto'
+reviewed_on = '2026-05-07'
+
+[[games]]
+slug = 'connecticut-cash5'
+name = 'Cash5'
+source_url = 'https://www.ctlottery.org/WinningNumbers/Cash5'
+reviewed_on = '2026-05-07'
+
+[[games]]
+slug = 'connecticut-play3-day'
+name = 'Play3 Day'
+source_url = 'https://www.ctlottery.org/WinningNumbers/Play3Day'
+reviewed_on = '2026-05-07'
+
+[[games]]
+slug = 'connecticut-play3-night'
+name = 'Play3 Night'
+source_url = 'https://www.ctlottery.org/WinningNumbers/Play3Night'
+reviewed_on = '2026-05-07'
+
+[[games]]
+slug = 'connecticut-play4-day'
+name = 'Play4 Day'
+source_url = 'https://www.ctlottery.org/WinningNumbers/Play4Day'
+reviewed_on = '2026-05-07'
+
+[[games]]
+slug = 'connecticut-play4-night'
+name = 'Play4 Night'
+source_url = 'https://www.ctlottery.org/WinningNumbers/Play4Night'
+reviewed_on = '2026-05-07'

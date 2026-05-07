@@ -209,6 +209,29 @@ def test_coverage_reports_pending_state_catalog_as_supported_jurisdiction(tmp_pa
             str(tmp_path),
             "coverage",
             "-j",
+            "de",
+            "--output",
+            "json",
+        ],
+    )
+
+    assert result.exit_code == 0, result.output
+    payload = json.loads(result.output)
+    assert payload["jurisdiction_code"] == "de"
+    assert payload["jurisdiction"] == "Delaware"
+    assert payload["jurisdiction_support_statuses"] == ["catalog_pending"]
+    assert payload["blocking_reason"] == "Lottery jurisdiction offering catalog pending"
+    assert payload["games"] == []
+
+
+def test_coverage_reports_connecticut_catalog_and_supported_national_games(tmp_path):
+    result = runner.invoke(
+        app,
+        [
+            "--data-dir",
+            str(tmp_path),
+            "coverage",
+            "-j",
             "ct",
             "--output",
             "json",
@@ -219,9 +242,32 @@ def test_coverage_reports_pending_state_catalog_as_supported_jurisdiction(tmp_pa
     payload = json.loads(result.output)
     assert payload["jurisdiction_code"] == "ct"
     assert payload["jurisdiction"] == "Connecticut"
-    assert payload["jurisdiction_support_statuses"] == ["catalog_pending"]
-    assert payload["blocking_reason"] == "Lottery jurisdiction offering catalog pending"
-    assert payload["games"] == []
+    games = {game["game_slug"]: game for game in payload["games"]}
+    assert set(games) == {
+        "connecticut-cash5",
+        "connecticut-keno",
+        "connecticut-lotto",
+        "connecticut-play3-day",
+        "connecticut-play3-night",
+        "connecticut-play4-day",
+        "connecticut-play4-night",
+        "mega-millions",
+        "millionaire-for-life",
+        "powerball",
+    }
+    assert games["powerball"]["support_statuses"] == [
+        "cataloged",
+        "rules_verified",
+        "ev_supported",
+        "fetch_supported",
+        "audit_supported",
+        "low_share_supported",
+    ]
+    assert games["mega-millions"]["results_adapter"] == "ct_winning_numbers_ajax"
+    assert games["connecticut-lotto"]["support_statuses"] == ["cataloged"]
+    assert games["connecticut-lotto"]["blocking_reason"] == (
+        "Rules and fetch adapter pending"
+    )
 
 
 def test_coverage_reports_colorado_catalog_and_supported_national_games(tmp_path):

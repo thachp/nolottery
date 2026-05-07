@@ -275,6 +275,72 @@ def _colorado_mega_millions_history_html() -> str:
     """
 
 
+def _connecticut_powerball_history_html() -> str:
+    return """
+    <form>
+      <table id="gvWinningNumbers">
+        <thead>
+          <tr>
+            <th>Drawing</th>
+            <th>Draw Date</th>
+            <th>Winning Numbers</th>
+            <th>Power<br>Ball</th>
+            <th>Power<br>Play</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Powerball</td>
+            <td>5/6/2026</td>
+            <td>18 - 27 - 51 - 65 - 68</td>
+            <td>5</td>
+            <td>3</td>
+          </tr>
+          <tr>
+            <td>Double Play</td>
+            <td>5/6/2026</td>
+            <td>4 - 21 - 36 - 48 - 69</td>
+            <td>5</td>
+            <td>-</td>
+          </tr>
+          <tr>
+            <td>Powerball</td>
+            <td>5/4/2026</td>
+            <td>30 - 36 - 42 - 60 - 63</td>
+            <td>13</td>
+            <td>2</td>
+          </tr>
+        </tbody>
+      </table>
+    </form>
+    """
+
+
+def _connecticut_mega_millions_history_html() -> str:
+    return """
+    <form>
+      <table id="gvWinningNumbers">
+        <thead>
+          <tr>
+            <th>Draw Date</th>
+            <th>Winning Numbers</th>
+            <th>Mega Ball</th>
+            <th>Megaplier*</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>5/5/2026</td>
+            <td>12 - 22 - 50 - 51 - 55</td>
+            <td>10</td>
+            <td>-</td>
+          </tr>
+        </tbody>
+      </table>
+    </form>
+    """
+
+
 def test_fetch_cashpop_persists_official_page_snapshot_and_draws(tmp_path):
     fixture = tmp_path / "cashpop.html"
     fixture.write_text(DRAWING_HTML, encoding="utf-8")
@@ -1096,6 +1162,119 @@ def test_fetch_all_colorado_backfill_uses_supported_national_games(tmp_path):
     assert "Powerball" in result.output
     assert "Mega Millions" in result.output
     assert "2 games fetched" in result.output
+
+
+def test_fetch_connecticut_powerball_backfill_reads_official_ajax_fixture(tmp_path):
+    fixtures = tmp_path / "fixtures"
+    fixtures.mkdir()
+    (fixtures / "powerball-ct-backfill.html").write_text(
+        _connecticut_powerball_history_html(),
+        encoding="utf-8",
+    )
+
+    result = runner.invoke(
+        app,
+        [
+            "--data-dir",
+            str(tmp_path / "data"),
+            "fetch",
+            "powerball",
+            "-j",
+            "ct",
+            "--backfill",
+            "--source-dir",
+            str(fixtures),
+        ],
+    )
+
+    assert result.exit_code == 0, result.output
+    assert "Powerball" in result.output
+    assert "2 draws" in result.output
+    assert "1 page" in result.output
+
+    draws_result = runner.invoke(
+        app,
+        [
+            "--data-dir",
+            str(tmp_path / "data"),
+            "draws",
+            "powerball",
+            "-j",
+            "ct",
+            "--output",
+            "json",
+        ],
+    )
+
+    assert draws_result.exit_code == 0, draws_result.output
+    payload = json.loads(draws_result.output)
+    assert payload["games"][0]["draws"] == [
+        {
+            "jurisdiction_code": "ct",
+            "draw_date": "Wed, May 06, 2026",
+            "winning_number": "18, 27, 51, 65, 68, 5 Powerball",
+        },
+        {
+            "jurisdiction_code": "ct",
+            "draw_date": "Mon, May 04, 2026",
+            "winning_number": "30, 36, 42, 60, 63, 13 Powerball",
+        },
+    ]
+
+
+def test_fetch_connecticut_mega_millions_backfill_reads_official_ajax_fixture(
+    tmp_path,
+):
+    fixtures = tmp_path / "fixtures"
+    fixtures.mkdir()
+    (fixtures / "mega-millions-ct-backfill.html").write_text(
+        _connecticut_mega_millions_history_html(),
+        encoding="utf-8",
+    )
+
+    result = runner.invoke(
+        app,
+        [
+            "--data-dir",
+            str(tmp_path / "data"),
+            "fetch",
+            "mega-millions",
+            "-j",
+            "ct",
+            "--backfill",
+            "--source-dir",
+            str(fixtures),
+        ],
+    )
+
+    assert result.exit_code == 0, result.output
+    assert "Mega Millions" in result.output
+    assert "1 draw" in result.output
+    assert "1 page" in result.output
+
+    draws_result = runner.invoke(
+        app,
+        [
+            "--data-dir",
+            str(tmp_path / "data"),
+            "draws",
+            "mega-millions",
+            "-j",
+            "ct",
+            "--output",
+            "json",
+        ],
+    )
+
+    assert draws_result.exit_code == 0, draws_result.output
+    payload = json.loads(draws_result.output)
+    assert payload["games"][0]["draws"] == [
+        {
+            "jurisdiction_code": "ct",
+            "draw_date": "Tue, May 05, 2026",
+            "winning_number": "12, 22, 50, 51, 55, 10 Mega Ball",
+        }
+    ]
 
 
 def test_fetch_all_backfill_uses_supported_subset_for_florida(tmp_path):
