@@ -546,6 +546,33 @@ def _idaho_mega_millions_history_html() -> str:
     """
 
 
+def _illinois_powerball_results_html() -> str:
+    return """
+    <html>
+      <body>
+        <h1>Powerball Draw Results</h1>
+        <ul>
+          <li><a>Wednesday May 6, 2026   18  27  51  65  68  5  x3</a></li>
+          <li><a>Monday May 4, 2026   30  36  42  60  63  13  x2</a></li>
+        </ul>
+      </body>
+    </html>
+    """
+
+
+def _illinois_mega_millions_results_html() -> str:
+    return """
+    <html>
+      <body>
+        <h1>Mega Millions Draw Results</h1>
+        <ul>
+          <li><a>Tuesday May 5, 2026   12  22  50  51  55  10</a></li>
+        </ul>
+      </body>
+    </html>
+    """
+
+
 def test_fetch_cashpop_persists_official_page_snapshot_and_draws(tmp_path):
     fixture = tmp_path / "cashpop.html"
     fixture.write_text(DRAWING_HTML, encoding="utf-8")
@@ -1815,6 +1842,119 @@ def test_fetch_idaho_mega_millions_backfill_reads_official_draw_page_fixture(
     assert payload["games"][0]["draws"] == [
         {
             "jurisdiction_code": "id",
+            "draw_date": "Tue, May 05, 2026",
+            "winning_number": "12, 22, 50, 51, 55, 10 Mega Ball",
+        }
+    ]
+
+
+def test_fetch_illinois_powerball_backfill_reads_official_results_fixture(tmp_path):
+    fixtures = tmp_path / "fixtures"
+    fixtures.mkdir()
+    (fixtures / "powerball-il-backfill.html").write_text(
+        _illinois_powerball_results_html(),
+        encoding="utf-8",
+    )
+
+    result = runner.invoke(
+        app,
+        [
+            "--data-dir",
+            str(tmp_path / "data"),
+            "fetch",
+            "powerball",
+            "-j",
+            "il",
+            "--backfill",
+            "--source-dir",
+            str(fixtures),
+        ],
+    )
+
+    assert result.exit_code == 0, result.output
+    assert "Powerball" in result.output
+    assert "2 draws" in result.output
+    assert "1 page" in result.output
+
+    draws_result = runner.invoke(
+        app,
+        [
+            "--data-dir",
+            str(tmp_path / "data"),
+            "draws",
+            "powerball",
+            "-j",
+            "il",
+            "--output",
+            "json",
+        ],
+    )
+
+    assert draws_result.exit_code == 0, draws_result.output
+    payload = json.loads(draws_result.output)
+    assert payload["games"][0]["draws"] == [
+        {
+            "jurisdiction_code": "il",
+            "draw_date": "Wed, May 06, 2026",
+            "winning_number": "18, 27, 51, 65, 68, 5 Powerball",
+        },
+        {
+            "jurisdiction_code": "il",
+            "draw_date": "Mon, May 04, 2026",
+            "winning_number": "30, 36, 42, 60, 63, 13 Powerball",
+        },
+    ]
+
+
+def test_fetch_illinois_mega_millions_backfill_reads_official_results_fixture(
+    tmp_path,
+):
+    fixtures = tmp_path / "fixtures"
+    fixtures.mkdir()
+    (fixtures / "mega-millions-il-backfill.html").write_text(
+        _illinois_mega_millions_results_html(),
+        encoding="utf-8",
+    )
+
+    result = runner.invoke(
+        app,
+        [
+            "--data-dir",
+            str(tmp_path / "data"),
+            "fetch",
+            "mega-millions",
+            "-j",
+            "il",
+            "--backfill",
+            "--source-dir",
+            str(fixtures),
+        ],
+    )
+
+    assert result.exit_code == 0, result.output
+    assert "Mega Millions" in result.output
+    assert "1 draw" in result.output
+    assert "1 page" in result.output
+
+    draws_result = runner.invoke(
+        app,
+        [
+            "--data-dir",
+            str(tmp_path / "data"),
+            "draws",
+            "mega-millions",
+            "-j",
+            "il",
+            "--output",
+            "json",
+        ],
+    )
+
+    assert draws_result.exit_code == 0, draws_result.output
+    payload = json.loads(draws_result.output)
+    assert payload["games"][0]["draws"] == [
+        {
+            "jurisdiction_code": "il",
             "draw_date": "Tue, May 05, 2026",
             "winning_number": "12, 22, 50, 51, 55, 10 Mega Ball",
         }

@@ -84,6 +84,10 @@ _IDAHO_DRAW_PAGE_GAMES = {
     "mega-millions": "Mega Ball",
     "powerball": "Powerball",
 }
+_ILLINOIS_RESULTS_PAGE_GAMES = {
+    "mega-millions": "Mega Ball",
+    "powerball": "Powerball",
+}
 
 
 @dataclass(frozen=True)
@@ -115,6 +119,27 @@ def fetch_game(
     source_file: Path | None = None,
     jurisdiction_code: str = DEFAULT_JURISDICTION_CODE,
 ) -> FetchResult:
+    if (
+        source_file is None
+        and jurisdiction_code == "il"
+        and game.slug in _ILLINOIS_RESULTS_PAGE_GAMES
+    ):
+        raw_html, source_url = _read_source(
+            game.source_url,
+            None,
+            f"{game.slug}-il-backfill",
+        )
+        draws = parse_illinois_results_page(raw_html, game.slug)
+        _insert_snapshot(conn, jurisdiction_code, game.slug, source_url, raw_html, draws)
+        new_draws = _filter_newer_draws(conn, jurisdiction_code, game.slug, draws)
+        _insert_draw_results(conn, jurisdiction_code, game.slug, new_draws)
+        conn.commit()
+        return FetchResult(
+            game_name=game.name,
+            source_url=source_url,
+            draw_count=len(new_draws),
+            prize_row_count=sum(len(draw.prizes) for draw in new_draws),
+        )
     if (
         source_file is None
         and jurisdiction_code == "id"
@@ -475,6 +500,23 @@ def fetch_game_backfill(
             f"{game.slug}-id-backfill",
         )
         draws = parse_idaho_draw_page(raw_html, game.slug)
+        _insert_snapshot(conn, jurisdiction_code, game.slug, source_url, raw_html, draws)
+        _replace_draw_results(conn, jurisdiction_code, game.slug, draws)
+        conn.commit()
+        return FetchResult(
+            game_name=game.name,
+            source_url=source_url,
+            draw_count=len(draws),
+            prize_row_count=sum(len(draw.prizes) for draw in draws),
+            page_count=1,
+        )
+    if jurisdiction_code == "il" and game.slug in _ILLINOIS_RESULTS_PAGE_GAMES:
+        raw_html, source_url = _read_source(
+            game.source_url,
+            source_dir,
+            f"{game.slug}-il-backfill",
+        )
+        draws = parse_illinois_results_page(raw_html, game.slug)
         _insert_snapshot(conn, jurisdiction_code, game.slug, source_url, raw_html, draws)
         _replace_draw_results(conn, jurisdiction_code, game.slug, draws)
         conn.commit()
@@ -1180,6 +1222,58 @@ def _idaho_draw_date(raw_value: str) -> str | None:
         return None
 
 
+def parse_illinois_results_page(
+    raw_html: str,
+    game_slug: str,
+) -> tuple[ParsedDraw, ...]:
+    special_number_name = _ILLINOIS_RESULTS_PAGE_GAMES[game_slug]
+    soup = BeautifulSoup(raw_html, "html.parser")
+    draws: list[ParsedDraw] = []
+    for item in soup.select("li"):
+        draw = _parse_illinois_result_line(
+            item.get_text(" ", strip=True),
+            special_number_name,
+        )
+        if draw is not None:
+            draws.append(draw)
+    return tuple(draws)
+
+
+def _parse_illinois_result_line(
+    line: str,
+    special_number_name: str,
+) -> ParsedDraw | None:
+    match = re.search(
+        r"\b(Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday)\s+"
+        r"([A-Z][a-z]+)\s+(\d{1,2}),\s+(\d{4})\b",
+        line,
+    )
+    if match is None:
+        return None
+    numbers = re.findall(r"\b\d{1,2}\b", line[match.end() :])
+    if len(numbers) < 6:
+        return None
+    draw_date = _illinois_draw_date(match.group(0))
+    if draw_date is None:
+        return None
+    return ParsedDraw(
+        draw_date=draw_date,
+        winning_number=", ".join(
+            [*numbers[:5], f"{numbers[5]} {special_number_name}"]
+        ),
+        prizes=(),
+    )
+
+
+def _illinois_draw_date(raw_value: str) -> str | None:
+    try:
+        return datetime.strptime(raw_value, "%A %B %d, %Y").strftime(
+            _DRAW_DATE_FORMAT
+        )
+    except ValueError:
+        return None
+
+
 def _new_york_draw_date(raw_value: object) -> str | None:
     if not isinstance(raw_value, str) or not raw_value:
         return None
@@ -1445,6 +1539,8 @@ def _parse_draws(
         return parse_georgia_draw_games_json(raw_html, game_slug)
     if jurisdiction_code == "id" and game_slug in _IDAHO_DRAW_PAGE_GAMES:
         return parse_idaho_draw_page(raw_html, game_slug)
+    if jurisdiction_code == "il" and game_slug in _ILLINOIS_RESULTS_PAGE_GAMES:
+        return parse_illinois_results_page(raw_html, game_slug)
     return parse_past_drawings(raw_html)
 
 

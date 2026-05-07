@@ -221,7 +221,7 @@ def test_coverage_reports_pending_state_catalog_as_supported_jurisdiction(tmp_pa
             str(tmp_path),
             "coverage",
             "-j",
-            "il",
+            "in",
             "--output",
             "json",
         ],
@@ -229,8 +229,8 @@ def test_coverage_reports_pending_state_catalog_as_supported_jurisdiction(tmp_pa
 
     assert result.exit_code == 0, result.output
     payload = json.loads(result.output)
-    assert payload["jurisdiction_code"] == "il"
-    assert payload["jurisdiction"] == "Illinois"
+    assert payload["jurisdiction_code"] == "in"
+    assert payload["jurisdiction"] == "Indiana"
     assert payload["jurisdiction_support_statuses"] == ["catalog_pending"]
     assert payload["blocking_reason"] == "Lottery jurisdiction offering catalog pending"
     assert payload["games"] == []
@@ -415,6 +415,49 @@ def test_coverage_reports_idaho_catalog_and_supported_national_games(tmp_path):
     assert games["mega-millions"]["results_adapter"] == "id_draw_page"
     assert games["idaho-cash"]["support_statuses"] == ["cataloged"]
     assert games["idaho-cash"]["blocking_reason"] == (
+        "Rules and fetch adapter pending"
+    )
+
+
+def test_coverage_reports_illinois_catalog_and_supported_national_games(tmp_path):
+    result = runner.invoke(
+        app,
+        [
+            "--data-dir",
+            str(tmp_path),
+            "coverage",
+            "-j",
+            "il",
+            "--output",
+            "json",
+        ],
+    )
+
+    assert result.exit_code == 0, result.output
+    payload = json.loads(result.output)
+    assert payload["jurisdiction_code"] == "il"
+    assert payload["jurisdiction"] == "Illinois"
+    games = {game["game_slug"]: game for game in payload["games"]}
+    assert set(games) == {
+        "illinois-hotwins",
+        "illinois-lotto",
+        "illinois-lucky-day-lotto",
+        "illinois-pick-3",
+        "illinois-pick-4",
+        "mega-millions",
+        "powerball",
+    }
+    assert games["powerball"]["support_statuses"] == [
+        "cataloged",
+        "rules_verified",
+        "ev_supported",
+        "fetch_supported",
+        "audit_supported",
+        "low_share_supported",
+    ]
+    assert games["mega-millions"]["results_adapter"] == "il_results_page"
+    assert games["illinois-lotto"]["support_statuses"] == ["cataloged"]
+    assert games["illinois-lotto"]["blocking_reason"] == (
         "Rules and fetch adapter pending"
     )
 

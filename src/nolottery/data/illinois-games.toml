@@ -1,0 +1,31 @@
+# Illinois active draw-game catalog entries.
+
+[[games]]
+slug = 'illinois-lotto'
+name = 'Lotto'
+source_url = 'https://www.illinoislottery.com/dbg/play/lotto'
+reviewed_on = '2026-05-07'
+
+[[games]]
+slug = 'illinois-lucky-day-lotto'
+name = 'Lucky Day Lotto'
+source_url = 'https://www.illinoislottery.com/dbg/play/luckydaylotto'
+reviewed_on = '2026-05-07'
+
+[[games]]
+slug = 'illinois-pick-3'
+name = 'Pick 3'
+source_url = 'https://www.illinoislottery.com/dbg/play/pick3'
+reviewed_on = '2026-05-07'
+
+[[games]]
+slug = 'illinois-pick-4'
+name = 'Pick 4'
+source_url = 'https://www.illinoislottery.com/dbg/play/pick4'
+reviewed_on = '2026-05-07'
+
+[[games]]
+slug = 'illinois-hotwins'
+name = 'HotWins'
+source_url = 'https://www.illinoislottery.com/dbg/results/hotwins'
+reviewed_on = '2026-05-07'
