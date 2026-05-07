@@ -1,0 +1,19 @@
+# Idaho active draw-game catalog entries.
+
+[[games]]
+slug = 'idaho-cash'
+name = 'Idaho Cash'
+source_url = 'https://www.idaholottery.com/games/draw/idaho-cash'
+reviewed_on = '2026-05-07'
+
+[[games]]
+slug = 'idaho-pick-3'
+name = 'Pick 3'
+source_url = 'https://www.idaholottery.com/games/draw/pick-3'
+reviewed_on = '2026-05-07'
+
+[[games]]
+slug = 'idaho-pick-4'
+name = 'Pick 4'
+source_url = 'https://www.idaholottery.com/games/draw/pick-4'
+reviewed_on = '2026-05-07'

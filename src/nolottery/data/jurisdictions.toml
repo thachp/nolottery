@@ -582,8 +582,54 @@ blocking_reason = 'No state lottery established'
 [[jurisdictions]]
 code = 'id'
 name = 'Idaho'
-support_statuses = ['catalog_pending']
-blocking_reason = 'Lottery jurisdiction offering catalog pending'
+blocking_reason = 'Idaho local draw-game rules and adapters pending'
+
+[[jurisdictions.offerings]]
+game_slug = 'powerball'
+source_url = 'https://www.idaholottery.com/games/draw/powerball'
+support_statuses = ['cataloged', 'rules_verified', 'ev_supported', 'fetch_supported', 'audit_supported', 'low_share_supported']
+results_adapter = 'id_draw_page'
+blocking_reason = ''
+
+[[jurisdictions.offerings]]
+game_slug = 'mega-millions'
+source_url = 'https://www.idaholottery.com/games/draw/mega-millions'
+support_statuses = ['cataloged', 'rules_verified', 'ev_supported', 'fetch_supported', 'audit_supported', 'low_share_supported']
+results_adapter = 'id_draw_page'
+blocking_reason = ''
+
+[[jurisdictions.offerings]]
+game_slug = 'lotto-america'
+source_url = 'https://www.idaholottery.com/games/draw/lotto-america'
+support_statuses = ['cataloged']
+blocking_reason = 'Rules and fetch adapter pending'
+
+[[jurisdictions.offerings]]
+game_slug = 'millionaire-for-life'
+source_url = 'https://www.idaholottery.com/games/draw/millionaire-for-life'
+support_statuses = ['cataloged']
+blocking_reason = 'Rules and fetch adapter pending'
+
+[[jurisdictions.offerings]]
+game_slug = 'lucky-for-life'
+source_url = 'https://www.idaholottery.com/games/draw/lucky-for-life'
+support_statuses = ['cataloged']
+blocking_reason = 'Rules and fetch adapter pending'
+
+[[jurisdictions.offerings]]
+game_slug = 'idaho-cash'
+support_statuses = ['cataloged']
+blocking_reason = 'Rules and fetch adapter pending'
+
+[[jurisdictions.offerings]]
+game_slug = 'idaho-pick-3'
+support_statuses = ['cataloged']
+blocking_reason = 'Rules and fetch adapter pending'
+
+[[jurisdictions.offerings]]
+game_slug = 'idaho-pick-4'
+support_statuses = ['cataloged']
+blocking_reason = 'Rules and fetch adapter pending'
 
 [[jurisdictions]]
 code = 'il'
