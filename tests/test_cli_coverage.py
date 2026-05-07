@@ -223,6 +223,29 @@ def test_coverage_reports_pending_state_catalog_as_supported_jurisdiction(tmp_pa
             str(tmp_path),
             "coverage",
             "-j",
+            "va",
+            "--output",
+            "json",
+        ],
+    )
+
+    assert result.exit_code == 0, result.output
+    payload = json.loads(result.output)
+    assert payload["jurisdiction_code"] == "va"
+    assert payload["jurisdiction"] == "Virginia"
+    assert payload["jurisdiction_support_statuses"] == ["catalog_pending"]
+    assert payload["blocking_reason"] == "Lottery jurisdiction offering catalog pending"
+    assert payload["games"] == []
+
+
+def test_coverage_reports_vermont_full_draw_game_catalog(tmp_path):
+    result = runner.invoke(
+        app,
+        [
+            "--data-dir",
+            str(tmp_path),
+            "coverage",
+            "-j",
             "vt",
             "--output",
             "json",
@@ -233,9 +256,24 @@ def test_coverage_reports_pending_state_catalog_as_supported_jurisdiction(tmp_pa
     payload = json.loads(result.output)
     assert payload["jurisdiction_code"] == "vt"
     assert payload["jurisdiction"] == "Vermont"
-    assert payload["jurisdiction_support_statuses"] == ["catalog_pending"]
-    assert payload["blocking_reason"] == "Lottery jurisdiction offering catalog pending"
-    assert payload["games"] == []
+    games = {game["game_slug"]: game for game in payload["games"]}
+    assert set(games) == {
+        "lucky-for-life",
+        "mega-millions",
+        "millionaire-for-life",
+        "powerball",
+        "vermont-gimme-5",
+        "vermont-megabucks",
+        "vermont-pick-3",
+        "vermont-pick-4",
+    }
+    assert games["lucky-for-life"]["blocking_reason"] == (
+        "Retired after February 2026; historical adapter pending"
+    )
+    assert games["vermont-megabucks"]["support_statuses"] == ["cataloged"]
+    assert games["vermont-megabucks"]["blocking_reason"] == (
+        "Rules and fetch adapter pending"
+    )
 
 
 def test_coverage_reports_tennessee_full_draw_game_catalog(tmp_path):

@@ -1,0 +1,25 @@
+# Vermont active draw-game catalog entries.
+
+[[games]]
+slug = 'vermont-megabucks'
+name = 'Megabucks'
+source_url = 'https://vtlottery.com/games/megabucks'
+reviewed_on = '2026-05-07'
+
+[[games]]
+slug = 'vermont-gimme-5'
+name = 'Gimme 5'
+source_url = 'https://vtlottery.com/games/gimme-5'
+reviewed_on = '2026-05-07'
+
+[[games]]
+slug = 'vermont-pick-3'
+name = 'Pick 3'
+source_url = 'https://vtlottery.com/games/pick-3'
+reviewed_on = '2026-05-07'
+
+[[games]]
+slug = 'vermont-pick-4'
+name = 'Pick 4'
+source_url = 'https://vtlottery.com/games/pick-4'
+reviewed_on = '2026-05-07'
