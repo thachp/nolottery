@@ -1,0 +1,49 @@
+# Michigan active draw-game catalog entries.
+
+[[games]]
+slug = 'michigan-lotto-47'
+name = 'Lotto 47'
+source_url = 'https://www.michiganlottery.com/games/lotto-47'
+reviewed_on = '2026-05-07'
+
+[[games]]
+slug = 'michigan-fantasy-5'
+name = 'Fantasy 5'
+source_url = 'https://www.michiganlottery.com/games/fantasy-5'
+reviewed_on = '2026-05-07'
+
+[[games]]
+slug = 'michigan-daily-3'
+name = 'Daily 3'
+source_url = 'https://www.michiganlottery.com/games/daily-3'
+reviewed_on = '2026-05-07'
+
+[[games]]
+slug = 'michigan-daily-4'
+name = 'Daily 4'
+source_url = 'https://www.michiganlottery.com/games/daily-4'
+reviewed_on = '2026-05-07'
+
+[[games]]
+slug = 'michigan-keno'
+name = 'Keno'
+source_url = 'https://www.michiganlottery.com/games/keno'
+reviewed_on = '2026-05-07'
+
+[[games]]
+slug = 'michigan-club-keno'
+name = 'Club Keno'
+source_url = 'https://www.michiganlottery.com/games/club-keno'
+reviewed_on = '2026-05-07'
+
+[[games]]
+slug = 'michigan-poker-lotto'
+name = 'Poker Lotto'
+source_url = 'https://www.michiganlottery.com/games/poker-lotto'
+reviewed_on = '2026-05-07'
+
+[[games]]
+slug = 'michigan-cash-pop'
+name = 'Cash Pop'
+source_url = 'https://www.michiganlottery.com/games/cash-pop'
+reviewed_on = '2026-05-07'

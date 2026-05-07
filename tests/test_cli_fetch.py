@@ -800,6 +800,59 @@ def _massachusetts_draw_results_json() -> str:
     )
 
 
+def _michigan_draw_history_json() -> str:
+    return json.dumps(
+        {
+            "data": {
+                "gameByCode": {
+                    "logicalGameIdentifier": "POWERBALL",
+                    "drawResultsBetweenDates": [
+                        {
+                            "drawDate": "2026-05-06T04:00:00.000Z",
+                            "drawSequence": 1,
+                            "hasPayoutData": True,
+                            "isBonusDraw": False,
+                            "winningNumbers": {
+                                "drawNumbers": [18, 27, 51, 65, 68],
+                                "powerball": 5,
+                                "powerplay": 3,
+                                "megaball": None,
+                                "megaplier": None,
+                            },
+                        },
+                        {
+                            "drawDate": "2026-05-06T04:00:00.000Z",
+                            "drawSequence": 2,
+                            "hasPayoutData": True,
+                            "isBonusDraw": False,
+                            "winningNumbers": {
+                                "drawNumbers": [4, 21, 36, 48, 69],
+                                "powerball": 5,
+                                "powerplay": 0,
+                                "megaball": None,
+                                "megaplier": None,
+                            },
+                        },
+                        {
+                            "drawDate": "2026-05-05T04:00:00.000Z",
+                            "drawSequence": 1,
+                            "hasPayoutData": True,
+                            "isBonusDraw": False,
+                            "winningNumbers": {
+                                "drawNumbers": [12, 22, 50, 51, 55],
+                                "powerball": None,
+                                "powerplay": None,
+                                "megaball": 10,
+                                "megaplier": None,
+                            },
+                        },
+                    ],
+                }
+            }
+        }
+    )
+
+
 def test_fetch_cashpop_persists_official_page_snapshot_and_draws(tmp_path):
     fixture = tmp_path / "cashpop.html"
     fixture.write_text(DRAWING_HTML, encoding="utf-8")
@@ -2970,6 +3023,114 @@ def test_fetch_massachusetts_mega_millions_backfill_reads_official_json_fixture(
     assert payload["games"][0]["draws"] == [
         {
             "jurisdiction_code": "ma",
+            "draw_date": "Tue, May 05, 2026",
+            "winning_number": "12, 22, 50, 51, 55, 10 Mega Ball",
+        }
+    ]
+
+
+def test_fetch_michigan_powerball_backfill_reads_official_graphql_fixture(tmp_path):
+    fixtures = tmp_path / "fixtures"
+    fixtures.mkdir()
+    (fixtures / "powerball-mi-backfill.json").write_text(
+        _michigan_draw_history_json(),
+        encoding="utf-8",
+    )
+
+    result = runner.invoke(
+        app,
+        [
+            "--data-dir",
+            str(tmp_path / "data"),
+            "fetch",
+            "powerball",
+            "-j",
+            "mi",
+            "--backfill",
+            "--source-dir",
+            str(fixtures),
+        ],
+    )
+
+    assert result.exit_code == 0, result.output
+    assert "Powerball" in result.output
+    assert "1 draw" in result.output
+    assert "1 page" in result.output
+
+    draws_result = runner.invoke(
+        app,
+        [
+            "--data-dir",
+            str(tmp_path / "data"),
+            "draws",
+            "powerball",
+            "-j",
+            "mi",
+            "--output",
+            "json",
+        ],
+    )
+
+    assert draws_result.exit_code == 0, draws_result.output
+    payload = json.loads(draws_result.output)
+    assert payload["games"][0]["draws"] == [
+        {
+            "jurisdiction_code": "mi",
+            "draw_date": "Wed, May 06, 2026",
+            "winning_number": "18, 27, 51, 65, 68, 5 Powerball",
+        }
+    ]
+
+
+def test_fetch_michigan_mega_millions_backfill_reads_official_graphql_fixture(
+    tmp_path,
+):
+    fixtures = tmp_path / "fixtures"
+    fixtures.mkdir()
+    (fixtures / "mega-millions-mi-backfill.json").write_text(
+        _michigan_draw_history_json(),
+        encoding="utf-8",
+    )
+
+    result = runner.invoke(
+        app,
+        [
+            "--data-dir",
+            str(tmp_path / "data"),
+            "fetch",
+            "mega-millions",
+            "-j",
+            "mi",
+            "--backfill",
+            "--source-dir",
+            str(fixtures),
+        ],
+    )
+
+    assert result.exit_code == 0, result.output
+    assert "Mega Millions" in result.output
+    assert "1 draw" in result.output
+    assert "1 page" in result.output
+
+    draws_result = runner.invoke(
+        app,
+        [
+            "--data-dir",
+            str(tmp_path / "data"),
+            "draws",
+            "mega-millions",
+            "-j",
+            "mi",
+            "--output",
+            "json",
+        ],
+    )
+
+    assert draws_result.exit_code == 0, draws_result.output
+    payload = json.loads(draws_result.output)
+    assert payload["games"][0]["draws"] == [
+        {
+            "jurisdiction_code": "mi",
             "draw_date": "Tue, May 05, 2026",
             "winning_number": "12, 22, 50, 51, 55, 10 Mega Ball",
         }
