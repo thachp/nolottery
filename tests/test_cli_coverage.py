@@ -222,6 +222,29 @@ def test_coverage_reports_pending_state_catalog_as_supported_jurisdiction(tmp_pa
             str(tmp_path),
             "coverage",
             "-j",
+            "nj",
+            "--output",
+            "json",
+        ],
+    )
+
+    assert result.exit_code == 0, result.output
+    payload = json.loads(result.output)
+    assert payload["jurisdiction_code"] == "nj"
+    assert payload["jurisdiction"] == "New Jersey"
+    assert payload["jurisdiction_support_statuses"] == ["catalog_pending"]
+    assert payload["blocking_reason"] == "Lottery jurisdiction offering catalog pending"
+    assert payload["games"] == []
+
+
+def test_coverage_reports_new_hampshire_full_draw_game_catalog(tmp_path):
+    result = runner.invoke(
+        app,
+        [
+            "--data-dir",
+            str(tmp_path),
+            "coverage",
+            "-j",
             "nh",
             "--output",
             "json",
@@ -232,9 +255,22 @@ def test_coverage_reports_pending_state_catalog_as_supported_jurisdiction(tmp_pa
     payload = json.loads(result.output)
     assert payload["jurisdiction_code"] == "nh"
     assert payload["jurisdiction"] == "New Hampshire"
-    assert payload["jurisdiction_support_statuses"] == ["catalog_pending"]
-    assert payload["blocking_reason"] == "Lottery jurisdiction offering catalog pending"
-    assert payload["games"] == []
+    games = {game["game_slug"]: game for game in payload["games"]}
+    assert set(games) == {
+        "lucky-for-life",
+        "mega-millions",
+        "new-hampshire-gimme-5",
+        "new-hampshire-keno-603",
+        "new-hampshire-megabucks",
+        "new-hampshire-pick-3",
+        "new-hampshire-pick-4",
+        "powerball",
+    }
+    assert all(game["support_statuses"] == ["cataloged"] for game in games.values())
+    assert all(
+        game["blocking_reason"] == "Rules and fetch adapter pending"
+        for game in games.values()
+    )
 
 
 def test_coverage_reports_connecticut_catalog_and_supported_national_games(tmp_path):

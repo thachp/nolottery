@@ -1,0 +1,31 @@
+# New Hampshire active draw-game catalog entries.
+
+[[games]]
+slug = 'new-hampshire-megabucks'
+name = 'MegaBucks'
+source_url = 'https://www.nhlottery.com/game/megabucks'
+reviewed_on = '2026-05-07'
+
+[[games]]
+slug = 'new-hampshire-gimme-5'
+name = 'Gimme 5'
+source_url = 'https://www.nhlottery.com/game/gimme-five'
+reviewed_on = '2026-05-07'
+
+[[games]]
+slug = 'new-hampshire-pick-3'
+name = 'Pick 3'
+source_url = 'https://www.nhlottery.com/game/pick-three'
+reviewed_on = '2026-05-07'
+
+[[games]]
+slug = 'new-hampshire-pick-4'
+name = 'Pick 4'
+source_url = 'https://www.nhlottery.com/game/pick-three'
+reviewed_on = '2026-05-07'
+
+[[games]]
+slug = 'new-hampshire-keno-603'
+name = 'KENO 603'
+source_url = 'https://www.nhlottery.com/game/keno'
+reviewed_on = '2026-05-07'
