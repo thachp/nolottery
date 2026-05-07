@@ -548,10 +548,25 @@ def test_coverage_reports_new_hampshire_full_draw_game_catalog(tmp_path):
         "new-hampshire-pick-4",
         "powerball",
     }
-    assert all(game["support_statuses"] == ["cataloged"] for game in games.values())
     assert all(
         game["blocking_reason"] == "Rules and fetch adapter pending"
-        for game in games.values()
+        for game_slug, game in games.items()
+        if game_slug not in {"powerball", "mega-millions"}
+    )
+    for game_slug in ("powerball", "mega-millions"):
+        assert games[game_slug]["support_statuses"] == [
+            "cataloged",
+            "rules_verified",
+            "ev_supported",
+            "fetch_supported",
+            "audit_supported",
+            "low_share_supported",
+        ]
+        assert games[game_slug]["results_adapter"] == "official_national_results_page"
+    assert all(
+        game["support_statuses"] == ["cataloged"]
+        for game_slug, game in games.items()
+        if game_slug not in {"powerball", "mega-millions"}
     )
 
 
