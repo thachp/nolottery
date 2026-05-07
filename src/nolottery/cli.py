@@ -111,7 +111,7 @@ def analyze(
     if game == "all":
         results = tuple(
             analyze_game(metadata, AppSettings())
-            for metadata in _load_games(conn, jurisdiction)
+            for metadata in _load_ev_games(conn, jurisdiction)
         )
         if output == "json":
             console.print_json(
@@ -138,6 +138,7 @@ def analyze(
     metadata = db.get_game(conn, game, jurisdiction)
     if metadata is None:
         raise typer.BadParameter(f"unknown game: {game}")
+    _validate_ev_supported(metadata)
 
     result = analyze_game(metadata, AppSettings())
     if output == "json":
@@ -307,7 +308,7 @@ def rank(
     results = []
     for slug in db.list_game_slugs(conn, jurisdiction):
         metadata = db.get_game(conn, slug, jurisdiction)
-        if metadata is not None:
+        if metadata is not None and metadata.wager_options:
             results.append(analyze_game(metadata, AppSettings()))
     results.sort(key=lambda result: result.best_option.net_after_tax_ev, reverse=True)
 
@@ -405,7 +406,7 @@ def recommend(
     """Recommend the highest hit-rate play style within a small budget."""
     conn = db.connect(ctx.obj["data_dir"])
     _validate_jurisdiction(conn, jurisdiction)
-    games = _load_games(conn, jurisdiction)
+    games = _load_ev_games(conn, jurisdiction)
     settings = AppSettings()
     generated_at = _generated_at()
     recommendations = recommend_highest_hit_rate(games, settings, budget)
@@ -522,11 +523,12 @@ def low_share(
     conn = db.connect(ctx.obj["data_dir"])
     _validate_jurisdiction(conn, jurisdiction)
     if game == "all":
-        games = _load_games(conn, jurisdiction)
+        games = _load_low_share_games(conn, jurisdiction)
     else:
         metadata = db.get_game(conn, game, jurisdiction)
         if metadata is None:
             raise typer.BadParameter(f"unknown game: {game}")
+        _validate_low_share_supported(metadata)
         games = (metadata,)
 
     results = tuple(
@@ -1013,6 +1015,18 @@ def _validate_jurisdiction(conn, jurisdiction_code: str) -> None:
         raise typer.BadParameter(f"unknown jurisdiction: {jurisdiction_code}")
 
 
+def _validate_ev_supported(metadata: GameMetadata) -> None:
+    if not metadata.wager_options:
+        raise typer.BadParameter(f"EV support pending for game: {metadata.slug}")
+
+
+def _validate_low_share_supported(metadata: GameMetadata) -> None:
+    if not metadata.wager_options:
+        raise typer.BadParameter(
+            f"low-share support pending for game: {metadata.slug}"
+        )
+
+
 def _coverage_game(metadata: GameMetadata, jurisdiction_code: str) -> dict[str, object]:
     offering = _coverage_offering(jurisdiction_code, metadata.slug)
     statuses = offering.get("support_statuses", SUPPORTED_STATUSES)
@@ -1051,6 +1065,24 @@ def _load_games(
         if metadata is not None:
             games.append(metadata)
     return tuple(games)
+
+
+def _load_ev_games(
+    conn,
+    jurisdiction_code: str = db.DEFAULT_JURISDICTION_CODE,
+) -> tuple[GameMetadata, ...]:
+    return tuple(
+        metadata
+        for metadata in _load_games(conn, jurisdiction_code)
+        if metadata.wager_options
+    )
+
+
+def _load_low_share_games(
+    conn,
+    jurisdiction_code: str = db.DEFAULT_JURISDICTION_CODE,
+) -> tuple[GameMetadata, ...]:
+    return _load_ev_games(conn, jurisdiction_code)
 
 
 @ledger_app.command("add")

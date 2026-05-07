@@ -81,6 +81,61 @@ def test_low_share_daily_keno_generates_multiple_picks_for_every_variation(tmp_p
     assert all(len(option["picks"]) == 2 for option in options)
 
 
+def test_low_share_supports_florida_and_new_york_digit_games(tmp_path):
+    for jurisdiction, game_slug, digits in [
+        ("fl", "florida-pick-2", 2),
+        ("fl", "florida-pick-3", 3),
+        ("fl", "florida-pick-4", 4),
+        ("fl", "florida-pick-5", 5),
+        ("ny", "numbers", 3),
+        ("ny", "win-4", 4),
+    ]:
+        result = runner.invoke(
+            app,
+            [
+                "--data-dir",
+                str(tmp_path / jurisdiction),
+                "low-share",
+                game_slug,
+                "-j",
+                jurisdiction,
+                "--count",
+                "2",
+                "--candidates",
+                "20",
+                "--seed",
+                "4",
+                "--output",
+                "json",
+            ],
+        )
+
+        assert result.exit_code == 0, result.output
+        payload = json.loads(result.output)
+        picks = payload["games"][0]["options"][0]["picks"]
+        assert len(picks) == 2
+        assert all(len(pick["numbers"]) == digits for pick in picks)
+
+
+def test_low_share_reports_cataloged_game_without_low_share_support(tmp_path):
+    result = runner.invoke(
+        app,
+        [
+            "--data-dir",
+            str(tmp_path),
+            "low-share",
+            "new-york-lotto",
+            "-j",
+            "ny",
+            "--output",
+            "json",
+        ],
+    )
+
+    assert result.exit_code != 0
+    assert "low-share support pending for game: new-york-lotto" in result.output
+
+
 def test_low_share_table_includes_score_and_no_odds_disclaimer(tmp_path):
     result = runner.invoke(
         app,

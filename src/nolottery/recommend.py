@@ -108,6 +108,16 @@ def _join_numbers(numbers: tuple[int, ...]) -> str:
 
 
 def suggest_numbers(game_slug: str, option_slug: str) -> tuple[int, ...]:
+    digit_count = {
+        "florida-pick-2": 2,
+        "florida-pick-3": 3,
+        "florida-pick-4": 4,
+        "florida-pick-5": 5,
+        "numbers": 3,
+        "win-4": 4,
+    }.get(game_slug)
+    if digit_count is not None:
+        return tuple(range(1, digit_count + 1))
     if game_slug == "cashpop":
         count = _selection_count(option_slug)
         return tuple(range(1, min(count, 15) + 1))

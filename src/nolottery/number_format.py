@@ -64,6 +64,30 @@ NUMBER_FORMATS: dict[str, NumberFormat] = {
         game_slug="daily-3",
         pools=(NumberPool("digits", 0, 9, 3, ordered=True, allow_repeats=True),),
     ),
+    "florida-pick-2": NumberFormat(
+        game_slug="florida-pick-2",
+        pools=(NumberPool("digits", 0, 9, 2, ordered=True, allow_repeats=True),),
+    ),
+    "florida-pick-3": NumberFormat(
+        game_slug="florida-pick-3",
+        pools=(NumberPool("digits", 0, 9, 3, ordered=True, allow_repeats=True),),
+    ),
+    "florida-pick-4": NumberFormat(
+        game_slug="florida-pick-4",
+        pools=(NumberPool("digits", 0, 9, 4, ordered=True, allow_repeats=True),),
+    ),
+    "florida-pick-5": NumberFormat(
+        game_slug="florida-pick-5",
+        pools=(NumberPool("digits", 0, 9, 5, ordered=True, allow_repeats=True),),
+    ),
+    "numbers": NumberFormat(
+        game_slug="numbers",
+        pools=(NumberPool("digits", 0, 9, 3, ordered=True, allow_repeats=True),),
+    ),
+    "win-4": NumberFormat(
+        game_slug="win-4",
+        pools=(NumberPool("digits", 0, 9, 4, ordered=True, allow_repeats=True),),
+    ),
     "hit-5": NumberFormat(
         game_slug="hit-5",
         pools=(NumberPool("white", 1, 42, 5),),

@@ -18,11 +18,31 @@ name = 'Numbers'
 source_url = 'https://nodeprod.nylottery.ny.gov/draw-games/'
 reviewed_on = '2026-05-07'
 
+[[games.wager_options]]
+slug = 'straight-1'
+label = 'Straight $1'
+ticket_cost = 1.0
+
+[[games.wager_options.prize_tiers]]
+label = 'Straight'
+probability = 0.001
+prize = 500
+
 [[games]]
 slug = 'win-4'
 name = 'Win 4'
 source_url = 'https://nodeprod.nylottery.ny.gov/draw-games/'
 reviewed_on = '2026-05-07'
+
+[[games.wager_options]]
+slug = 'straight-1'
+label = 'Straight $1'
+ticket_cost = 1.0
+
+[[games.wager_options.prize_tiers]]
+label = 'Straight'
+probability = 0.0001
+prize = 5000
 
 [[games]]
 slug = 'take-5'

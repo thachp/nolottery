@@ -56,6 +56,130 @@ def test_analyze_accepts_explicit_washington_jurisdiction(tmp_path):
     assert payload["game_slug"] == "cashpop"
 
 
+def test_analyze_supports_florida_pick_3_rules(tmp_path):
+    result = runner.invoke(
+        app,
+        [
+            "--data-dir",
+            str(tmp_path),
+            "analyze",
+            "florida-pick-3",
+            "-j",
+            "fl",
+            "--output",
+            "json",
+        ],
+    )
+
+    assert result.exit_code == 0, result.output
+    payload = json.loads(result.output)
+    assert payload["jurisdiction_code"] == "fl"
+    assert payload["game_slug"] == "florida-pick-3"
+    assert payload["best_option"] == "Straight $1"
+    assert payload["options"][0]["slug"] == "straight-1"
+    assert payload["options"][0]["ticket_cost"] == 1.0
+    assert payload["options"][0]["hit_rate"] == 0.001
+
+
+def test_analyze_supports_new_york_numbers_rules(tmp_path):
+    result = runner.invoke(
+        app,
+        [
+            "--data-dir",
+            str(tmp_path),
+            "analyze",
+            "numbers",
+            "-j",
+            "ny",
+            "--output",
+            "json",
+        ],
+    )
+
+    assert result.exit_code == 0, result.output
+    payload = json.loads(result.output)
+    assert payload["jurisdiction_code"] == "ny"
+    assert payload["game_slug"] == "numbers"
+    assert payload["best_option"] == "Straight $1"
+    assert payload["options"][0]["slug"] == "straight-1"
+    assert payload["options"][0]["ticket_cost"] == 1.0
+    assert payload["options"][0]["hit_rate"] == 0.001
+
+
+def test_analyze_supports_other_florida_and_new_york_fixed_digit_rules(tmp_path):
+    cases = [
+        ("fl", "florida-pick-2", 0.01, 50),
+        ("fl", "florida-pick-4", 0.0001, 5000),
+        ("fl", "florida-pick-5", 0.00001, 50000),
+        ("ny", "win-4", 0.0001, 5000),
+    ]
+
+    for jurisdiction, game_slug, probability, prize in cases:
+        result = runner.invoke(
+            app,
+            [
+                "--data-dir",
+                str(tmp_path / jurisdiction / game_slug),
+                "analyze",
+                game_slug,
+                "-j",
+                jurisdiction,
+                "--output",
+                "json",
+            ],
+        )
+
+        assert result.exit_code == 0, result.output
+        payload = json.loads(result.output)
+        assert payload["jurisdiction_code"] == jurisdiction
+        assert payload["game_slug"] == game_slug
+        assert payload["options"][0]["slug"] == "straight-1"
+        assert payload["options"][0]["hit_rate"] == probability
+        assert payload["options"][0]["gross_ev"] == prize * probability
+
+
+def test_analyze_reports_cataloged_game_without_ev_support(tmp_path):
+    result = runner.invoke(
+        app,
+        [
+            "--data-dir",
+            str(tmp_path),
+            "analyze",
+            "new-york-lotto",
+            "-j",
+            "ny",
+            "--output",
+            "json",
+        ],
+    )
+
+    assert result.exit_code != 0
+    assert "EV support pending for game: new-york-lotto" in result.output
+
+
+def test_analyze_all_skips_cataloged_new_york_games_without_ev_support(tmp_path):
+    result = runner.invoke(
+        app,
+        [
+            "--data-dir",
+            str(tmp_path),
+            "analyze",
+            "all",
+            "-j",
+            "ny",
+            "--output",
+            "json",
+        ],
+    )
+
+    assert result.exit_code == 0, result.output
+    payload = json.loads(result.output)
+    assert payload["jurisdiction_code"] == "ny"
+    game_slugs = {game["game_slug"] for game in payload["games"]}
+    assert "numbers" in game_slugs
+    assert "new-york-lotto" not in game_slugs
+
+
 def test_analyze_rejects_unknown_jurisdiction(tmp_path):
     result = runner.invoke(
         app,
@@ -206,6 +330,55 @@ def test_recommend_can_use_pick3_when_budget_is_under_one_dollar(tmp_path):
     assert payload["best"]["game_slug"] == "pick-3"
     assert payload["best"]["option_slug"] in {"front-pair-50c", "back-pair-50c"}
     assert payload["best"]["hit_rate"] == 0.01
+
+
+def test_recommend_supports_new_york_numbers(tmp_path):
+    result = runner.invoke(
+        app,
+        [
+            "--data-dir",
+            str(tmp_path),
+            "recommend",
+            "-j",
+            "ny",
+            "--budget",
+            "1",
+            "--output",
+            "json",
+        ],
+    )
+
+    assert result.exit_code == 0, result.output
+    payload = json.loads(result.output)
+    assert payload["jurisdiction_code"] == "ny"
+    assert payload["best"]["game_slug"] == "numbers"
+    assert payload["best"]["number_selection"] == [1, 2, 3]
+    assert payload["best"]["prediction_method"] == "quick-pick-random-no-edge"
+    assert len(payload["best"]["prediction"]) == 3
+
+
+def test_recommend_supports_florida_pick_2(tmp_path):
+    result = runner.invoke(
+        app,
+        [
+            "--data-dir",
+            str(tmp_path),
+            "recommend",
+            "-j",
+            "fl",
+            "--budget",
+            "1",
+            "--output",
+            "json",
+        ],
+    )
+
+    assert result.exit_code == 0, result.output
+    payload = json.loads(result.output)
+    assert payload["jurisdiction_code"] == "fl"
+    assert payload["best"]["game_slug"] == "florida-pick-2"
+    assert payload["best"]["number_selection"] == [1, 2]
+    assert len(payload["best"]["prediction"]) == 2
 
 
 def test_recommend_recognizes_cashpop_all_numbers_as_guaranteed(tmp_path):

@@ -108,13 +108,13 @@ blocking_reason = 'Rules and fetch adapter pending'
 
 [[jurisdictions.offerings]]
 game_slug = 'numbers'
-support_statuses = ['cataloged']
-blocking_reason = 'Rules and fetch adapter pending'
+support_statuses = ['cataloged', 'rules_verified', 'ev_supported', 'low_share_supported']
+blocking_reason = 'Fetch adapter pending'
 
 [[jurisdictions.offerings]]
 game_slug = 'win-4'
-support_statuses = ['cataloged']
-blocking_reason = 'Rules and fetch adapter pending'
+support_statuses = ['cataloged', 'rules_verified', 'ev_supported', 'low_share_supported']
+blocking_reason = 'Fetch adapter pending'
 
 [[jurisdictions.offerings]]
 game_slug = 'take-5'
@@ -142,23 +142,23 @@ blocking_reason = 'Rules and fetch adapter pending'
 
 [[jurisdictions.offerings]]
 game_slug = 'florida-pick-2'
-support_statuses = ['cataloged']
-blocking_reason = 'Rules and fetch adapter pending'
+support_statuses = ['cataloged', 'rules_verified', 'ev_supported', 'low_share_supported']
+blocking_reason = 'Fetch adapter pending'
 
 [[jurisdictions.offerings]]
 game_slug = 'florida-pick-3'
-support_statuses = ['cataloged']
-blocking_reason = 'Rules and fetch adapter pending'
+support_statuses = ['cataloged', 'rules_verified', 'ev_supported', 'low_share_supported']
+blocking_reason = 'Fetch adapter pending'
 
 [[jurisdictions.offerings]]
 game_slug = 'florida-pick-4'
-support_statuses = ['cataloged']
-blocking_reason = 'Rules and fetch adapter pending'
+support_statuses = ['cataloged', 'rules_verified', 'ev_supported', 'low_share_supported']
+blocking_reason = 'Fetch adapter pending'
 
 [[jurisdictions.offerings]]
 game_slug = 'florida-pick-5'
-support_statuses = ['cataloged']
-blocking_reason = 'Rules and fetch adapter pending'
+support_statuses = ['cataloged', 'rules_verified', 'ev_supported', 'low_share_supported']
+blocking_reason = 'Fetch adapter pending'
 
 [[jurisdictions.offerings]]
 game_slug = 'florida-fantasy-5'

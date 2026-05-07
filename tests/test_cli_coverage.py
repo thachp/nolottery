@@ -42,6 +42,16 @@ def test_coverage_reports_washington_game_support_statuses(tmp_path):
 
 
 def test_coverage_reports_representative_catalog_jurisdictions(tmp_path):
+    ev_supported = {
+        "ny": {"numbers", "win-4"},
+        "fl": {
+            "florida-pick-2",
+            "florida-pick-3",
+            "florida-pick-4",
+            "florida-pick-5",
+        },
+        "dc": set(),
+    }
     expected = {
         "ny": (
             "New York",
@@ -107,11 +117,57 @@ def test_coverage_reports_representative_catalog_jurisdictions(tmp_path):
         payload = json.loads(result.output)
         assert payload["jurisdiction"] == name
         assert {game["game_slug"] for game in payload["games"]} == game_slugs
+        catalog_only_games = (
+            game
+            for game in payload["games"]
+            if game["game_slug"] not in ev_supported[jurisdiction]
+        )
         assert all(
             game["support_statuses"] == ["cataloged"]
-            for game in payload["games"]
+            for game in catalog_only_games
         )
         assert all(
             game["blocking_reason"] == "Rules and fetch adapter pending"
             for game in payload["games"]
+            if game["game_slug"] not in ev_supported[jurisdiction]
         )
+
+
+def test_coverage_reports_florida_and_new_york_ev_supported_games(tmp_path):
+    expected = {
+        "fl": {
+            "florida-pick-2",
+            "florida-pick-3",
+            "florida-pick-4",
+            "florida-pick-5",
+        },
+        "ny": {"numbers", "win-4"},
+    }
+
+    for jurisdiction, game_slugs in expected.items():
+        result = runner.invoke(
+            app,
+            [
+                "--data-dir",
+                str(tmp_path / jurisdiction),
+                "coverage",
+                "-j",
+                jurisdiction,
+                "--output",
+                "json",
+            ],
+        )
+
+        assert result.exit_code == 0, result.output
+        payload = json.loads(result.output)
+        for game_slug in game_slugs:
+            game = next(
+                game for game in payload["games"] if game["game_slug"] == game_slug
+            )
+            assert game["support_statuses"] == [
+                "cataloged",
+                "rules_verified",
+                "ev_supported",
+                "low_share_supported",
+            ]
+            assert game["blocking_reason"] == "Fetch adapter pending"

@@ -12,11 +12,31 @@ name = 'Pick 2'
 source_url = 'https://floridalottery.com/games/draw-games/pick2'
 reviewed_on = '2026-05-07'
 
+[[games.wager_options]]
+slug = 'straight-1'
+label = 'Straight $1'
+ticket_cost = 1.0
+
+[[games.wager_options.prize_tiers]]
+label = 'Straight'
+probability = 0.01
+prize = 50
+
 [[games]]
 slug = 'florida-pick-3'
 name = 'Pick 3'
 source_url = 'https://floridalottery.com/games/draw-games/pick3'
 reviewed_on = '2026-05-07'
+
+[[games.wager_options]]
+slug = 'straight-1'
+label = 'Straight $1'
+ticket_cost = 1.0
+
+[[games.wager_options.prize_tiers]]
+label = 'Straight'
+probability = 0.001
+prize = 500
 
 [[games]]
 slug = 'florida-pick-4'
@@ -24,11 +44,31 @@ name = 'Pick 4'
 source_url = 'https://floridalottery.com/games/draw-games/pick4'
 reviewed_on = '2026-05-07'
 
+[[games.wager_options]]
+slug = 'straight-1'
+label = 'Straight $1'
+ticket_cost = 1.0
+
+[[games.wager_options.prize_tiers]]
+label = 'Straight'
+probability = 0.0001
+prize = 5000
+
 [[games]]
 slug = 'florida-pick-5'
 name = 'Pick 5'
 source_url = 'https://floridalottery.com/games/draw-games/pick5'
 reviewed_on = '2026-05-07'
+
+[[games.wager_options]]
+slug = 'straight-1'
+label = 'Straight $1'
+ticket_cost = 1.0
+
+[[games.wager_options.prize_tiers]]
+label = 'Straight'
+probability = 0.00001
+prize = 50000
 
 [[games]]
 slug = 'florida-fantasy-5'
