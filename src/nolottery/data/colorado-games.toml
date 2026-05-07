@@ -1,0 +1,19 @@
+# Colorado draw-game catalog entries.
+
+[[games]]
+slug = 'colorado-lotto-plus'
+name = 'Colorado Lotto+'
+source_url = 'https://www.coloradolottery.com/en/games/colorado-lotto-plus/'
+reviewed_on = '2026-05-07'
+
+[[games]]
+slug = 'colorado-cash-5'
+name = 'Cash 5'
+source_url = 'https://www.coloradolottery.com/en/games/cash-5/'
+reviewed_on = '2026-05-07'
+
+[[games]]
+slug = 'colorado-pick-3'
+name = 'Pick 3'
+source_url = 'https://www.coloradolottery.com/en/games/pick-3/'
+reviewed_on = '2026-05-07'

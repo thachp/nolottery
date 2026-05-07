@@ -54,6 +54,10 @@ _ARKANSAS_DID_I_WIN_GAMES = {
     "mega-millions": "Mega Ball",
     "powerball": "Powerball",
 }
+_COLORADO_DRAWING_HISTORY_GAMES = {
+    "mega-millions": ("Mega Millions Numbers", "Mega Ball"),
+    "powerball": ("Powerball Numbers", "Powerball"),
+}
 _ARIZONA_PAST_180_GAMES = {
     "mega-millions": "Mega Ball",
     "powerball": "Powerball",
@@ -93,6 +97,27 @@ def fetch_game(
     source_file: Path | None = None,
     jurisdiction_code: str = DEFAULT_JURISDICTION_CODE,
 ) -> FetchResult:
+    if (
+        source_file is None
+        and jurisdiction_code == "co"
+        and game.slug in _COLORADO_DRAWING_HISTORY_GAMES
+    ):
+        raw_html, source_url = _read_source(
+            game.source_url,
+            None,
+            f"{game.slug}-co-backfill",
+        )
+        draws = parse_colorado_drawing_history(raw_html, game.slug)
+        _insert_snapshot(conn, jurisdiction_code, game.slug, source_url, raw_html, draws)
+        new_draws = _filter_newer_draws(conn, jurisdiction_code, game.slug, draws)
+        _insert_draw_results(conn, jurisdiction_code, game.slug, new_draws)
+        conn.commit()
+        return FetchResult(
+            game_name=game.name,
+            source_url=source_url,
+            draw_count=len(new_draws),
+            prize_row_count=sum(len(draw.prizes) for draw in new_draws),
+        )
     if (
         source_file is None
         and jurisdiction_code == "ar"
@@ -256,6 +281,23 @@ def fetch_game_backfill(
             f"{game.slug}-ar-backfill",
         )
         draws = parse_arkansas_did_i_win(raw_html, game.slug)
+        _insert_snapshot(conn, jurisdiction_code, game.slug, source_url, raw_html, draws)
+        _replace_draw_results(conn, jurisdiction_code, game.slug, draws)
+        conn.commit()
+        return FetchResult(
+            game_name=game.name,
+            source_url=source_url,
+            draw_count=len(draws),
+            prize_row_count=sum(len(draw.prizes) for draw in draws),
+            page_count=1,
+        )
+    if jurisdiction_code == "co" and game.slug in _COLORADO_DRAWING_HISTORY_GAMES:
+        raw_html, source_url = _read_source(
+            game.source_url,
+            source_dir,
+            f"{game.slug}-co-backfill",
+        )
+        draws = parse_colorado_drawing_history(raw_html, game.slug)
         _insert_snapshot(conn, jurisdiction_code, game.slug, source_url, raw_html, draws)
         _replace_draw_results(conn, jurisdiction_code, game.slug, draws)
         conn.commit()
@@ -684,6 +726,54 @@ def _arkansas_draw_date(raw_value: str) -> str | None:
         return None
 
 
+def parse_colorado_drawing_history(
+    raw_html: str,
+    game_slug: str,
+) -> tuple[ParsedDraw, ...]:
+    numbers_label, special_number_name = _COLORADO_DRAWING_HISTORY_GAMES[game_slug]
+    soup = BeautifulSoup(raw_html, "html.parser")
+    lines = _page_lines(soup)
+    draws: list[ParsedDraw] = []
+    index = 0
+    while index < len(lines):
+        draw_date = _colorado_draw_date(lines[index])
+        if draw_date is None:
+            index += 1
+            continue
+        cursor = index + 1
+        while cursor < len(lines) and lines[cursor] != numbers_label:
+            if _colorado_draw_date(lines[cursor]) is not None:
+                break
+            cursor += 1
+        if cursor + 2 >= len(lines) or lines[cursor] != numbers_label:
+            index += 1
+            continue
+        numbers = re.findall(r"\d{1,2}", lines[cursor + 1])
+        special_number = re.fullmatch(r"\d{1,2}", lines[cursor + 2])
+        if len(numbers) == 5 and special_number is not None:
+            draws.append(
+                ParsedDraw(
+                    draw_date=draw_date,
+                    winning_number=", ".join(
+                        [
+                            *numbers,
+                            f"{special_number.group(0)} {special_number_name}",
+                        ]
+                    ),
+                    prizes=(),
+                )
+            )
+        index = cursor + 3
+    return tuple(draws)
+
+
+def _colorado_draw_date(raw_value: str) -> str | None:
+    try:
+        return datetime.strptime(raw_value, "%A, %m/%d/%y").strftime(_DRAW_DATE_FORMAT)
+    except ValueError:
+        return None
+
+
 def parse_texas_winning_numbers(
     raw_html: str,
     game_slug: str,
@@ -972,6 +1062,8 @@ def _parse_draws(
         return parse_california_draw_game(raw_html)
     if jurisdiction_code == "ar" and game_slug in _ARKANSAS_DID_I_WIN_GAMES:
         return parse_arkansas_did_i_win(raw_html, game_slug)
+    if jurisdiction_code == "co" and game_slug in _COLORADO_DRAWING_HISTORY_GAMES:
+        return parse_colorado_drawing_history(raw_html, game_slug)
     if jurisdiction_code == "az" and game_slug in _ARIZONA_PAST_180_GAMES:
         return parse_arizona_past_180_text(raw_html, game_slug)
     if jurisdiction_code == "tx" and game_slug in _TEXAS_SPECIAL_NUMBER_NAMES:

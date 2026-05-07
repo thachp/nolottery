@@ -237,6 +237,44 @@ def _arkansas_mega_millions_history_html() -> str:
     """
 
 
+def _colorado_powerball_history_html() -> str:
+    return """
+    <html>
+      <body>
+        <h1>Powerball Drawing History</h1>
+        <h2>May 2026</h2>
+        <a>Wednesday, 5/6/26</a>
+        <p>Powerball Numbers</p>
+        <p>18 27 51 65 68</p>
+        <p>5</p>
+        <p>x3</p>
+        <p>$30,000,000 Jackpot</p>
+        <a>Monday, 5/4/26</a>
+        <p>Powerball Numbers</p>
+        <p>30 36 42 60 63</p>
+        <p>13</p>
+        <p>x2</p>
+        <p>$20,000,000 Jackpot</p>
+      </body>
+    </html>
+    """
+
+
+def _colorado_mega_millions_history_html() -> str:
+    return """
+    <html>
+      <body>
+        <h1>Mega Millions Drawing History</h1>
+        <a>Tuesday, 2/3/26</a>
+        <p>Mega Millions Numbers</p>
+        <p>5 11 22 25 69</p>
+        <p>21</p>
+        <p>$323,000,000 Jackpot</p>
+      </body>
+    </html>
+    """
+
+
 def test_fetch_cashpop_persists_official_page_snapshot_and_draws(tmp_path):
     fixture = tmp_path / "cashpop.html"
     fixture.write_text(DRAWING_HTML, encoding="utf-8")
@@ -958,6 +996,96 @@ def test_fetch_all_arkansas_backfill_uses_supported_national_games(tmp_path):
             "all",
             "-j",
             "ar",
+            "--backfill",
+            "--source-dir",
+            str(fixtures),
+        ],
+    )
+
+    assert result.exit_code == 0, result.output
+    assert "Powerball" in result.output
+    assert "Mega Millions" in result.output
+    assert "2 games fetched" in result.output
+
+
+def test_fetch_colorado_powerball_backfill_reads_official_history_fixture(tmp_path):
+    fixtures = tmp_path / "fixtures"
+    fixtures.mkdir()
+    (fixtures / "powerball-co-backfill.html").write_text(
+        _colorado_powerball_history_html(),
+        encoding="utf-8",
+    )
+
+    result = runner.invoke(
+        app,
+        [
+            "--data-dir",
+            str(tmp_path / "data"),
+            "fetch",
+            "powerball",
+            "-j",
+            "co",
+            "--backfill",
+            "--source-dir",
+            str(fixtures),
+        ],
+    )
+
+    assert result.exit_code == 0, result.output
+    assert "Powerball" in result.output
+    assert "2 draws" in result.output
+
+    draws_result = runner.invoke(
+        app,
+        [
+            "--data-dir",
+            str(tmp_path / "data"),
+            "draws",
+            "powerball",
+            "-j",
+            "co",
+            "--output",
+            "json",
+        ],
+    )
+
+    assert draws_result.exit_code == 0, draws_result.output
+    payload = json.loads(draws_result.output)
+    assert payload["games"][0]["draws"] == [
+        {
+            "jurisdiction_code": "co",
+            "draw_date": "Wed, May 06, 2026",
+            "winning_number": "18, 27, 51, 65, 68, 5 Powerball",
+        },
+        {
+            "jurisdiction_code": "co",
+            "draw_date": "Mon, May 04, 2026",
+            "winning_number": "30, 36, 42, 60, 63, 13 Powerball",
+        },
+    ]
+
+
+def test_fetch_all_colorado_backfill_uses_supported_national_games(tmp_path):
+    fixtures = tmp_path / "fixtures"
+    fixtures.mkdir()
+    (fixtures / "powerball-co-backfill.html").write_text(
+        _colorado_powerball_history_html(),
+        encoding="utf-8",
+    )
+    (fixtures / "mega-millions-co-backfill.html").write_text(
+        _colorado_mega_millions_history_html(),
+        encoding="utf-8",
+    )
+
+    result = runner.invoke(
+        app,
+        [
+            "--data-dir",
+            str(tmp_path / "data"),
+            "fetch",
+            "all",
+            "-j",
+            "co",
             "--backfill",
             "--source-dir",
             str(fixtures),
