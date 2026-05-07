@@ -744,6 +744,39 @@ def _maine_home_page_html() -> str:
     """
 
 
+def _maryland_winning_numbers_html() -> str:
+    return """
+    <html>
+      <body>
+        <h4>Mega Millions</h4>
+        <table>
+          <tr>
+            <td>05/05/26</td>
+            <td><ul><li>12</li><li>22</li><li>50</li><li>51</li><li>55</li></ul></td>
+            <td><ul><li>10</li></ul></td>
+            <td>N/A</td>
+          </tr>
+        </table>
+        <h4>Powerball</h4>
+        <table>
+          <tr>
+            <td>05/06/26</td>
+            <td><ul><li>18</li><li>27</li><li>51</li><li>65</li><li>68</li></ul></td>
+            <td><ul><li>05</li></ul></td>
+            <td>x3</td>
+          </tr>
+          <tr>
+            <td>05/04/26</td>
+            <td><ul><li>30</li><li>36</li><li>42</li><li>60</li><li>63</li></ul></td>
+            <td><ul><li>13</li></ul></td>
+            <td>x2</td>
+          </tr>
+        </table>
+      </body>
+    </html>
+    """
+
+
 def test_fetch_cashpop_persists_official_page_snapshot_and_draws(tmp_path):
     fixture = tmp_path / "cashpop.html"
     fixture.write_text(DRAWING_HTML, encoding="utf-8")
@@ -2693,6 +2726,119 @@ def test_fetch_maine_mega_millions_backfill_reads_official_home_page_fixture(
     assert payload["games"][0]["draws"] == [
         {
             "jurisdiction_code": "me",
+            "draw_date": "Tue, May 05, 2026",
+            "winning_number": "12, 22, 50, 51, 55, 10 Mega Ball",
+        }
+    ]
+
+
+def test_fetch_maryland_powerball_backfill_reads_official_results_fixture(tmp_path):
+    fixtures = tmp_path / "fixtures"
+    fixtures.mkdir()
+    (fixtures / "powerball-md-backfill.html").write_text(
+        _maryland_winning_numbers_html(),
+        encoding="utf-8",
+    )
+
+    result = runner.invoke(
+        app,
+        [
+            "--data-dir",
+            str(tmp_path / "data"),
+            "fetch",
+            "powerball",
+            "-j",
+            "md",
+            "--backfill",
+            "--source-dir",
+            str(fixtures),
+        ],
+    )
+
+    assert result.exit_code == 0, result.output
+    assert "Powerball" in result.output
+    assert "2 draws" in result.output
+    assert "1 page" in result.output
+
+    draws_result = runner.invoke(
+        app,
+        [
+            "--data-dir",
+            str(tmp_path / "data"),
+            "draws",
+            "powerball",
+            "-j",
+            "md",
+            "--output",
+            "json",
+        ],
+    )
+
+    assert draws_result.exit_code == 0, draws_result.output
+    payload = json.loads(draws_result.output)
+    assert payload["games"][0]["draws"] == [
+        {
+            "jurisdiction_code": "md",
+            "draw_date": "Wed, May 06, 2026",
+            "winning_number": "18, 27, 51, 65, 68, 05 Powerball",
+        },
+        {
+            "jurisdiction_code": "md",
+            "draw_date": "Mon, May 04, 2026",
+            "winning_number": "30, 36, 42, 60, 63, 13 Powerball",
+        },
+    ]
+
+
+def test_fetch_maryland_mega_millions_backfill_reads_official_results_fixture(
+    tmp_path,
+):
+    fixtures = tmp_path / "fixtures"
+    fixtures.mkdir()
+    (fixtures / "mega-millions-md-backfill.html").write_text(
+        _maryland_winning_numbers_html(),
+        encoding="utf-8",
+    )
+
+    result = runner.invoke(
+        app,
+        [
+            "--data-dir",
+            str(tmp_path / "data"),
+            "fetch",
+            "mega-millions",
+            "-j",
+            "md",
+            "--backfill",
+            "--source-dir",
+            str(fixtures),
+        ],
+    )
+
+    assert result.exit_code == 0, result.output
+    assert "Mega Millions" in result.output
+    assert "1 draw" in result.output
+    assert "1 page" in result.output
+
+    draws_result = runner.invoke(
+        app,
+        [
+            "--data-dir",
+            str(tmp_path / "data"),
+            "draws",
+            "mega-millions",
+            "-j",
+            "md",
+            "--output",
+            "json",
+        ],
+    )
+
+    assert draws_result.exit_code == 0, draws_result.output
+    payload = json.loads(draws_result.output)
+    assert payload["games"][0]["draws"] == [
+        {
+            "jurisdiction_code": "md",
             "draw_date": "Tue, May 05, 2026",
             "winning_number": "12, 22, 50, 51, 55, 10 Mega Ball",
         }

@@ -1,0 +1,49 @@
+# Maryland active draw-game catalog entries.
+
+[[games]]
+slug = 'maryland-cash-pop'
+name = 'CASH POP'
+source_url = 'https://www.mdlottery.com/games/cash-pop/'
+reviewed_on = '2026-05-07'
+
+[[games]]
+slug = 'maryland-pick-3'
+name = 'Pick 3'
+source_url = 'https://www.mdlottery.com/games/pick-3-pick-4-pick-5/'
+reviewed_on = '2026-05-07'
+
+[[games]]
+slug = 'maryland-pick-4'
+name = 'Pick 4'
+source_url = 'https://www.mdlottery.com/games/pick-3-pick-4-pick-5/'
+reviewed_on = '2026-05-07'
+
+[[games]]
+slug = 'maryland-pick-5'
+name = 'Pick 5'
+source_url = 'https://www.mdlottery.com/games/pick-3-pick-4-pick-5/'
+reviewed_on = '2026-05-07'
+
+[[games]]
+slug = 'maryland-bonus-match-5'
+name = 'Bonus Match 5'
+source_url = 'https://www.mdlottery.com/games/bonus-match-5/'
+reviewed_on = '2026-05-07'
+
+[[games]]
+slug = 'maryland-multi-match'
+name = 'Multi-Match'
+source_url = 'https://www.mdlottery.com/games/multi-match/'
+reviewed_on = '2026-05-07'
+
+[[games]]
+slug = 'maryland-keno'
+name = 'Keno'
+source_url = 'https://www.mdlottery.com/games/keno/'
+reviewed_on = '2026-05-07'
+
+[[games]]
+slug = 'maryland-racetrax'
+name = 'Racetrax'
+source_url = 'https://www.mdlottery.com/games/racetrax/'
+reviewed_on = '2026-05-07'
