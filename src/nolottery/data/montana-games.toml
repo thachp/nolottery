@@ -1,0 +1,13 @@
+# Montana active draw-game catalog entries.
+
+[[games]]
+slug = 'montana-cash'
+name = 'Montana Cash'
+source_url = 'https://montanalottery.com/montana-cash/'
+reviewed_on = '2026-05-07'
+
+[[games]]
+slug = 'montana-big-sky-bonus'
+name = 'Big Sky Bonus'
+source_url = 'https://montanalottery.com/big-sky-bonus/'
+reviewed_on = '2026-05-07'
