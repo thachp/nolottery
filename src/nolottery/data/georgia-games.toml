@@ -1,0 +1,49 @@
+# Georgia active draw-game catalog entries.
+
+[[games]]
+slug = 'georgia-cash-3'
+name = 'Cash 3'
+source_url = 'https://www.galottery.com/en-us/games/draw-games/cash-three.html'
+reviewed_on = '2026-05-07'
+
+[[games]]
+slug = 'georgia-cash-4'
+name = 'Cash 4'
+source_url = 'https://www.galottery.com/en-us/games/draw-games/cash-four.html'
+reviewed_on = '2026-05-07'
+
+[[games]]
+slug = 'georgia-cash-pop'
+name = 'Cash Pop'
+source_url = 'https://www.galottery.com/en-us/games/draw-games/cash-pop.html'
+reviewed_on = '2026-05-07'
+
+[[games]]
+slug = 'georgia-keno'
+name = 'KENO!'
+source_url = 'https://www.galottery.com/en-us/games/draw-games/keno.html'
+reviewed_on = '2026-05-07'
+
+[[games]]
+slug = 'georgia-fantasy-5'
+name = 'Fantasy 5'
+source_url = 'https://www.galottery.com/en-us/games/draw-games/fantasy-five.html'
+reviewed_on = '2026-05-07'
+
+[[games]]
+slug = 'georgia-five'
+name = 'Georgia Five'
+source_url = 'https://www.galottery.com/en-us/games/draw-games/georgia-five.html'
+reviewed_on = '2026-05-07'
+
+[[games]]
+slug = 'georgia-jumbo-bucks-lotto'
+name = 'Jumbo Bucks Lotto'
+source_url = 'https://www.galottery.com/en-us/games/draw-games/jumbo-bucks-lotto.html'
+reviewed_on = '2026-05-07'
+
+[[games]]
+slug = 'georgia-all-or-nothing'
+name = 'All or Nothing'
+source_url = 'https://www.galottery.com/en-us/games/draw-games/all-or-nothing.html'
+reviewed_on = '2026-05-07'

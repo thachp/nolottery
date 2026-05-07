@@ -505,8 +505,73 @@ blocking_reason = 'Rules and fetch adapter pending'
 [[jurisdictions]]
 code = 'ga'
 name = 'Georgia'
-support_statuses = ['catalog_pending']
-blocking_reason = 'Lottery jurisdiction offering catalog pending'
+blocking_reason = 'Georgia local draw-game rules and adapters pending'
+
+[[jurisdictions.offerings]]
+game_slug = 'powerball'
+source_url = 'https://www.galottery.com/en-us/games/draw-games/powerball.html'
+support_statuses = ['cataloged', 'rules_verified', 'ev_supported', 'fetch_supported', 'audit_supported', 'low_share_supported']
+results_adapter = 'ga_draw_games_json'
+blocking_reason = ''
+
+[[jurisdictions.offerings]]
+game_slug = 'mega-millions'
+source_url = 'https://www.galottery.com/en-us/games/draw-games/megamillions.html'
+support_statuses = ['cataloged', 'rules_verified', 'ev_supported', 'fetch_supported', 'audit_supported', 'low_share_supported']
+results_adapter = 'ga_draw_games_json'
+blocking_reason = ''
+
+[[jurisdictions.offerings]]
+game_slug = 'millionaire-for-life'
+source_url = 'https://www.galottery.com/en-us/games/draw-games/millionaireforlife.html'
+support_statuses = ['cataloged']
+blocking_reason = 'Rules and fetch adapter pending'
+
+[[jurisdictions.offerings]]
+game_slug = 'cash4life'
+source_url = 'https://www.galottery.com/en-us/games/draw-games/cash-for-life.html'
+support_statuses = ['cataloged']
+blocking_reason = 'Rules and fetch adapter pending'
+
+[[jurisdictions.offerings]]
+game_slug = 'georgia-cash-3'
+support_statuses = ['cataloged']
+blocking_reason = 'Rules and fetch adapter pending'
+
+[[jurisdictions.offerings]]
+game_slug = 'georgia-cash-4'
+support_statuses = ['cataloged']
+blocking_reason = 'Rules and fetch adapter pending'
+
+[[jurisdictions.offerings]]
+game_slug = 'georgia-cash-pop'
+support_statuses = ['cataloged']
+blocking_reason = 'Rules and fetch adapter pending'
+
+[[jurisdictions.offerings]]
+game_slug = 'georgia-keno'
+support_statuses = ['cataloged']
+blocking_reason = 'Rules and fetch adapter pending'
+
+[[jurisdictions.offerings]]
+game_slug = 'georgia-fantasy-5'
+support_statuses = ['cataloged']
+blocking_reason = 'Rules and fetch adapter pending'
+
+[[jurisdictions.offerings]]
+game_slug = 'georgia-five'
+support_statuses = ['cataloged']
+blocking_reason = 'Rules and fetch adapter pending'
+
+[[jurisdictions.offerings]]
+game_slug = 'georgia-jumbo-bucks-lotto'
+support_statuses = ['cataloged']
+blocking_reason = 'Rules and fetch adapter pending'
+
+[[jurisdictions.offerings]]
+game_slug = 'georgia-all-or-nothing'
+support_statuses = ['cataloged']
+blocking_reason = 'Rules and fetch adapter pending'
 
 [[jurisdictions]]
 code = 'hi'

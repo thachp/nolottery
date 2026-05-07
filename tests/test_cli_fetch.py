@@ -403,6 +403,90 @@ def _delaware_mega_millions_history_html() -> str:
     """
 
 
+def _georgia_powerball_history_json() -> str:
+    return json.dumps(
+        {
+            "draws": [
+                {
+                    "gameName": "POWERBALL",
+                    "id": "1942",
+                    "status": "CLOSED",
+                    "closeTime": 1777946375000,
+                    "results": [
+                        {
+                            "primary": [
+                                "30",
+                                "36",
+                                "42",
+                                "60",
+                                "63",
+                                "M-02",
+                                "PB-13",
+                            ],
+                            "drawType": "Regular",
+                        }
+                    ],
+                },
+                {
+                    "gameName": "POWERBALL",
+                    "id": "1943",
+                    "status": "CLOSED",
+                    "closeTime": 1778119175000,
+                    "results": [
+                        {
+                            "primary": [
+                                "18",
+                                "27",
+                                "51",
+                                "65",
+                                "68",
+                                "M-03",
+                                "PB-05",
+                            ],
+                            "drawType": "Regular",
+                        }
+                    ],
+                },
+                {
+                    "gameName": "POWERBALL",
+                    "id": "1944",
+                    "status": "OPEN",
+                    "closeTime": 1778378375000,
+                },
+            ]
+        }
+    )
+
+
+def _georgia_mega_millions_history_json() -> str:
+    return json.dumps(
+        {
+            "draws": [
+                {
+                    "gameName": "MEGA MILLIONS",
+                    "id": "3022",
+                    "status": "CLOSED",
+                    "closeTime": 1778035505000,
+                    "results": [
+                        {
+                            "primary": [
+                                "12",
+                                "22",
+                                "50",
+                                "51",
+                                "55",
+                                "M-00",
+                                "MB-10",
+                            ],
+                            "drawType": "Regular",
+                        }
+                    ],
+                }
+            ]
+        }
+    )
+
+
 def test_fetch_cashpop_persists_official_page_snapshot_and_draws(tmp_path):
     fixture = tmp_path / "cashpop.html"
     fixture.write_text(DRAWING_HTML, encoding="utf-8")
@@ -1446,6 +1530,119 @@ def test_fetch_delaware_mega_millions_backfill_reads_official_history_fixture(
     assert payload["games"][0]["draws"] == [
         {
             "jurisdiction_code": "de",
+            "draw_date": "Tue, May 05, 2026",
+            "winning_number": "12, 22, 50, 51, 55, 10 Mega Ball",
+        }
+    ]
+
+
+def test_fetch_georgia_powerball_backfill_reads_official_json_fixture(tmp_path):
+    fixtures = tmp_path / "fixtures"
+    fixtures.mkdir()
+    (fixtures / "powerball-ga-backfill.json").write_text(
+        _georgia_powerball_history_json(),
+        encoding="utf-8",
+    )
+
+    result = runner.invoke(
+        app,
+        [
+            "--data-dir",
+            str(tmp_path / "data"),
+            "fetch",
+            "powerball",
+            "-j",
+            "ga",
+            "--backfill",
+            "--source-dir",
+            str(fixtures),
+        ],
+    )
+
+    assert result.exit_code == 0, result.output
+    assert "Powerball" in result.output
+    assert "2 draws" in result.output
+    assert "1 page" in result.output
+
+    draws_result = runner.invoke(
+        app,
+        [
+            "--data-dir",
+            str(tmp_path / "data"),
+            "draws",
+            "powerball",
+            "-j",
+            "ga",
+            "--output",
+            "json",
+        ],
+    )
+
+    assert draws_result.exit_code == 0, draws_result.output
+    payload = json.loads(draws_result.output)
+    assert payload["games"][0]["draws"] == [
+        {
+            "jurisdiction_code": "ga",
+            "draw_date": "Wed, May 06, 2026",
+            "winning_number": "18, 27, 51, 65, 68, 05 Powerball",
+        },
+        {
+            "jurisdiction_code": "ga",
+            "draw_date": "Mon, May 04, 2026",
+            "winning_number": "30, 36, 42, 60, 63, 13 Powerball",
+        },
+    ]
+
+
+def test_fetch_georgia_mega_millions_backfill_reads_official_json_fixture(
+    tmp_path,
+):
+    fixtures = tmp_path / "fixtures"
+    fixtures.mkdir()
+    (fixtures / "mega-millions-ga-backfill.json").write_text(
+        _georgia_mega_millions_history_json(),
+        encoding="utf-8",
+    )
+
+    result = runner.invoke(
+        app,
+        [
+            "--data-dir",
+            str(tmp_path / "data"),
+            "fetch",
+            "mega-millions",
+            "-j",
+            "ga",
+            "--backfill",
+            "--source-dir",
+            str(fixtures),
+        ],
+    )
+
+    assert result.exit_code == 0, result.output
+    assert "Mega Millions" in result.output
+    assert "1 draw" in result.output
+    assert "1 page" in result.output
+
+    draws_result = runner.invoke(
+        app,
+        [
+            "--data-dir",
+            str(tmp_path / "data"),
+            "draws",
+            "mega-millions",
+            "-j",
+            "ga",
+            "--output",
+            "json",
+        ],
+    )
+
+    assert draws_result.exit_code == 0, draws_result.output
+    payload = json.loads(draws_result.output)
+    assert payload["games"][0]["draws"] == [
+        {
+            "jurisdiction_code": "ga",
             "draw_date": "Tue, May 05, 2026",
             "winning_number": "12, 22, 50, 51, 55, 10 Mega Ball",
         }

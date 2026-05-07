@@ -209,7 +209,7 @@ def test_coverage_reports_pending_state_catalog_as_supported_jurisdiction(tmp_pa
             str(tmp_path),
             "coverage",
             "-j",
-            "ga",
+            "id",
             "--output",
             "json",
         ],
@@ -217,8 +217,8 @@ def test_coverage_reports_pending_state_catalog_as_supported_jurisdiction(tmp_pa
 
     assert result.exit_code == 0, result.output
     payload = json.loads(result.output)
-    assert payload["jurisdiction_code"] == "ga"
-    assert payload["jurisdiction"] == "Georgia"
+    assert payload["jurisdiction_code"] == "id"
+    assert payload["jurisdiction"] == "Idaho"
     assert payload["jurisdiction_support_statuses"] == ["catalog_pending"]
     assert payload["blocking_reason"] == "Lottery jurisdiction offering catalog pending"
     assert payload["games"] == []
@@ -311,6 +311,54 @@ def test_coverage_reports_delaware_catalog_and_supported_national_games(tmp_path
     assert games["mega-millions"]["results_adapter"] == "de_search_winners"
     assert games["delaware-play-3"]["support_statuses"] == ["cataloged"]
     assert games["delaware-play-3"]["blocking_reason"] == (
+        "Rules and fetch adapter pending"
+    )
+
+
+def test_coverage_reports_georgia_catalog_and_supported_national_games(tmp_path):
+    result = runner.invoke(
+        app,
+        [
+            "--data-dir",
+            str(tmp_path),
+            "coverage",
+            "-j",
+            "ga",
+            "--output",
+            "json",
+        ],
+    )
+
+    assert result.exit_code == 0, result.output
+    payload = json.loads(result.output)
+    assert payload["jurisdiction_code"] == "ga"
+    assert payload["jurisdiction"] == "Georgia"
+    games = {game["game_slug"]: game for game in payload["games"]}
+    assert set(games) == {
+        "cash4life",
+        "georgia-all-or-nothing",
+        "georgia-cash-3",
+        "georgia-cash-4",
+        "georgia-cash-pop",
+        "georgia-five",
+        "georgia-jumbo-bucks-lotto",
+        "georgia-keno",
+        "georgia-fantasy-5",
+        "mega-millions",
+        "millionaire-for-life",
+        "powerball",
+    }
+    assert games["powerball"]["support_statuses"] == [
+        "cataloged",
+        "rules_verified",
+        "ev_supported",
+        "fetch_supported",
+        "audit_supported",
+        "low_share_supported",
+    ]
+    assert games["mega-millions"]["results_adapter"] == "ga_draw_games_json"
+    assert games["georgia-cash-3"]["support_statuses"] == ["cataloged"]
+    assert games["georgia-cash-3"]["blocking_reason"] == (
         "Rules and fetch adapter pending"
     )
 

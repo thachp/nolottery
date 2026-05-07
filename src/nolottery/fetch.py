@@ -10,6 +10,7 @@ from io import BytesIO
 from math import ceil
 from pathlib import Path
 from urllib.parse import parse_qsl, urlencode, urljoin, urlparse, urlunparse
+from zoneinfo import ZoneInfo
 
 import httpx
 import pdfplumber
@@ -74,6 +75,11 @@ _DELAWARE_SEARCH_WINNERS_GAMES = {
     "mega-millions": ("MEGA-MILLIONS", "Mega Millions", "Mega Ball"),
     "powerball": ("POWERBALL", "Powerball", "Powerball"),
 }
+_GEORGIA_DRAW_GAMES = {
+    "mega-millions": ("MEGA MILLIONS", "MB", "Mega Ball"),
+    "powerball": ("POWERBALL", "PB", "Powerball"),
+}
+_GEORGIA_TIMEZONE = ZoneInfo("America/New_York")
 
 
 @dataclass(frozen=True)
@@ -105,6 +111,26 @@ def fetch_game(
     source_file: Path | None = None,
     jurisdiction_code: str = DEFAULT_JURISDICTION_CODE,
 ) -> FetchResult:
+    if (
+        source_file is None
+        and jurisdiction_code == "ga"
+        and game.slug in _GEORGIA_DRAW_GAMES
+    ):
+        raw_json, source_url = _georgia_draw_games_source(
+            game,
+            source_dir=None,
+        )
+        draws = parse_georgia_draw_games_json(raw_json, game.slug)
+        _insert_snapshot(conn, jurisdiction_code, game.slug, source_url, raw_json, draws)
+        new_draws = _filter_newer_draws(conn, jurisdiction_code, game.slug, draws)
+        _insert_draw_results(conn, jurisdiction_code, game.slug, new_draws)
+        conn.commit()
+        return FetchResult(
+            game_name=game.name,
+            source_url=source_url,
+            draw_count=len(new_draws),
+            prize_row_count=sum(len(draw.prizes) for draw in new_draws),
+        )
     if (
         source_file is None
         and jurisdiction_code == "de"
@@ -392,6 +418,22 @@ def fetch_game_backfill(
         )
         draws = parse_delaware_search_winners(raw_html, game.slug)
         _insert_snapshot(conn, jurisdiction_code, game.slug, source_url, raw_html, draws)
+        _replace_draw_results(conn, jurisdiction_code, game.slug, draws)
+        conn.commit()
+        return FetchResult(
+            game_name=game.name,
+            source_url=source_url,
+            draw_count=len(draws),
+            prize_row_count=sum(len(draw.prizes) for draw in draws),
+            page_count=1,
+        )
+    if jurisdiction_code == "ga" and game.slug in _GEORGIA_DRAW_GAMES:
+        raw_json, source_url = _georgia_draw_games_source(
+            game,
+            source_dir=source_dir,
+        )
+        draws = parse_georgia_draw_games_json(raw_json, game.slug)
+        _insert_snapshot(conn, jurisdiction_code, game.slug, source_url, raw_json, draws)
         _replace_draw_results(conn, jurisdiction_code, game.slug, draws)
         conn.commit()
         return FetchResult(
@@ -981,6 +1023,77 @@ def _delaware_draw_date(raw_value: str) -> str | None:
         return None
 
 
+def parse_georgia_draw_games_json(
+    raw_json: str,
+    game_slug: str,
+) -> tuple[ParsedDraw, ...]:
+    game_name, special_prefix, special_number_name = _GEORGIA_DRAW_GAMES[game_slug]
+    payload = json.loads(raw_json)
+    draws: list[ParsedDraw] = []
+    for item in payload.get("draws") or ():
+        if item.get("gameName") != game_name:
+            continue
+        if item.get("status") == "OPEN":
+            continue
+        draw_date = _georgia_draw_date(item.get("closeTime"))
+        numbers = _georgia_draw_numbers(item, special_prefix, special_number_name)
+        if draw_date is None or numbers is None:
+            continue
+        draws.append(
+            ParsedDraw(
+                draw_date=draw_date,
+                winning_number=", ".join(numbers),
+                prizes=(),
+            )
+        )
+    return tuple(draws)
+
+
+def _georgia_draw_numbers(
+    item: dict[str, object],
+    special_prefix: str,
+    special_number_name: str,
+) -> tuple[str, ...] | None:
+    results = item.get("results")
+    if not isinstance(results, list) or not results:
+        return None
+    first_result = results[0]
+    if not isinstance(first_result, dict):
+        return None
+    raw_numbers = first_result.get("primary")
+    if not isinstance(raw_numbers, list):
+        return None
+    primary_numbers = [
+        str(number)
+        for number in raw_numbers
+        if isinstance(number, str) and re.fullmatch(r"\d{1,2}", number)
+    ][:5]
+    special_marker = next(
+        (
+            number
+            for number in raw_numbers
+            if isinstance(number, str) and number.startswith(f"{special_prefix}-")
+        ),
+        None,
+    )
+    if len(primary_numbers) != 5 or special_marker is None:
+        return None
+    special_number = special_marker.split("-", 1)[1]
+    if not re.fullmatch(r"\d{1,2}", special_number):
+        return None
+    return (*primary_numbers, f"{special_number} {special_number_name}")
+
+
+def _georgia_draw_date(raw_value: object) -> str | None:
+    milliseconds = _int_value(raw_value)
+    if milliseconds is None:
+        return None
+    return datetime.fromtimestamp(
+        milliseconds / 1000,
+        tz=UTC,
+    ).astimezone(_GEORGIA_TIMEZONE).strftime(_DRAW_DATE_FORMAT)
+
+
 def _new_york_draw_date(raw_value: object) -> str | None:
     if not isinstance(raw_value, str) or not raw_value:
         return None
@@ -1242,6 +1355,8 @@ def _parse_draws(
         return parse_connecticut_winning_numbers(raw_html, game_slug)
     if jurisdiction_code == "de" and game_slug in _DELAWARE_SEARCH_WINNERS_GAMES:
         return parse_delaware_search_winners(raw_html, game_slug)
+    if jurisdiction_code == "ga" and game_slug in _GEORGIA_DRAW_GAMES:
+        return parse_georgia_draw_games_json(raw_html, game_slug)
     return parse_past_drawings(raw_html)
 
 
@@ -1400,6 +1515,28 @@ def _delaware_search_winners_source(
     )
     raw_html, resolved_url = _read_source(source_url, None, source_name)
     return raw_html, resolved_url
+
+
+def _georgia_draw_games_source(
+    game: GameMetadata,
+    source_dir: Path | None,
+) -> tuple[str, str]:
+    source_name = f"{game.slug}-ga-backfill"
+    if source_dir is not None:
+        source_file = source_dir / f"{source_name}.json"
+        return source_file.read_text(encoding="utf-8"), source_file.as_uri()
+
+    game_name, _, _ = _GEORGIA_DRAW_GAMES[game.slug]
+    query = urlencode(
+        {
+            "game-names": game_name,
+            "previous-draws": "180",
+            "page": "0",
+            "size": "180",
+        }
+    )
+    source_url = f"https://www.galottery.com/api/v2/draw-games/draws/page?{query}"
+    return _read_source(source_url, None, source_name, suffix=".json")
 
 
 def _extract_pdf_text(raw_pdf: bytes) -> str:
