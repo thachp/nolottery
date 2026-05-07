@@ -1,0 +1,25 @@
+# Oregon active and recently retired draw-game catalog entries.
+
+[[games]]
+slug = 'oregon-megabucks'
+name = "Oregon's Game Megabucks"
+source_url = 'https://www.oregonlottery.org/jackpot/megabucks/'
+reviewed_on = '2026-05-07'
+
+[[games]]
+slug = 'oregon-keno'
+name = 'Keno'
+source_url = 'https://www.oregonlottery.org/jackpot/keno/'
+reviewed_on = '2026-05-07'
+
+[[games]]
+slug = 'oregon-cash-pop'
+name = 'Cash Pop'
+source_url = 'https://www.oregonlottery.org/jackpot/cash-pop/'
+reviewed_on = '2026-05-07'
+
+[[games]]
+slug = 'oregon-lucky-lines'
+name = 'Lucky Lines'
+source_url = 'https://www.oregonlottery.org/jackpot/lucky-lines/'
+reviewed_on = '2026-05-07'

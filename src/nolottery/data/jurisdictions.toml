@@ -1763,8 +1763,39 @@ blocking_reason = 'Retired after February 2026; historical adapter pending'
 [[jurisdictions]]
 code = 'or'
 name = 'Oregon'
-support_statuses = ['catalog_pending']
-blocking_reason = 'Lottery jurisdiction offering catalog pending'
+blocking_reason = 'Oregon draw-game rules and adapters pending'
+
+[[jurisdictions.offerings]]
+game_slug = 'powerball'
+source_url = 'https://www.oregonlottery.org/jackpot/powerball/'
+support_statuses = ['cataloged']
+blocking_reason = 'Rules and fetch adapter pending'
+
+[[jurisdictions.offerings]]
+game_slug = 'mega-millions'
+source_url = 'https://www.oregonlottery.org/jackpot/mega-millions/'
+support_statuses = ['cataloged']
+blocking_reason = 'Rules and fetch adapter pending'
+
+[[jurisdictions.offerings]]
+game_slug = 'oregon-megabucks'
+support_statuses = ['cataloged']
+blocking_reason = 'Rules and fetch adapter pending'
+
+[[jurisdictions.offerings]]
+game_slug = 'oregon-keno'
+support_statuses = ['cataloged']
+blocking_reason = 'Rules and fetch adapter pending'
+
+[[jurisdictions.offerings]]
+game_slug = 'oregon-cash-pop'
+support_statuses = ['cataloged']
+blocking_reason = 'Rules and fetch adapter pending'
+
+[[jurisdictions.offerings]]
+game_slug = 'oregon-lucky-lines'
+support_statuses = ['cataloged']
+blocking_reason = 'Retired after January 2025; historical adapter pending'
 
 [[jurisdictions]]
 code = 'pa'
