@@ -184,6 +184,7 @@ def test_coverage_reports_florida_and_new_york_ev_supported_games(tmp_path):
     [
         ("al", "Alabama"),
         ("hi", "Hawaii"),
+        ("nv", "Nevada"),
     ],
 )
 def test_coverage_reports_state_without_lottery_as_supported_jurisdiction(

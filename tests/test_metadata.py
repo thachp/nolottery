@@ -121,6 +121,9 @@ def test_remaining_state_catalog_marks_jurisdiction_level_blockers():
     assert jurisdictions["hi"]["support_statuses"] == ("no_state_lottery",)
     assert jurisdictions["hi"]["blocking_reason"] == "No state lottery established"
     assert jurisdictions["hi"]["offerings"] == ()
+    assert jurisdictions["nv"]["support_statuses"] == ("no_state_lottery",)
+    assert jurisdictions["nv"]["blocking_reason"] == "No state lottery established"
+    assert jurisdictions["nv"]["offerings"] == ()
 
     assert jurisdictions["nh"]["support_statuses"] == ("catalog_pending",)
     assert jurisdictions["nh"]["blocking_reason"] == (
