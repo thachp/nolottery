@@ -1245,7 +1245,7 @@ def test_coverage_reports_iowa_catalog_and_supported_national_games(tmp_path):
     )
 
 
-def test_coverage_reports_kansas_catalog_with_result_source_blockers(tmp_path):
+def test_coverage_reports_kansas_catalog_and_supported_national_games(tmp_path):
     result = runner.invoke(
         app,
         [
@@ -1275,9 +1275,25 @@ def test_coverage_reports_kansas_catalog_with_result_source_blockers(tmp_path):
         "millionaire-for-life",
         "powerball",
     }
-    assert games["powerball"]["support_statuses"] == ["cataloged"]
-    assert games["powerball"]["blocking_reason"] == (
-        "Official public result history source pending"
+    assert games["powerball"]["support_statuses"] == [
+        "cataloged",
+        "rules_verified",
+        "ev_supported",
+        "fetch_supported",
+        "audit_supported",
+        "low_share_supported",
+    ]
+    assert games["powerball"]["results_adapter"] == "official_national_results_page"
+    assert games["mega-millions"]["support_statuses"] == [
+        "cataloged",
+        "rules_verified",
+        "ev_supported",
+        "fetch_supported",
+        "audit_supported",
+        "low_share_supported",
+    ]
+    assert games["mega-millions"]["results_adapter"] == (
+        "official_national_results_page"
     )
     assert games["kansas-super-kansas-cash"]["support_statuses"] == ["cataloged"]
 

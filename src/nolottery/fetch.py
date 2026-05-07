@@ -140,6 +140,14 @@ _NEBRASKA_DRAW_RESULTS_GAMES = {
     "mega-millions": ("Mega Millions", "Mega Ball"),
     "powerball": ("Powerball", "Powerball"),
 }
+_OFFICIAL_NATIONAL_RESULTS_GAMES = {
+    "mega-millions": "Mega Ball",
+    "powerball": "Powerball",
+}
+_NATIONAL_DRAW_DATE_RE = re.compile(
+    r"^(Sun|Mon|Tue|Wed|Thu|Fri|Sat),\s+"
+    r"([A-Z][a-z]+)\s+(\d{1,2}),\s+(\d{4})"
+)
 _MICHIGAN_DRAW_HISTORY_QUERY = """
 query Game($gameCode: String!, $startDateString: String!, $endDateString: String!) {
   gameByCode(code: $gameCode) {
@@ -692,6 +700,19 @@ def fetch_game_backfill(
     source_dir: Path | None = None,
     jurisdiction_code: str = DEFAULT_JURISDICTION_CODE,
 ) -> FetchResult:
+    if jurisdiction_code == "ks" and game.slug in _OFFICIAL_NATIONAL_RESULTS_GAMES:
+        raw_html, source_url = _read_source(game.source_url, source_dir, game.slug)
+        draws = parse_official_national_results_page(raw_html, game.slug)
+        _insert_snapshot(conn, jurisdiction_code, game.slug, source_url, raw_html, draws)
+        _replace_draw_results(conn, jurisdiction_code, game.slug, draws)
+        conn.commit()
+        return FetchResult(
+            game_name=game.name,
+            source_url=source_url,
+            draw_count=len(draws),
+            prize_row_count=sum(len(draw.prizes) for draw in draws),
+            page_count=1,
+        )
     if jurisdiction_code == "fl" and game.slug in _FLORIDA_PICK_GAMES:
         raw_html, source_url, draws = _florida_pick_history_draws(
             game.slug,
@@ -1258,6 +1279,45 @@ def parse_past_drawings(raw_html: str) -> tuple[ParsedDraw, ...]:
         draw = _parse_large_table(table)
         if draw is not None:
             draws.append(draw)
+    return tuple(draws)
+
+
+def parse_official_national_results_page(
+    raw_html: str,
+    game_slug: str,
+) -> tuple[ParsedDraw, ...]:
+    special_number_name = _OFFICIAL_NATIONAL_RESULTS_GAMES[game_slug]
+    soup = BeautifulSoup(raw_html, "html.parser")
+    lines = _page_lines(soup)
+    draws: list[ParsedDraw] = []
+    index = 0
+    while index < len(lines):
+        match = _NATIONAL_DRAW_DATE_RE.match(lines[index])
+        if match is None:
+            index += 1
+            continue
+
+        numbers = _national_result_numbers(lines[index][match.end() :])
+        cursor = index + 1
+        while cursor < len(lines) and len(numbers) < 6:
+            if _NATIONAL_DRAW_DATE_RE.match(lines[cursor]) is not None:
+                break
+            numbers.extend(_national_result_numbers(lines[cursor]))
+            cursor += 1
+        if len(numbers) >= 6:
+            draws.append(
+                ParsedDraw(
+                    draw_date=_national_draw_date(match),
+                    winning_number=", ".join(
+                        (
+                            *numbers[:5],
+                            f"{numbers[5]} {special_number_name}",
+                        )
+                    ),
+                    prizes=(),
+                )
+            )
+        index = max(cursor, index + 1)
     return tuple(draws)
 
 
@@ -2534,6 +2594,20 @@ def _page_lines(soup: BeautifulSoup) -> list[str]:
     ]
 
 
+def _national_result_numbers(value: str) -> list[str]:
+    return re.findall(r"\b\d{1,2}\b", value)
+
+
+def _national_draw_date(match: re.Match[str]) -> str:
+    raw_date = f"{match.group(1)}, {match.group(2)} {match.group(3)}, {match.group(4)}"
+    for date_format in ("%a, %B %d, %Y", "%a, %b %d, %Y"):
+        try:
+            return datetime.strptime(raw_date, date_format).strftime(_DRAW_DATE_FORMAT)
+        except ValueError:
+            pass
+    raise ValueError(f"invalid draw date: {raw_date}")
+
+
 def _is_california_detail_boundary(line: str) -> bool:
     return line in {
         "Detailed Draw Results",
@@ -2765,6 +2839,8 @@ def _parse_draws(
     jurisdiction_code: str,
     game_slug: str,
 ) -> tuple[ParsedDraw, ...]:
+    if jurisdiction_code == "ks" and game_slug in _OFFICIAL_NATIONAL_RESULTS_GAMES:
+        return parse_official_national_results_page(raw_html, game_slug)
     if jurisdiction_code == "ca" and game_slug == "hot-spot":
         return parse_california_hot_spot(raw_html)
     if jurisdiction_code == "ca" and game_slug in _CALIFORNIA_GAME_SLUGS:
