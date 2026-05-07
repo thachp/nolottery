@@ -413,6 +413,10 @@ def recommend(
     conn = db.connect(ctx.obj["data_dir"])
     _validate_jurisdiction(conn, jurisdiction)
     games = _load_ev_games(conn, jurisdiction)
+    if not games:
+        raise typer.BadParameter(
+            _no_supported_games_message(conn, jurisdiction, "EV-supported")
+        )
     settings = AppSettings()
     generated_at = _generated_at()
     recommendations = recommend_highest_hit_rate(games, settings, budget)
@@ -1113,6 +1117,22 @@ def _load_low_share_games(
     jurisdiction_code: str = db.DEFAULT_JURISDICTION_CODE,
 ) -> tuple[GameMetadata, ...]:
     return _load_ev_games(conn, jurisdiction_code)
+
+
+def _no_supported_games_message(
+    conn,
+    jurisdiction_code: str,
+    support_label: str,
+) -> str:
+    jurisdiction_name = db.get_jurisdiction_name(conn, jurisdiction_code)
+    jurisdiction_metadata = db.DEFAULT_JURISDICTIONS[jurisdiction_code]
+    message = f"No {support_label} games"
+    if jurisdiction_name is not None:
+        message = f"{message} for {jurisdiction_name}"
+    blocking_reason = jurisdiction_metadata.get("blocking_reason")
+    if blocking_reason:
+        message = f"{message}: {blocking_reason}"
+    return message
 
 
 def _game_has_support_status(

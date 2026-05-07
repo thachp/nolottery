@@ -61,7 +61,7 @@ Washington draw games currently have EV, fetch, audit, and low-share support:
 
 California currently has EV, fetch, audit, and low-share support for its cataloged draw games. New York, Florida, and District of Columbia have representative catalog entries, with New York Numbers/Win 4 and Florida Pick 2/Pick 3/Pick 4/Pick 5 also supporting EV, fetch, and low-share. Texas Powerball and Mega Millions support EV, fetch, audit, low-share, and one-page historical backfill from Texas Lottery past winning-number pages.
 
-Every U.S. state code is recognized by coverage. States whose game catalogs have not been verified yet report `catalog_pending`; Alabama, Alaska, Hawaii, Nevada, and Utah report `no_state_lottery`.
+Every U.S. state code is recognized by coverage. States whose game catalogs have not been verified yet report `catalog_pending`. Alabama, Alaska, Hawaii, Nevada, and Utah report `no_state_lottery`; game capabilities such as EV, fetch, backfill, audit, and low-share are intentionally unavailable there until a state lottery exists.
 
 Run coverage to see current status and blocking reasons:
 

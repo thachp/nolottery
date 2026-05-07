@@ -381,6 +381,26 @@ def test_recommend_supports_florida_pick_2(tmp_path):
     assert len(payload["best"]["prediction"]) == 2
 
 
+def test_recommend_reports_alabama_has_no_state_lottery(tmp_path):
+    result = runner.invoke(
+        app,
+        [
+            "--data-dir",
+            str(tmp_path),
+            "recommend",
+            "-j",
+            "al",
+            "--output",
+            "json",
+        ],
+    )
+
+    assert result.exit_code != 0
+    assert "No EV-supported games for Alabama" in result.output
+    assert "No state lottery" in result.output
+    assert "established" in result.output
+
+
 def test_recommend_recognizes_cashpop_all_numbers_as_guaranteed(tmp_path):
     result = runner.invoke(
         app,
