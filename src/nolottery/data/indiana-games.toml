@@ -1,0 +1,37 @@
+# Indiana active draw-game catalog entries.
+
+[[games]]
+slug = 'indiana-hoosier-lotto'
+name = 'Hoosier Lotto'
+source_url = 'https://hoosierlottery.com/games/draw/hoosier-lotto'
+reviewed_on = '2026-05-07'
+
+[[games]]
+slug = 'indiana-cash-5'
+name = 'CA$H 5'
+source_url = 'https://hoosierlottery.com/games/draw/cash-5'
+reviewed_on = '2026-05-07'
+
+[[games]]
+slug = 'indiana-cash-pop'
+name = 'Cash POP'
+source_url = 'https://hoosierlottery.com/games/draw/cash-pop'
+reviewed_on = '2026-05-07'
+
+[[games]]
+slug = 'indiana-daily-3'
+name = 'Daily 3'
+source_url = 'https://hoosierlottery.com/games/draw/daily-3'
+reviewed_on = '2026-05-07'
+
+[[games]]
+slug = 'indiana-daily-4'
+name = 'Daily 4'
+source_url = 'https://hoosierlottery.com/games/draw/daily-4'
+reviewed_on = '2026-05-07'
+
+[[games]]
+slug = 'indiana-quick-draw'
+name = 'Quick Draw'
+source_url = 'https://hoosierlottery.com/games/draw/quick-draw'
+reviewed_on = '2026-05-07'

@@ -573,6 +573,60 @@ def _illinois_mega_millions_results_html() -> str:
     """
 
 
+def _indiana_powerball_draw_page_html() -> str:
+    return """
+    <html>
+      <body>
+        <section class="drawing-numbers">
+          <h2>Winning Numbers</h2>
+          <span class="font-weight-bold">Powerball</span>
+          <span class="sub-title">Wednesday, May 6th</span>
+          <div class="numbers-container">
+            <span class="winning-number">18</span>
+            <span class="winning-number">27</span>
+            <span class="winning-number">51</span>
+            <span class="winning-number">65</span>
+            <span class="winning-number">68</span>
+            <span class="winning-number bonus-number">05</span>
+          </div>
+          <span class="drawing-sub-title">Power Play: 3x</span>
+          <span class="font-weight-bold">Double Play</span>
+          <span class="sub-title">Wednesday, May 6th</span>
+          <div class="numbers-container">
+            <span class="winning-number">04</span>
+            <span class="winning-number">21</span>
+            <span class="winning-number">36</span>
+            <span class="winning-number">48</span>
+            <span class="winning-number">69</span>
+            <span class="winning-number bonus-number">05</span>
+          </div>
+        </section>
+      </body>
+    </html>
+    """
+
+
+def _indiana_mega_millions_draw_page_html() -> str:
+    return """
+    <html>
+      <body>
+        <section class="drawing-numbers">
+          <h2>Winning Numbers</h2>
+          <span class="sub-title">Tuesday, May 5th</span>
+          <div class="numbers-container">
+            <span class="winning-number">12</span>
+            <span class="winning-number">22</span>
+            <span class="winning-number">50</span>
+            <span class="winning-number">51</span>
+            <span class="winning-number">55</span>
+            <span class="winning-number bonus-number">10</span>
+          </div>
+        </section>
+      </body>
+    </html>
+    """
+
+
 def test_fetch_cashpop_persists_official_page_snapshot_and_draws(tmp_path):
     fixture = tmp_path / "cashpop.html"
     fixture.write_text(DRAWING_HTML, encoding="utf-8")
@@ -1955,6 +2009,114 @@ def test_fetch_illinois_mega_millions_backfill_reads_official_results_fixture(
     assert payload["games"][0]["draws"] == [
         {
             "jurisdiction_code": "il",
+            "draw_date": "Tue, May 05, 2026",
+            "winning_number": "12, 22, 50, 51, 55, 10 Mega Ball",
+        }
+    ]
+
+
+def test_fetch_indiana_powerball_backfill_reads_official_draw_page_fixture(tmp_path):
+    fixtures = tmp_path / "fixtures"
+    fixtures.mkdir()
+    (fixtures / "powerball-in-backfill.html").write_text(
+        _indiana_powerball_draw_page_html(),
+        encoding="utf-8",
+    )
+
+    result = runner.invoke(
+        app,
+        [
+            "--data-dir",
+            str(tmp_path / "data"),
+            "fetch",
+            "powerball",
+            "-j",
+            "in",
+            "--backfill",
+            "--source-dir",
+            str(fixtures),
+        ],
+    )
+
+    assert result.exit_code == 0, result.output
+    assert "Powerball" in result.output
+    assert "1 draw" in result.output
+    assert "1 page" in result.output
+
+    draws_result = runner.invoke(
+        app,
+        [
+            "--data-dir",
+            str(tmp_path / "data"),
+            "draws",
+            "powerball",
+            "-j",
+            "in",
+            "--output",
+            "json",
+        ],
+    )
+
+    assert draws_result.exit_code == 0, draws_result.output
+    payload = json.loads(draws_result.output)
+    assert payload["games"][0]["draws"] == [
+        {
+            "jurisdiction_code": "in",
+            "draw_date": "Wed, May 06, 2026",
+            "winning_number": "18, 27, 51, 65, 68, 05 Powerball",
+        }
+    ]
+
+
+def test_fetch_indiana_mega_millions_backfill_reads_official_draw_page_fixture(
+    tmp_path,
+):
+    fixtures = tmp_path / "fixtures"
+    fixtures.mkdir()
+    (fixtures / "mega-millions-in-backfill.html").write_text(
+        _indiana_mega_millions_draw_page_html(),
+        encoding="utf-8",
+    )
+
+    result = runner.invoke(
+        app,
+        [
+            "--data-dir",
+            str(tmp_path / "data"),
+            "fetch",
+            "mega-millions",
+            "-j",
+            "in",
+            "--backfill",
+            "--source-dir",
+            str(fixtures),
+        ],
+    )
+
+    assert result.exit_code == 0, result.output
+    assert "Mega Millions" in result.output
+    assert "1 draw" in result.output
+    assert "1 page" in result.output
+
+    draws_result = runner.invoke(
+        app,
+        [
+            "--data-dir",
+            str(tmp_path / "data"),
+            "draws",
+            "mega-millions",
+            "-j",
+            "in",
+            "--output",
+            "json",
+        ],
+    )
+
+    assert draws_result.exit_code == 0, draws_result.output
+    payload = json.loads(draws_result.output)
+    assert payload["games"][0]["draws"] == [
+        {
+            "jurisdiction_code": "in",
             "draw_date": "Tue, May 05, 2026",
             "winning_number": "12, 22, 50, 51, 55, 10 Mega Ball",
         }
