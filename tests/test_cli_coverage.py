@@ -222,7 +222,7 @@ def test_coverage_reports_pending_state_catalog_as_supported_jurisdiction(tmp_pa
             str(tmp_path),
             "coverage",
             "-j",
-            "nd",
+            "oh",
             "--output",
             "json",
         ],
@@ -230,8 +230,8 @@ def test_coverage_reports_pending_state_catalog_as_supported_jurisdiction(tmp_pa
 
     assert result.exit_code == 0, result.output
     payload = json.loads(result.output)
-    assert payload["jurisdiction_code"] == "nd"
-    assert payload["jurisdiction"] == "North Dakota"
+    assert payload["jurisdiction_code"] == "oh"
+    assert payload["jurisdiction"] == "Ohio"
     assert payload["jurisdiction_support_statuses"] == ["catalog_pending"]
     assert payload["blocking_reason"] == "Lottery jurisdiction offering catalog pending"
     assert payload["games"] == []
@@ -377,6 +377,44 @@ def test_coverage_reports_north_carolina_full_draw_game_catalog(tmp_path):
         game["blocking_reason"] == "Rules and fetch adapter pending"
         for game in games.values()
     )
+
+
+def test_coverage_reports_north_dakota_full_draw_game_catalog(tmp_path):
+    result = runner.invoke(
+        app,
+        [
+            "--data-dir",
+            str(tmp_path),
+            "coverage",
+            "-j",
+            "nd",
+            "--output",
+            "json",
+        ],
+    )
+
+    assert result.exit_code == 0, result.output
+    payload = json.loads(result.output)
+    assert payload["jurisdiction_code"] == "nd"
+    assert payload["jurisdiction"] == "North Dakota"
+    games = {game["game_slug"]: game for game in payload["games"]}
+    assert set(games) == {
+        "lotto-america",
+        "lucky-for-life",
+        "mega-millions",
+        "millionaire-for-life",
+        "north-dakota-2by2",
+        "powerball",
+    }
+    assert games["lucky-for-life"]["blocking_reason"] == (
+        "Retired after February 2026; historical adapter pending"
+    )
+    supported_blockers = {
+        game["blocking_reason"]
+        for slug, game in games.items()
+        if slug != "lucky-for-life"
+    }
+    assert supported_blockers == {"Rules and fetch adapter pending"}
 
 
 def test_coverage_reports_connecticut_catalog_and_supported_national_games(tmp_path):
