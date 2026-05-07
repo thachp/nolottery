@@ -1,0 +1,37 @@
+# Texas active draw-game catalog entries.
+
+[[games]]
+slug = 'texas-lotto'
+name = 'Lotto Texas'
+source_url = 'https://www.texaslottery.com/export/sites/lottery/Games/Lotto_Texas/index.html'
+reviewed_on = '2026-05-07'
+
+[[games]]
+slug = 'texas-two-step'
+name = 'Texas Two Step'
+source_url = 'https://www.texaslottery.com/export/sites/lottery/Games/Texas_Two_Step/index.html'
+reviewed_on = '2026-05-07'
+
+[[games]]
+slug = 'texas-cash-five'
+name = 'Cash Five'
+source_url = 'https://www.texaslottery.com/export/sites/lottery/Games/Cash_Five/index.html'
+reviewed_on = '2026-05-07'
+
+[[games]]
+slug = 'texas-all-or-nothing'
+name = 'All or Nothing'
+source_url = 'https://www.texaslottery.com/export/sites/lottery/Games/All_or_Nothing/index.html'
+reviewed_on = '2026-05-07'
+
+[[games]]
+slug = 'texas-pick-3'
+name = 'Pick 3'
+source_url = 'https://www.texaslottery.com/export/sites/lottery/Games/Pick_3/index.html'
+reviewed_on = '2026-05-07'
+
+[[games]]
+slug = 'texas-daily-4'
+name = 'Daily 4'
+source_url = 'https://www.texaslottery.com/export/sites/lottery/Games/Daily_4/index.html'
+reviewed_on = '2026-05-07'

@@ -2059,7 +2059,7 @@ blocking_reason = 'Retired after February 2026; historical adapter pending'
 [[jurisdictions]]
 code = 'tx'
 name = 'Texas'
-blocking_reason = 'Additional Texas draw-game offerings pending'
+blocking_reason = 'Texas local draw-game rules and adapters pending'
 
 [[jurisdictions.offerings]]
 game_slug = 'powerball'
@@ -2074,6 +2074,36 @@ source_url = 'https://www.texaslottery.com/export/sites/lottery/Games/Mega_Milli
 support_statuses = ['cataloged', 'rules_verified', 'ev_supported', 'fetch_supported', 'audit_supported', 'low_share_supported']
 results_adapter = 'tx_winning_numbers'
 blocking_reason = ''
+
+[[jurisdictions.offerings]]
+game_slug = 'texas-lotto'
+support_statuses = ['cataloged']
+blocking_reason = 'Rules and fetch adapter pending'
+
+[[jurisdictions.offerings]]
+game_slug = 'texas-two-step'
+support_statuses = ['cataloged']
+blocking_reason = 'Rules and fetch adapter pending'
+
+[[jurisdictions.offerings]]
+game_slug = 'texas-cash-five'
+support_statuses = ['cataloged']
+blocking_reason = 'Rules and fetch adapter pending'
+
+[[jurisdictions.offerings]]
+game_slug = 'texas-all-or-nothing'
+support_statuses = ['cataloged']
+blocking_reason = 'Rules and fetch adapter pending'
+
+[[jurisdictions.offerings]]
+game_slug = 'texas-pick-3'
+support_statuses = ['cataloged']
+blocking_reason = 'Rules and fetch adapter pending'
+
+[[jurisdictions.offerings]]
+game_slug = 'texas-daily-4'
+support_statuses = ['cataloged']
+blocking_reason = 'Rules and fetch adapter pending'
 
 [[jurisdictions]]
 code = 'ut'

@@ -1683,7 +1683,7 @@ def test_coverage_reports_arizona_catalog_and_backfill_supported_national_games(
     )
 
 
-def test_coverage_reports_texas_backfill_supported_national_games(tmp_path):
+def test_coverage_reports_texas_full_draw_game_catalog(tmp_path):
     result = runner.invoke(
         app,
         [
@@ -1702,9 +1702,18 @@ def test_coverage_reports_texas_backfill_supported_national_games(tmp_path):
     assert payload["jurisdiction_code"] == "tx"
     assert payload["jurisdiction"] == "Texas"
     games = {game["game_slug"]: game for game in payload["games"]}
-    assert set(games) == {"mega-millions", "powerball"}
+    assert set(games) == {
+        "mega-millions",
+        "powerball",
+        "texas-all-or-nothing",
+        "texas-cash-five",
+        "texas-daily-4",
+        "texas-lotto",
+        "texas-pick-3",
+        "texas-two-step",
+    }
     assert all(
-        game["support_statuses"]
+        games[game_slug]["support_statuses"]
         == [
             "cataloged",
             "rules_verified",
@@ -1713,9 +1722,17 @@ def test_coverage_reports_texas_backfill_supported_national_games(tmp_path):
             "audit_supported",
             "low_share_supported",
         ]
-        for game in games.values()
+        for game_slug in {"mega-millions", "powerball"}
     )
     assert all(
-        game["results_adapter"] == "tx_winning_numbers"
-        for game in games.values()
+        games[game_slug]["results_adapter"] == "tx_winning_numbers"
+        for game_slug in {"mega-millions", "powerball"}
+    )
+    assert all(
+        games[game_slug]["support_statuses"] == ["cataloged"]
+        for game_slug in set(games) - {"mega-millions", "powerball"}
+    )
+    assert all(
+        games[game_slug]["blocking_reason"] == "Rules and fetch adapter pending"
+        for game_slug in set(games) - {"mega-millions", "powerball"}
     )
