@@ -1,0 +1,19 @@
+# New Mexico active draw-game catalog entries.
+
+[[games]]
+slug = 'new-mexico-roadrunner-cash'
+name = 'Roadrunner Cash'
+source_url = 'https://www.nmlottery.com/games/roadrunner-cash/'
+reviewed_on = '2026-05-07'
+
+[[games]]
+slug = 'new-mexico-pick-3-plus'
+name = 'Pick 3 Plus'
+source_url = 'https://www.nmlottery.com/games/pick-3-plus/'
+reviewed_on = '2026-05-07'
+
+[[games]]
+slug = 'new-mexico-pick-4-plus'
+name = 'Pick 4 Plus'
+source_url = 'https://www.nmlottery.com/games/pick-4-plus/'
+reviewed_on = '2026-05-07'

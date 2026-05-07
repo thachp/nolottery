@@ -222,7 +222,7 @@ def test_coverage_reports_pending_state_catalog_as_supported_jurisdiction(tmp_pa
             str(tmp_path),
             "coverage",
             "-j",
-            "nm",
+            "nc",
             "--output",
             "json",
         ],
@@ -230,8 +230,8 @@ def test_coverage_reports_pending_state_catalog_as_supported_jurisdiction(tmp_pa
 
     assert result.exit_code == 0, result.output
     payload = json.loads(result.output)
-    assert payload["jurisdiction_code"] == "nm"
-    assert payload["jurisdiction"] == "New Mexico"
+    assert payload["jurisdiction_code"] == "nc"
+    assert payload["jurisdiction"] == "North Carolina"
     assert payload["jurisdiction_support_statuses"] == ["catalog_pending"]
     assert payload["blocking_reason"] == "Lottery jurisdiction offering catalog pending"
     assert payload["games"] == []
@@ -301,6 +301,40 @@ def test_coverage_reports_new_jersey_full_draw_game_catalog(tmp_path):
         "new-jersey-pick-4",
         "new-jersey-pick-6",
         "new-jersey-quick-draw",
+        "powerball",
+    }
+    assert all(game["support_statuses"] == ["cataloged"] for game in games.values())
+    assert all(
+        game["blocking_reason"] == "Rules and fetch adapter pending"
+        for game in games.values()
+    )
+
+
+def test_coverage_reports_new_mexico_full_draw_game_catalog(tmp_path):
+    result = runner.invoke(
+        app,
+        [
+            "--data-dir",
+            str(tmp_path),
+            "coverage",
+            "-j",
+            "nm",
+            "--output",
+            "json",
+        ],
+    )
+
+    assert result.exit_code == 0, result.output
+    payload = json.loads(result.output)
+    assert payload["jurisdiction_code"] == "nm"
+    assert payload["jurisdiction"] == "New Mexico"
+    games = {game["game_slug"]: game for game in payload["games"]}
+    assert set(games) == {
+        "lotto-america",
+        "mega-millions",
+        "new-mexico-pick-3-plus",
+        "new-mexico-pick-4-plus",
+        "new-mexico-roadrunner-cash",
         "powerball",
     }
     assert all(game["support_statuses"] == ["cataloged"] for game in games.values())
