@@ -1,0 +1,37 @@
+# Missouri active draw-game catalog entries.
+
+[[games]]
+slug = 'missouri-millions'
+name = 'MO Millions'
+source_url = 'https://www.molottery.com/mo-millions/mo-millions.jsp'
+reviewed_on = '2026-05-07'
+
+[[games]]
+slug = 'missouri-lotto'
+name = 'Lotto'
+source_url = 'https://www.molottery.com/lotto/lotto.jsp'
+reviewed_on = '2026-05-07'
+
+[[games]]
+slug = 'missouri-show-me-cash'
+name = 'Show Me Cash'
+source_url = 'https://www.molottery.com/show-me-cash/show-me-cash.jsp'
+reviewed_on = '2026-05-07'
+
+[[games]]
+slug = 'missouri-pick-4'
+name = 'Pick 4'
+source_url = 'https://www.molottery.com/pick4/pick4.jsp'
+reviewed_on = '2026-05-07'
+
+[[games]]
+slug = 'missouri-pick-3'
+name = 'Pick 3'
+source_url = 'https://www.molottery.com/pick3/pick3.jsp'
+reviewed_on = '2026-05-07'
+
+[[games]]
+slug = 'missouri-cash-pop'
+name = 'Cash Pop'
+source_url = 'https://www.molottery.com/cash-pop/cash-pop.jsp'
+reviewed_on = '2026-05-07'

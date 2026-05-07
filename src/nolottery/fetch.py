@@ -128,6 +128,10 @@ _MISSISSIPPI_HOME_PAGE_GAMES = {
     "mega-millions": ("mega-millions", "Mega Ball"),
     "powerball": ("powerball", "Powerball"),
 }
+_MISSOURI_WINNING_NUMBERS_GAMES = {
+    "mega-millions": ("num_yellow", "Mega Ball"),
+    "powerball": ("num_red", "Powerball"),
+}
 _MICHIGAN_DRAW_HISTORY_QUERY = """
 query Game($gameCode: String!, $startDateString: String!, $endDateString: String!) {
   gameByCode(code: $gameCode) {
@@ -272,6 +276,27 @@ def fetch_game(
             f"{game.slug}-ms-backfill",
         )
         draws = parse_mississippi_home_page(raw_html, game.slug)
+        _insert_snapshot(conn, jurisdiction_code, game.slug, source_url, raw_html, draws)
+        new_draws = _filter_newer_draws(conn, jurisdiction_code, game.slug, draws)
+        _insert_draw_results(conn, jurisdiction_code, game.slug, new_draws)
+        conn.commit()
+        return FetchResult(
+            game_name=game.name,
+            source_url=source_url,
+            draw_count=len(new_draws),
+            prize_row_count=sum(len(draw.prizes) for draw in new_draws),
+        )
+    if (
+        source_file is None
+        and jurisdiction_code == "mo"
+        and game.slug in _MISSOURI_WINNING_NUMBERS_GAMES
+    ):
+        raw_html, source_url = _read_source(
+            game.source_url,
+            None,
+            f"{game.slug}-mo-backfill",
+        )
+        draws = parse_missouri_winning_numbers_page(raw_html, game.slug)
         _insert_snapshot(conn, jurisdiction_code, game.slug, source_url, raw_html, draws)
         new_draws = _filter_newer_draws(conn, jurisdiction_code, game.slug, draws)
         _insert_draw_results(conn, jurisdiction_code, game.slug, new_draws)
@@ -951,6 +976,23 @@ def fetch_game_backfill(
             f"{game.slug}-ms-backfill",
         )
         draws = parse_mississippi_home_page(raw_html, game.slug)
+        _insert_snapshot(conn, jurisdiction_code, game.slug, source_url, raw_html, draws)
+        _replace_draw_results(conn, jurisdiction_code, game.slug, draws)
+        conn.commit()
+        return FetchResult(
+            game_name=game.name,
+            source_url=source_url,
+            draw_count=len(draws),
+            prize_row_count=sum(len(draw.prizes) for draw in draws),
+            page_count=1,
+        )
+    if jurisdiction_code == "mo" and game.slug in _MISSOURI_WINNING_NUMBERS_GAMES:
+        raw_html, source_url = _read_source(
+            game.source_url,
+            source_dir,
+            f"{game.slug}-mo-backfill",
+        )
+        draws = parse_missouri_winning_numbers_page(raw_html, game.slug)
         _insert_snapshot(conn, jurisdiction_code, game.slug, source_url, raw_html, draws)
         _replace_draw_results(conn, jurisdiction_code, game.slug, draws)
         conn.commit()
@@ -2232,6 +2274,50 @@ def _mississippi_draw_date(raw_value: str) -> str | None:
         return None
 
 
+def parse_missouri_winning_numbers_page(
+    raw_html: str,
+    game_slug: str,
+) -> tuple[ParsedDraw, ...]:
+    special_class, special_number_name = _MISSOURI_WINNING_NUMBERS_GAMES[game_slug]
+    soup = BeautifulSoup(raw_html, "html.parser")
+    draws: list[ParsedDraw] = []
+    for row in soup.select("table.table_game tbody tr"):
+        cells = row.find_all("td")
+        if len(cells) < 2:
+            continue
+        draw_date = _missouri_draw_date(cells[0].get_text(" ", strip=True))
+        number_nodes = cells[1].select(".num_small")
+        if len(number_nodes) < 6:
+            continue
+        special_node = number_nodes[5]
+        if special_class not in special_node.get("class", ()):
+            continue
+        numbers = [
+            item.get_text(" ", strip=True)
+            for item in number_nodes[:6]
+            if re.fullmatch(r"\d{1,2}", item.get_text(" ", strip=True))
+        ]
+        if draw_date is None or len(numbers) != 6:
+            continue
+        draws.append(
+            ParsedDraw(
+                draw_date=draw_date,
+                winning_number=", ".join(
+                    [*numbers[:5], f"{numbers[5]} {special_number_name}"]
+                ),
+                prizes=(),
+            )
+        )
+    return tuple(draws)
+
+
+def _missouri_draw_date(raw_value: str) -> str | None:
+    try:
+        return datetime.strptime(raw_value, "%Y-%m-%d").strftime(_DRAW_DATE_FORMAT)
+    except ValueError:
+        return None
+
+
 def _new_york_draw_date(raw_value: object) -> str | None:
     if not isinstance(raw_value, str) or not raw_value:
         return None
@@ -2519,6 +2605,8 @@ def _parse_draws(
         return parse_minnesota_winning_numbers_page(raw_html, game_slug)
     if jurisdiction_code == "ms" and game_slug in _MISSISSIPPI_HOME_PAGE_GAMES:
         return parse_mississippi_home_page(raw_html, game_slug)
+    if jurisdiction_code == "mo" and game_slug in _MISSOURI_WINNING_NUMBERS_GAMES:
+        return parse_missouri_winning_numbers_page(raw_html, game_slug)
     return parse_past_drawings(raw_html)
 
 
