@@ -1,6 +1,7 @@
 import json
 import sqlite3
 
+import pytest
 from typer.testing import CliRunner
 
 from nolottery.cli import app
@@ -1603,7 +1604,8 @@ def test_fetch_reports_cataloged_game_without_fetch_support(tmp_path):
     assert "fetch support pending for game: new-york-lotto" in result.output
 
 
-def test_fetch_all_kansas_uses_supported_national_games(tmp_path):
+@pytest.mark.parametrize("jurisdiction", ["dc", "ks"])
+def test_fetch_all_uses_supported_national_games(tmp_path, jurisdiction):
     fixtures = tmp_path / "fixtures"
     fixtures.mkdir()
     (fixtures / "powerball.html").write_text(
@@ -1623,7 +1625,7 @@ def test_fetch_all_kansas_uses_supported_national_games(tmp_path):
             "fetch",
             "all",
             "-j",
-            "ks",
+            jurisdiction,
             "--backfill",
             "--source-dir",
             str(fixtures),
@@ -1643,7 +1645,7 @@ def test_fetch_all_kansas_uses_supported_national_games(tmp_path):
             "draws",
             "powerball",
             "-j",
-            "ks",
+            jurisdiction,
             "--output",
             "json",
         ],
@@ -1653,12 +1655,12 @@ def test_fetch_all_kansas_uses_supported_national_games(tmp_path):
     payload = json.loads(draws_result.output)
     assert payload["games"][0]["draws"] == [
         {
-            "jurisdiction_code": "ks",
+            "jurisdiction_code": jurisdiction,
             "draw_date": "Wed, May 06, 2026",
             "winning_number": "18, 27, 51, 65, 68, 5 Powerball",
         },
         {
-            "jurisdiction_code": "ks",
+            "jurisdiction_code": jurisdiction,
             "draw_date": "Mon, May 04, 2026",
             "winning_number": "30, 36, 42, 60, 63, 13 Powerball",
         },

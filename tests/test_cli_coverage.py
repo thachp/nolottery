@@ -51,7 +51,7 @@ def test_coverage_reports_representative_catalog_jurisdictions(tmp_path):
             "florida-pick-4",
             "florida-pick-5",
         },
-        "dc": set(),
+        "dc": {"powerball", "mega-millions"},
     }
     expected = {
         "ny": (
@@ -132,6 +132,20 @@ def test_coverage_reports_representative_catalog_jurisdictions(tmp_path):
             for game in payload["games"]
             if game["game_slug"] not in ev_supported[jurisdiction]
         )
+        if jurisdiction == "dc":
+            for game_slug in ev_supported[jurisdiction]:
+                game = next(
+                    game for game in payload["games"] if game["game_slug"] == game_slug
+                )
+                assert game["support_statuses"] == [
+                    "cataloged",
+                    "rules_verified",
+                    "ev_supported",
+                    "fetch_supported",
+                    "audit_supported",
+                    "low_share_supported",
+                ]
+                assert game["results_adapter"] == "official_national_results_page"
 
 
 def test_coverage_reports_florida_and_new_york_ev_supported_games(tmp_path):

@@ -144,6 +144,7 @@ _OFFICIAL_NATIONAL_RESULTS_GAMES = {
     "mega-millions": "Mega Ball",
     "powerball": "Powerball",
 }
+_OFFICIAL_NATIONAL_RESULTS_JURISDICTIONS = {"dc", "ks"}
 _NATIONAL_DRAW_DATE_RE = re.compile(
     r"^(Sun|Mon|Tue|Wed|Thu|Fri|Sat),\s+"
     r"([A-Z][a-z]+)\s+(\d{1,2}),\s+(\d{4})"
@@ -700,7 +701,10 @@ def fetch_game_backfill(
     source_dir: Path | None = None,
     jurisdiction_code: str = DEFAULT_JURISDICTION_CODE,
 ) -> FetchResult:
-    if jurisdiction_code == "ks" and game.slug in _OFFICIAL_NATIONAL_RESULTS_GAMES:
+    if (
+        jurisdiction_code in _OFFICIAL_NATIONAL_RESULTS_JURISDICTIONS
+        and game.slug in _OFFICIAL_NATIONAL_RESULTS_GAMES
+    ):
         raw_html, source_url = _read_source(game.source_url, source_dir, game.slug)
         draws = parse_official_national_results_page(raw_html, game.slug)
         _insert_snapshot(conn, jurisdiction_code, game.slug, source_url, raw_html, draws)
@@ -2839,7 +2843,10 @@ def _parse_draws(
     jurisdiction_code: str,
     game_slug: str,
 ) -> tuple[ParsedDraw, ...]:
-    if jurisdiction_code == "ks" and game_slug in _OFFICIAL_NATIONAL_RESULTS_GAMES:
+    if (
+        jurisdiction_code in _OFFICIAL_NATIONAL_RESULTS_JURISDICTIONS
+        and game_slug in _OFFICIAL_NATIONAL_RESULTS_GAMES
+    ):
         return parse_official_national_results_page(raw_html, game_slug)
     if jurisdiction_code == "ca" and game_slug == "hot-spot":
         return parse_california_hot_spot(raw_html)
