@@ -1,0 +1,31 @@
+# Arkansas draw-game catalog entries.
+
+[[games]]
+slug = 'arkansas-lotto'
+name = 'LOTTO'
+source_url = 'https://www.myarkansaslottery.com/games/lotto'
+reviewed_on = '2026-05-07'
+
+[[games]]
+slug = 'arkansas-natural-state-jackpot'
+name = 'Natural State Jackpot'
+source_url = 'https://www.myarkansaslottery.com/games/natural-state-jackpot'
+reviewed_on = '2026-05-07'
+
+[[games]]
+slug = 'arkansas-cash-3'
+name = 'Cash 3'
+source_url = 'https://www.myarkansaslottery.com/games/cash-3'
+reviewed_on = '2026-05-07'
+
+[[games]]
+slug = 'arkansas-cash-4'
+name = 'Cash 4'
+source_url = 'https://www.myarkansaslottery.com/games/cash-4'
+reviewed_on = '2026-05-07'
+
+[[games]]
+slug = 'lucky-for-life'
+name = 'Lucky for Life'
+source_url = 'https://www.myarkansaslottery.com/games/lucky-for-life'
+reviewed_on = '2026-05-07'

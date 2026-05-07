@@ -194,6 +194,49 @@ def _arizona_mega_millions_past_180_text() -> str:
     """
 
 
+def _arkansas_powerball_history_html() -> str:
+    return """
+    <html>
+      <body>
+        <h1>Powerball Winning Numbers</h1>
+        <table>
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Ball #1</th>
+              <th>Ball #2</th>
+              <th>Ball #3</th>
+              <th>Ball #4</th>
+              <th>Ball #5</th>
+              <th>PB</th>
+              <th>Power Play</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>05/06/2026</td><td>18</td><td>27</td><td>51</td><td>65</td><td>68</td><td>5</td><td>3</td></tr>
+            <tr><td>05/04/2026</td><td>30</td><td>36</td><td>42</td><td>60</td><td>63</td><td>13</td><td>2</td></tr>
+          </tbody>
+        </table>
+      </body>
+    </html>
+    """
+
+
+def _arkansas_mega_millions_history_html() -> str:
+    return """
+    <html>
+      <body>
+        <h1>Mega Millions Winning Numbers</h1>
+        <table>
+          <tbody>
+            <tr><td>05/05/2026</td><td>12</td><td>22</td><td>50</td><td>51</td><td>55</td><td>10</td></tr>
+          </tbody>
+        </table>
+      </body>
+    </html>
+    """
+
+
 def test_fetch_cashpop_persists_official_page_snapshot_and_draws(tmp_path):
     fixture = tmp_path / "cashpop.html"
     fixture.write_text(DRAWING_HTML, encoding="utf-8")
@@ -825,6 +868,96 @@ def test_fetch_all_arizona_backfill_uses_supported_national_games(tmp_path):
             "all",
             "-j",
             "az",
+            "--backfill",
+            "--source-dir",
+            str(fixtures),
+        ],
+    )
+
+    assert result.exit_code == 0, result.output
+    assert "Powerball" in result.output
+    assert "Mega Millions" in result.output
+    assert "2 games fetched" in result.output
+
+
+def test_fetch_arkansas_powerball_backfill_reads_official_history_fixture(tmp_path):
+    fixtures = tmp_path / "fixtures"
+    fixtures.mkdir()
+    (fixtures / "powerball-ar-backfill.html").write_text(
+        _arkansas_powerball_history_html(),
+        encoding="utf-8",
+    )
+
+    result = runner.invoke(
+        app,
+        [
+            "--data-dir",
+            str(tmp_path / "data"),
+            "fetch",
+            "powerball",
+            "-j",
+            "ar",
+            "--backfill",
+            "--source-dir",
+            str(fixtures),
+        ],
+    )
+
+    assert result.exit_code == 0, result.output
+    assert "Powerball" in result.output
+    assert "2 draws" in result.output
+
+    draws_result = runner.invoke(
+        app,
+        [
+            "--data-dir",
+            str(tmp_path / "data"),
+            "draws",
+            "powerball",
+            "-j",
+            "ar",
+            "--output",
+            "json",
+        ],
+    )
+
+    assert draws_result.exit_code == 0, draws_result.output
+    payload = json.loads(draws_result.output)
+    assert payload["games"][0]["draws"] == [
+        {
+            "jurisdiction_code": "ar",
+            "draw_date": "Wed, May 06, 2026",
+            "winning_number": "18, 27, 51, 65, 68, 5 Powerball",
+        },
+        {
+            "jurisdiction_code": "ar",
+            "draw_date": "Mon, May 04, 2026",
+            "winning_number": "30, 36, 42, 60, 63, 13 Powerball",
+        },
+    ]
+
+
+def test_fetch_all_arkansas_backfill_uses_supported_national_games(tmp_path):
+    fixtures = tmp_path / "fixtures"
+    fixtures.mkdir()
+    (fixtures / "powerball-ar-backfill.html").write_text(
+        _arkansas_powerball_history_html(),
+        encoding="utf-8",
+    )
+    (fixtures / "mega-millions-ar-backfill.html").write_text(
+        _arkansas_mega_millions_history_html(),
+        encoding="utf-8",
+    )
+
+    result = runner.invoke(
+        app,
+        [
+            "--data-dir",
+            str(tmp_path / "data"),
+            "fetch",
+            "all",
+            "-j",
+            "ar",
             "--backfill",
             "--source-dir",
             str(fixtures),
