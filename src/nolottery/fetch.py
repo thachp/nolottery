@@ -96,6 +96,10 @@ _IOWA_WINNING_NUMBERS_GAMES = {
     "mega-millions": (1, "Mega Ball"),
     "powerball": (0, "Powerball"),
 }
+_KENTUCKY_WINNING_NUMBERS_GAMES = {
+    "mega-millions": ("26", "MEGABALL", "Mega Ball"),
+    "powerball": ("12", "POWERBALL", "Powerball"),
+}
 
 
 @dataclass(frozen=True)
@@ -127,6 +131,26 @@ def fetch_game(
     source_file: Path | None = None,
     jurisdiction_code: str = DEFAULT_JURISDICTION_CODE,
 ) -> FetchResult:
+    if (
+        source_file is None
+        and jurisdiction_code == "ky"
+        and game.slug in _KENTUCKY_WINNING_NUMBERS_GAMES
+    ):
+        raw_json, source_url = _kentucky_winning_numbers_source(
+            game,
+            source_dir=None,
+        )
+        draws = parse_kentucky_winning_numbers_json(raw_json, game.slug)
+        _insert_snapshot(conn, jurisdiction_code, game.slug, source_url, raw_json, draws)
+        new_draws = _filter_newer_draws(conn, jurisdiction_code, game.slug, draws)
+        _insert_draw_results(conn, jurisdiction_code, game.slug, new_draws)
+        conn.commit()
+        return FetchResult(
+            game_name=game.name,
+            source_url=source_url,
+            draw_count=len(new_draws),
+            prize_row_count=sum(len(draw.prizes) for draw in new_draws),
+        )
     if (
         source_file is None
         and jurisdiction_code == "ia"
@@ -602,6 +626,22 @@ def fetch_game_backfill(
         )
         draws = parse_iowa_winning_numbers_page(raw_html, game.slug)
         _insert_snapshot(conn, jurisdiction_code, game.slug, source_url, raw_html, draws)
+        _replace_draw_results(conn, jurisdiction_code, game.slug, draws)
+        conn.commit()
+        return FetchResult(
+            game_name=game.name,
+            source_url=source_url,
+            draw_count=len(draws),
+            prize_row_count=sum(len(draw.prizes) for draw in draws),
+            page_count=1,
+        )
+    if jurisdiction_code == "ky" and game.slug in _KENTUCKY_WINNING_NUMBERS_GAMES:
+        raw_json, source_url = _kentucky_winning_numbers_source(
+            game,
+            source_dir=source_dir,
+        )
+        draws = parse_kentucky_winning_numbers_json(raw_json, game.slug)
+        _insert_snapshot(conn, jurisdiction_code, game.slug, source_url, raw_json, draws)
         _replace_draw_results(conn, jurisdiction_code, game.slug, draws)
         conn.commit()
         return FetchResult(
@@ -1457,6 +1497,69 @@ def _iowa_draw_date(raw_month: str, raw_day: str) -> str | None:
         return None
 
 
+def parse_kentucky_winning_numbers_json(
+    raw_json: str,
+    game_slug: str,
+) -> tuple[ParsedDraw, ...]:
+    _, special_key, special_number_name = _KENTUCKY_WINNING_NUMBERS_GAMES[game_slug]
+    payload = json.loads(raw_json)
+    draws: list[ParsedDraw] = []
+    for item in payload.get("DRAW_HISTORY") or ():
+        draw_date = _kentucky_draw_date(item.get("DRAW_DATE"))
+        primary_numbers = _kentucky_primary_numbers(item.get("DRAW_VALUES"))
+        special_number = _kentucky_special_number(item, special_key)
+        if draw_date is None or primary_numbers is None or special_number is None:
+            continue
+        draws.append(
+            ParsedDraw(
+                draw_date=draw_date,
+                winning_number=", ".join(
+                    [*primary_numbers, f"{special_number} {special_number_name}"]
+                ),
+                prizes=(),
+            )
+        )
+    return tuple(draws)
+
+
+def _kentucky_primary_numbers(raw_values: object) -> tuple[str, ...] | None:
+    if not isinstance(raw_values, list):
+        return None
+    sorted_values = sorted(
+        (
+            value
+            for value in raw_values
+            if isinstance(value, dict)
+            and _int_value(value.get("DRAW_NUMBER_POSITION")) is not None
+            and _int_value(value.get("DRAW_VALUE")) is not None
+        ),
+        key=lambda value: int(value["DRAW_NUMBER_POSITION"]),
+    )
+    numbers = tuple(str(int(value["DRAW_VALUE"])) for value in sorted_values[:5])
+    if len(numbers) != 5:
+        return None
+    return numbers
+
+
+def _kentucky_special_number(item: dict[str, object], special_key: str) -> str | None:
+    special_args = item.get("SPECIAL_ARGS")
+    if not isinstance(special_args, dict):
+        return None
+    special_number = _int_value(special_args.get(special_key))
+    if special_number is None:
+        return None
+    return str(special_number)
+
+
+def _kentucky_draw_date(raw_value: object) -> str | None:
+    milliseconds = _int_value(raw_value)
+    if milliseconds is None:
+        return None
+    return datetime.fromtimestamp(milliseconds / 1000, tz=UTC).strftime(
+        _DRAW_DATE_FORMAT
+    )
+
+
 def _new_york_draw_date(raw_value: object) -> str | None:
     if not isinstance(raw_value, str) or not raw_value:
         return None
@@ -1728,6 +1831,8 @@ def _parse_draws(
         return parse_indiana_draw_page(raw_html, game_slug)
     if jurisdiction_code == "ia" and game_slug in _IOWA_WINNING_NUMBERS_GAMES:
         return parse_iowa_winning_numbers_page(raw_html, game_slug)
+    if jurisdiction_code == "ky" and game_slug in _KENTUCKY_WINNING_NUMBERS_GAMES:
+        return parse_kentucky_winning_numbers_json(raw_html, game_slug)
     return parse_past_drawings(raw_html)
 
 
@@ -1908,6 +2013,29 @@ def _georgia_draw_games_source(
     )
     source_url = f"https://www.galottery.com/api/v2/draw-games/draws/page?{query}"
     return _read_source(source_url, None, source_name, suffix=".json")
+
+
+def _kentucky_winning_numbers_source(
+    game: GameMetadata,
+    source_dir: Path | None,
+) -> tuple[str, str]:
+    source_name = f"{game.slug}-ky-backfill"
+    if source_dir is not None:
+        source_file = source_dir / f"{source_name}.json"
+        return source_file.read_text(encoding="utf-8"), source_file.as_uri()
+
+    game_number, _, _ = _KENTUCKY_WINNING_NUMBERS_GAMES[game.slug]
+    source_url = "https://www.kylottery.com/webhandlers/WinningNumbers.xhtml"
+    payload = json.dumps({"gameNumber": game_number, "infoRequest": "11"})
+    response = httpx.post(
+        source_url,
+        content=payload,
+        headers={"Content-Type": "application/json", "User-Agent": "Mozilla/5.0"},
+        follow_redirects=True,
+        timeout=30,
+    )
+    response.raise_for_status()
+    return response.text, str(response.url)
 
 
 def _extract_pdf_text(raw_pdf: bytes) -> str:

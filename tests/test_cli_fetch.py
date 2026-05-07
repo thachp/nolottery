@@ -643,6 +643,59 @@ def _iowa_winning_numbers_html() -> str:
     """
 
 
+def _kentucky_powerball_history_json() -> str:
+    return json.dumps(
+        {
+            "GAME_NUMBER": [12],
+            "DRAW_HISTORY": [
+                {
+                    "DRAW_DATE": 1778068800000,
+                    "DRAW_VALUES": [
+                        {"DRAW_NUMBER_POSITION": 1, "DRAW_VALUE": 18},
+                        {"DRAW_NUMBER_POSITION": 2, "DRAW_VALUE": 27},
+                        {"DRAW_NUMBER_POSITION": 3, "DRAW_VALUE": 51},
+                        {"DRAW_NUMBER_POSITION": 4, "DRAW_VALUE": 65},
+                        {"DRAW_NUMBER_POSITION": 5, "DRAW_VALUE": 68},
+                    ],
+                    "SPECIAL_ARGS": {"POWERBALL": 5, "POWERPLAY": 3},
+                },
+                {
+                    "DRAW_DATE": 1777896000000,
+                    "DRAW_VALUES": [
+                        {"DRAW_NUMBER_POSITION": 1, "DRAW_VALUE": 30},
+                        {"DRAW_NUMBER_POSITION": 2, "DRAW_VALUE": 36},
+                        {"DRAW_NUMBER_POSITION": 3, "DRAW_VALUE": 42},
+                        {"DRAW_NUMBER_POSITION": 4, "DRAW_VALUE": 60},
+                        {"DRAW_NUMBER_POSITION": 5, "DRAW_VALUE": 63},
+                    ],
+                    "SPECIAL_ARGS": {"POWERBALL": 13, "POWERPLAY": 2},
+                },
+            ],
+        }
+    )
+
+
+def _kentucky_mega_millions_history_json() -> str:
+    return json.dumps(
+        {
+            "GAME_NUMBER": [26],
+            "DRAW_HISTORY": [
+                {
+                    "DRAW_DATE": 1777982400000,
+                    "DRAW_VALUES": [
+                        {"DRAW_NUMBER_POSITION": 1, "DRAW_VALUE": 12},
+                        {"DRAW_NUMBER_POSITION": 2, "DRAW_VALUE": 22},
+                        {"DRAW_NUMBER_POSITION": 3, "DRAW_VALUE": 50},
+                        {"DRAW_NUMBER_POSITION": 4, "DRAW_VALUE": 51},
+                        {"DRAW_NUMBER_POSITION": 5, "DRAW_VALUE": 55},
+                    ],
+                    "SPECIAL_ARGS": {"MEGABALL": 10, "MULTIPLIER": 0},
+                }
+            ],
+        }
+    )
+
+
 def test_fetch_cashpop_persists_official_page_snapshot_and_draws(tmp_path):
     fixture = tmp_path / "cashpop.html"
     fixture.write_text(DRAWING_HTML, encoding="utf-8")
@@ -2261,6 +2314,119 @@ def test_fetch_iowa_mega_millions_backfill_reads_official_winning_numbers_fixtur
     assert payload["games"][0]["draws"] == [
         {
             "jurisdiction_code": "ia",
+            "draw_date": "Tue, May 05, 2026",
+            "winning_number": "12, 22, 50, 51, 55, 10 Mega Ball",
+        }
+    ]
+
+
+def test_fetch_kentucky_powerball_backfill_reads_official_json_fixture(tmp_path):
+    fixtures = tmp_path / "fixtures"
+    fixtures.mkdir()
+    (fixtures / "powerball-ky-backfill.json").write_text(
+        _kentucky_powerball_history_json(),
+        encoding="utf-8",
+    )
+
+    result = runner.invoke(
+        app,
+        [
+            "--data-dir",
+            str(tmp_path / "data"),
+            "fetch",
+            "powerball",
+            "-j",
+            "ky",
+            "--backfill",
+            "--source-dir",
+            str(fixtures),
+        ],
+    )
+
+    assert result.exit_code == 0, result.output
+    assert "Powerball" in result.output
+    assert "2 draws" in result.output
+    assert "1 page" in result.output
+
+    draws_result = runner.invoke(
+        app,
+        [
+            "--data-dir",
+            str(tmp_path / "data"),
+            "draws",
+            "powerball",
+            "-j",
+            "ky",
+            "--output",
+            "json",
+        ],
+    )
+
+    assert draws_result.exit_code == 0, draws_result.output
+    payload = json.loads(draws_result.output)
+    assert payload["games"][0]["draws"] == [
+        {
+            "jurisdiction_code": "ky",
+            "draw_date": "Wed, May 06, 2026",
+            "winning_number": "18, 27, 51, 65, 68, 5 Powerball",
+        },
+        {
+            "jurisdiction_code": "ky",
+            "draw_date": "Mon, May 04, 2026",
+            "winning_number": "30, 36, 42, 60, 63, 13 Powerball",
+        },
+    ]
+
+
+def test_fetch_kentucky_mega_millions_backfill_reads_official_json_fixture(
+    tmp_path,
+):
+    fixtures = tmp_path / "fixtures"
+    fixtures.mkdir()
+    (fixtures / "mega-millions-ky-backfill.json").write_text(
+        _kentucky_mega_millions_history_json(),
+        encoding="utf-8",
+    )
+
+    result = runner.invoke(
+        app,
+        [
+            "--data-dir",
+            str(tmp_path / "data"),
+            "fetch",
+            "mega-millions",
+            "-j",
+            "ky",
+            "--backfill",
+            "--source-dir",
+            str(fixtures),
+        ],
+    )
+
+    assert result.exit_code == 0, result.output
+    assert "Mega Millions" in result.output
+    assert "1 draw" in result.output
+    assert "1 page" in result.output
+
+    draws_result = runner.invoke(
+        app,
+        [
+            "--data-dir",
+            str(tmp_path / "data"),
+            "draws",
+            "mega-millions",
+            "-j",
+            "ky",
+            "--output",
+            "json",
+        ],
+    )
+
+    assert draws_result.exit_code == 0, draws_result.output
+    payload = json.loads(draws_result.output)
+    assert payload["games"][0]["draws"] == [
+        {
+            "jurisdiction_code": "ky",
             "draw_date": "Tue, May 05, 2026",
             "winning_number": "12, 22, 50, 51, 55, 10 Mega Ball",
         }

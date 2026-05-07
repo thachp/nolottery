@@ -1,0 +1,31 @@
+# Kentucky active draw-game catalog entries.
+
+[[games]]
+slug = 'kentucky-keno'
+name = 'Keno'
+source_url = 'https://www.kylottery.com/apps/draw_games/pastwinning.html'
+reviewed_on = '2026-05-07'
+
+[[games]]
+slug = 'kentucky-pick-3'
+name = 'Pick 3'
+source_url = 'https://www.kylottery.com/apps/draw_games/pastwinning.html'
+reviewed_on = '2026-05-07'
+
+[[games]]
+slug = 'kentucky-pick-4'
+name = 'Pick 4'
+source_url = 'https://www.kylottery.com/apps/draw_games/pastwinning.html'
+reviewed_on = '2026-05-07'
+
+[[games]]
+slug = 'kentucky-cash-ball'
+name = 'Cash Ball 225'
+source_url = 'https://www.kylottery.com/apps/draw_games/pastwinning.html'
+reviewed_on = '2026-05-07'
+
+[[games]]
+slug = 'kentucky-cash-pop'
+name = 'CASH POP'
+source_url = 'https://www.kylottery.com/apps/draw_games/pastwinning.html'
+reviewed_on = '2026-05-07'
