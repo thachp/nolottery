@@ -1,4 +1,16 @@
-# New York representative draw-game catalog entries.
+# New York active draw-game catalog entries.
+
+[[games]]
+slug = 'new-york-lotto'
+name = 'LOTTO'
+source_url = 'https://nylottery.ny.gov/draw-game/?game=lotto'
+reviewed_on = '2026-05-07'
+
+[[games]]
+slug = 'millionaire-for-life'
+name = 'Millionaire For Life'
+source_url = 'https://nylottery.ny.gov/draw-game/?game=millionaireforlife'
+reviewed_on = '2026-05-07'
 
 [[games]]
 slug = 'numbers'
@@ -16,6 +28,12 @@ reviewed_on = '2026-05-07'
 slug = 'take-5'
 name = 'Take 5'
 source_url = 'https://nodeprod.nylottery.ny.gov/draw-game/?game=take5'
+reviewed_on = '2026-05-07'
+
+[[games]]
+slug = 'quick-draw'
+name = 'Quick Draw'
+source_url = 'https://nylottery.ny.gov/draw-game/?game=quickdraw'
 reviewed_on = '2026-05-07'
 
 [[games]]

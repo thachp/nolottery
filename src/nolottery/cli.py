@@ -572,6 +572,7 @@ def low_share(
 def audit_frequency(
     ctx: typer.Context,
     game: Annotated[str, typer.Argument(help="Game slug, such as cashpop.")],
+    jurisdiction: JurisdictionOption = db.DEFAULT_JURISDICTION_CODE,
     output: Annotated[
         str,
         typer.Option("--output", "-o", help="Output format: table or json."),
@@ -595,11 +596,17 @@ def audit_frequency(
     if evaluate not in {"none", "openai"}:
         raise typer.BadParameter("evaluate must be none or openai")
     conn = db.connect(ctx.obj["data_dir"])
+    _validate_jurisdiction(conn, jurisdiction)
     if game == "all":
         results = [
             result
-            for slug in db.list_game_slugs(conn)
-            for result in frequency_audit(conn, slug, last=last)
+            for slug in db.list_game_slugs(conn, jurisdiction)
+            for result in frequency_audit(
+                conn,
+                slug,
+                jurisdiction_code=jurisdiction,
+                last=last,
+            )
         ]
         evaluation = _evaluate_audits_if_requested(results, evaluate, openai_model)
         if output == "json":
@@ -613,9 +620,14 @@ def audit_frequency(
             print_openai_evaluation(console, evaluation)
         return
 
-    if db.get_game(conn, game) is None:
+    if db.get_game(conn, game, jurisdiction) is None:
         raise typer.BadParameter(f"unknown game: {game}")
-    results = frequency_audit(conn, game, last=last)
+    results = frequency_audit(
+        conn,
+        game,
+        jurisdiction_code=jurisdiction,
+        last=last,
+    )
     evaluation = _evaluate_audits_if_requested(results, evaluate, openai_model)
     if output == "json":
         payload: dict[str, object]
@@ -636,6 +648,7 @@ def audit_frequency(
 def audit_chi_square(
     ctx: typer.Context,
     game: Annotated[str, typer.Argument(help="Game slug, such as powerball.")],
+    jurisdiction: JurisdictionOption = db.DEFAULT_JURISDICTION_CODE,
     output: Annotated[
         str,
         typer.Option("--output", "-o", help="Output format: table or json."),
@@ -659,16 +672,27 @@ def audit_chi_square(
     if evaluate not in {"none", "openai"}:
         raise typer.BadParameter("evaluate must be none or openai")
     conn = db.connect(ctx.obj["data_dir"])
+    _validate_jurisdiction(conn, jurisdiction)
     if game == "all":
         results = [
             result
-            for slug in db.list_game_slugs(conn)
-            for result in chi_square_audit(conn, slug, last=last)
+            for slug in db.list_game_slugs(conn, jurisdiction)
+            for result in chi_square_audit(
+                conn,
+                slug,
+                jurisdiction_code=jurisdiction,
+                last=last,
+            )
         ]
     else:
-        if db.get_game(conn, game) is None:
+        if db.get_game(conn, game, jurisdiction) is None:
             raise typer.BadParameter(f"unknown game: {game}")
-        results = chi_square_audit(conn, game, last=last)
+        results = chi_square_audit(
+            conn,
+            game,
+            jurisdiction_code=jurisdiction,
+            last=last,
+        )
     evaluation = _evaluate_audits_if_requested(results, evaluate, openai_model)
     if output == "json":
         payload: dict[str, object] = {"audits": results}
@@ -688,6 +712,7 @@ def audit_all(
         str,
         typer.Argument(help="Game slug or 'all'."),
     ] = "all",
+    jurisdiction: JurisdictionOption = db.DEFAULT_JURISDICTION_CODE,
     output: Annotated[
         str,
         typer.Option("--output", "-o", help="Output format: table or json."),
@@ -715,16 +740,17 @@ def audit_all(
     if evaluate not in {"none", "openai"}:
         raise typer.BadParameter("evaluate must be none or openai")
     conn = db.connect(ctx.obj["data_dir"])
+    _validate_jurisdiction(conn, jurisdiction)
     if game == "all":
-        slugs = db.list_game_slugs(conn)
+        slugs = db.list_game_slugs(conn, jurisdiction)
     else:
-        if db.get_game(conn, game) is None:
+        if db.get_game(conn, game, jurisdiction) is None:
             raise typer.BadParameter(f"unknown game: {game}")
         slugs = (game,)
     games = []
     summary_results = []
     for slug in slugs:
-        audits = _all_audits_for_game(conn, slug, last)
+        audits = _all_audits_for_game(conn, slug, last, jurisdiction)
         summary_results.extend(audits)
         games.append(
             {
@@ -755,6 +781,7 @@ def audit_all(
 def audit_pairs(
     ctx: typer.Context,
     game: Annotated[str, typer.Argument(help="Game slug, such as hit-5.")],
+    jurisdiction: JurisdictionOption = db.DEFAULT_JURISDICTION_CODE,
     output: Annotated[
         str,
         typer.Option("--output", "-o", help="Output format: table or json."),
@@ -776,6 +803,7 @@ def audit_pairs(
     _run_combination_command(
         ctx,
         game,
+        jurisdiction,
         output,
         last,
         evaluate,
@@ -788,6 +816,7 @@ def audit_pairs(
 def audit_triples(
     ctx: typer.Context,
     game: Annotated[str, typer.Argument(help="Game slug, such as hit-5.")],
+    jurisdiction: JurisdictionOption = db.DEFAULT_JURISDICTION_CODE,
     output: Annotated[
         str,
         typer.Option("--output", "-o", help="Output format: table or json."),
@@ -809,6 +838,7 @@ def audit_triples(
     _run_combination_command(
         ctx,
         game,
+        jurisdiction,
         output,
         last,
         evaluate,
@@ -821,6 +851,7 @@ def audit_triples(
 def audit_gaps(
     ctx: typer.Context,
     game: Annotated[str, typer.Argument(help="Game slug, such as cashpop.")],
+    jurisdiction: JurisdictionOption = db.DEFAULT_JURISDICTION_CODE,
     output: Annotated[
         str,
         typer.Option("--output", "-o", help="Output format: table or json."),
@@ -844,16 +875,27 @@ def audit_gaps(
     if evaluate not in {"none", "openai"}:
         raise typer.BadParameter("evaluate must be none or openai")
     conn = db.connect(ctx.obj["data_dir"])
+    _validate_jurisdiction(conn, jurisdiction)
     if game == "all":
         results = [
             result
-            for slug in db.list_game_slugs(conn)
-            for result in gap_audit(conn, slug, last=last)
+            for slug in db.list_game_slugs(conn, jurisdiction)
+            for result in gap_audit(
+                conn,
+                slug,
+                jurisdiction_code=jurisdiction,
+                last=last,
+            )
         ]
     else:
-        if db.get_game(conn, game) is None:
+        if db.get_game(conn, game, jurisdiction) is None:
             raise typer.BadParameter(f"unknown game: {game}")
-        results = gap_audit(conn, game, last=last)
+        results = gap_audit(
+            conn,
+            game,
+            jurisdiction_code=jurisdiction,
+            last=last,
+        )
     evaluation = _evaluate_audits_if_requested(results, evaluate, openai_model)
     if output == "json":
         if len(results) == 1:
@@ -872,6 +914,7 @@ def audit_gaps(
 def _run_combination_command(
     ctx: typer.Context,
     game: str,
+    jurisdiction: str,
     output: str,
     last: int | None,
     evaluate: str,
@@ -884,16 +927,29 @@ def _run_combination_command(
     if evaluate not in {"none", "openai"}:
         raise typer.BadParameter("evaluate must be none or openai")
     conn = db.connect(ctx.obj["data_dir"])
+    _validate_jurisdiction(conn, jurisdiction)
     if game == "all":
         results = [
             result
-            for slug in db.list_game_slugs(conn)
-            for result in combination_audit(conn, slug, size=size, last=last)
+            for slug in db.list_game_slugs(conn, jurisdiction)
+            for result in combination_audit(
+                conn,
+                slug,
+                size=size,
+                jurisdiction_code=jurisdiction,
+                last=last,
+            )
         ]
     else:
-        if db.get_game(conn, game) is None:
+        if db.get_game(conn, game, jurisdiction) is None:
             raise typer.BadParameter(f"unknown game: {game}")
-        results = combination_audit(conn, game, size=size, last=last)
+        results = combination_audit(
+            conn,
+            game,
+            size=size,
+            jurisdiction_code=jurisdiction,
+            last=last,
+        )
     evaluation = _evaluate_audits_if_requested(results, evaluate, openai_model)
     if output == "json":
         if len(results) == 1:
@@ -913,13 +969,26 @@ def _all_audits_for_game(
     conn,
     slug: str,
     last: int | None,
+    jurisdiction_code: str,
 ) -> list[dict[str, object]]:
     return [
-        *frequency_audit(conn, slug, last=last),
-        *chi_square_audit(conn, slug, last=last),
-        *combination_audit(conn, slug, size=2, last=last),
-        *combination_audit(conn, slug, size=3, last=last),
-        *gap_audit(conn, slug, last=last),
+        *frequency_audit(conn, slug, jurisdiction_code=jurisdiction_code, last=last),
+        *chi_square_audit(conn, slug, jurisdiction_code=jurisdiction_code, last=last),
+        *combination_audit(
+            conn,
+            slug,
+            size=2,
+            jurisdiction_code=jurisdiction_code,
+            last=last,
+        ),
+        *combination_audit(
+            conn,
+            slug,
+            size=3,
+            jurisdiction_code=jurisdiction_code,
+            last=last,
+        ),
+        *gap_audit(conn, slug, jurisdiction_code=jurisdiction_code, last=last),
     ]
 
 

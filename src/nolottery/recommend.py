@@ -86,6 +86,13 @@ def format_number_label(
         return f"White: {_join_numbers(numbers[:5])}; Powerball: {numbers[5]}"
     if game_slug == "mega-millions" and len(numbers) == 6:
         return f"White: {_join_numbers(numbers[:5])}; Mega Ball: {numbers[5]}"
+    if game_slug == "superlotto-plus" and len(numbers) == 6:
+        return f"White: {_join_numbers(numbers[:5])}; Mega: {numbers[5]}"
+    if game_slug == "daily-derby" and len(numbers) == 4:
+        return (
+            f"First: {numbers[0]}; Second: {numbers[1]}; "
+            f"Third: {numbers[2]}; Race Time Index: {numbers[3]}"
+        )
     if game_slug == "lotto" and len(numbers) == 12:
         return (
             f"Play 1: {_join_numbers(numbers[:6])}; "
@@ -111,6 +118,19 @@ def suggest_numbers(game_slug: str, option_slug: str) -> tuple[int, ...]:
         return (1, 2, 3, 4, 5, 1)
     if game_slug == "mega-millions":
         return (1, 2, 3, 4, 5, 1)
+    if game_slug == "superlotto-plus":
+        return (1, 2, 3, 4, 5, 1)
+    if game_slug == "fantasy-5":
+        return (1, 2, 3, 4, 5)
+    if game_slug == "daily-4":
+        return (1, 2, 3, 4)
+    if game_slug == "daily-3":
+        return (1, 2, 3)
+    if game_slug == "daily-derby":
+        return (1, 2, 3, 67)
+    if game_slug == "hot-spot":
+        count = _selection_count(option_slug)
+        return tuple(range(1, min(count, 80) + 1))
     if game_slug == "lotto":
         return tuple(range(1, 13))
     if game_slug == "hit-5":

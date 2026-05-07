@@ -43,12 +43,50 @@ def test_coverage_reports_washington_game_support_statuses(tmp_path):
 
 def test_coverage_reports_representative_catalog_jurisdictions(tmp_path):
     expected = {
-        "ny": ("New York", {"numbers", "win-4", "take-5", "pick-10"}),
+        "ny": (
+            "New York",
+            {
+                "powerball",
+                "new-york-lotto",
+                "mega-millions",
+                "millionaire-for-life",
+                "numbers",
+                "win-4",
+                "take-5",
+                "quick-draw",
+                "pick-10",
+            },
+        ),
         "fl": (
             "Florida",
-            {"florida-fantasy-5", "florida-lotto", "florida-pick-5"},
+            {
+                "florida-cash-pop",
+                "florida-pick-2",
+                "florida-pick-3",
+                "florida-pick-4",
+                "florida-pick-5",
+                "florida-fantasy-5",
+                "cash4life",
+                "jackpot-triple-play",
+                "florida-lotto",
+                "mega-millions",
+                "powerball",
+            },
         ),
-        "dc": ("District of Columbia", {"dc-3", "dc-4", "dc-5"}),
+        "dc": (
+            "District of Columbia",
+            {
+                "dc-3",
+                "dc-4",
+                "dc-5",
+                "powerball",
+                "mega-millions",
+                "lotto-america",
+                "millionaire-for-life",
+                "dc-keno",
+                "race2riches",
+            },
+        ),
     }
 
     for jurisdiction, (name, game_slugs) in expected.items():

@@ -45,6 +45,25 @@ NUMBER_FORMATS: dict[str, NumberFormat] = {
             NumberPool("mega-ball", 1, 24, 1),
         ),
     ),
+    "superlotto-plus": NumberFormat(
+        game_slug="superlotto-plus",
+        pools=(
+            NumberPool("white", 1, 47, 5),
+            NumberPool("mega", 1, 27, 1),
+        ),
+    ),
+    "fantasy-5": NumberFormat(
+        game_slug="fantasy-5",
+        pools=(NumberPool("white", 1, 39, 5),),
+    ),
+    "daily-4": NumberFormat(
+        game_slug="daily-4",
+        pools=(NumberPool("digits", 0, 9, 4, ordered=True, allow_repeats=True),),
+    ),
+    "daily-3": NumberFormat(
+        game_slug="daily-3",
+        pools=(NumberPool("digits", 0, 9, 3, ordered=True, allow_repeats=True),),
+    ),
     "hit-5": NumberFormat(
         game_slug="hit-5",
         pools=(NumberPool("white", 1, 42, 5),),
@@ -70,6 +89,11 @@ def quick_pick(
         return tuple(sorted(source.sample(range(1, 16), count)))
     if game_slug == "daily-keno":
         return tuple(sorted(source.sample(range(1, 81), _selection_count(option_slug))))
+    if game_slug == "hot-spot":
+        return tuple(sorted(source.sample(range(1, 81), _selection_count(option_slug))))
+    if game_slug == "daily-derby":
+        horses = tuple(source.sample(range(1, 13), 3))
+        return (*horses, source.randrange(0, 1001))
     if game_slug == "lotto":
         play_one = sorted(source.sample(range(1, 50), 6))
         play_two = sorted(source.sample(range(1, 50), 6))

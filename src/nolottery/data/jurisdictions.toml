@@ -33,14 +33,78 @@ code = 'ca'
 name = 'California'
 
 [[jurisdictions.offerings]]
+game_slug = 'powerball'
+source_url = 'https://www.calottery.com/en/draw-games/powerball'
+support_statuses = ['cataloged', 'rules_verified', 'ev_supported', 'fetch_supported', 'audit_supported', 'low_share_supported']
+results_adapter = 'ca_draw_game_page'
+blocking_reason = ''
+
+[[jurisdictions.offerings]]
+game_slug = 'mega-millions'
+source_url = 'https://www.calottery.com/en/draw-games/mega-millions'
+support_statuses = ['cataloged', 'rules_verified', 'ev_supported', 'fetch_supported', 'audit_supported', 'low_share_supported']
+results_adapter = 'ca_draw_game_page'
+blocking_reason = ''
+
+[[jurisdictions.offerings]]
+game_slug = 'superlotto-plus'
+support_statuses = ['cataloged', 'rules_verified', 'ev_supported', 'fetch_supported', 'audit_supported', 'low_share_supported']
+results_adapter = 'ca_draw_game_page'
+blocking_reason = ''
+
+[[jurisdictions.offerings]]
+game_slug = 'fantasy-5'
+support_statuses = ['cataloged', 'rules_verified', 'ev_supported', 'fetch_supported', 'audit_supported', 'low_share_supported']
+results_adapter = 'ca_draw_game_page'
+blocking_reason = ''
+
+[[jurisdictions.offerings]]
+game_slug = 'daily-4'
+support_statuses = ['cataloged', 'rules_verified', 'ev_supported', 'fetch_supported', 'audit_supported', 'low_share_supported']
+results_adapter = 'ca_draw_game_page'
+blocking_reason = ''
+
+[[jurisdictions.offerings]]
 game_slug = 'daily-3'
-support_statuses = ['cataloged', 'rules_verified', 'fetch_supported']
+support_statuses = ['cataloged', 'rules_verified', 'ev_supported', 'fetch_supported', 'audit_supported', 'low_share_supported']
 results_adapter = 'ca_daily3_page'
-blocking_reason = 'EV pending variable pari-mutuel prize estimates'
+blocking_reason = ''
+
+[[jurisdictions.offerings]]
+game_slug = 'daily-derby'
+support_statuses = ['cataloged', 'rules_verified', 'ev_supported', 'fetch_supported', 'audit_supported', 'low_share_supported']
+results_adapter = 'ca_draw_game_page'
+blocking_reason = ''
+
+[[jurisdictions.offerings]]
+game_slug = 'hot-spot'
+support_statuses = ['cataloged', 'rules_verified', 'ev_supported', 'fetch_supported', 'audit_supported', 'low_share_supported']
+results_adapter = 'ca_hot_spot_page'
+blocking_reason = ''
 
 [[jurisdictions]]
 code = 'ny'
 name = 'New York'
+
+[[jurisdictions.offerings]]
+game_slug = 'powerball'
+support_statuses = ['cataloged']
+blocking_reason = 'Rules and fetch adapter pending'
+
+[[jurisdictions.offerings]]
+game_slug = 'new-york-lotto'
+support_statuses = ['cataloged']
+blocking_reason = 'Rules and fetch adapter pending'
+
+[[jurisdictions.offerings]]
+game_slug = 'mega-millions'
+support_statuses = ['cataloged']
+blocking_reason = 'Rules and fetch adapter pending'
+
+[[jurisdictions.offerings]]
+game_slug = 'millionaire-for-life'
+support_statuses = ['cataloged']
+blocking_reason = 'Rules and fetch adapter pending'
 
 [[jurisdictions.offerings]]
 game_slug = 'numbers'
@@ -58,6 +122,11 @@ support_statuses = ['cataloged']
 blocking_reason = 'Rules and fetch adapter pending'
 
 [[jurisdictions.offerings]]
+game_slug = 'quick-draw'
+support_statuses = ['cataloged']
+blocking_reason = 'Rules and fetch adapter pending'
+
+[[jurisdictions.offerings]]
 game_slug = 'pick-10'
 support_statuses = ['cataloged']
 blocking_reason = 'Rules and fetch adapter pending'
@@ -67,7 +136,42 @@ code = 'fl'
 name = 'Florida'
 
 [[jurisdictions.offerings]]
+game_slug = 'florida-cash-pop'
+support_statuses = ['cataloged']
+blocking_reason = 'Rules and fetch adapter pending'
+
+[[jurisdictions.offerings]]
+game_slug = 'florida-pick-2'
+support_statuses = ['cataloged']
+blocking_reason = 'Rules and fetch adapter pending'
+
+[[jurisdictions.offerings]]
+game_slug = 'florida-pick-3'
+support_statuses = ['cataloged']
+blocking_reason = 'Rules and fetch adapter pending'
+
+[[jurisdictions.offerings]]
+game_slug = 'florida-pick-4'
+support_statuses = ['cataloged']
+blocking_reason = 'Rules and fetch adapter pending'
+
+[[jurisdictions.offerings]]
+game_slug = 'florida-pick-5'
+support_statuses = ['cataloged']
+blocking_reason = 'Rules and fetch adapter pending'
+
+[[jurisdictions.offerings]]
 game_slug = 'florida-fantasy-5'
+support_statuses = ['cataloged']
+blocking_reason = 'Rules and fetch adapter pending'
+
+[[jurisdictions.offerings]]
+game_slug = 'cash4life'
+support_statuses = ['cataloged']
+blocking_reason = 'Rules and fetch adapter pending'
+
+[[jurisdictions.offerings]]
+game_slug = 'jackpot-triple-play'
 support_statuses = ['cataloged']
 blocking_reason = 'Rules and fetch adapter pending'
 
@@ -77,7 +181,12 @@ support_statuses = ['cataloged']
 blocking_reason = 'Rules and fetch adapter pending'
 
 [[jurisdictions.offerings]]
-game_slug = 'florida-pick-5'
+game_slug = 'mega-millions'
+support_statuses = ['cataloged']
+blocking_reason = 'Rules and fetch adapter pending'
+
+[[jurisdictions.offerings]]
+game_slug = 'powerball'
 support_statuses = ['cataloged']
 blocking_reason = 'Rules and fetch adapter pending'
 
@@ -97,5 +206,35 @@ blocking_reason = 'Rules and fetch adapter pending'
 
 [[jurisdictions.offerings]]
 game_slug = 'dc-5'
+support_statuses = ['cataloged']
+blocking_reason = 'Rules and fetch adapter pending'
+
+[[jurisdictions.offerings]]
+game_slug = 'powerball'
+support_statuses = ['cataloged']
+blocking_reason = 'Rules and fetch adapter pending'
+
+[[jurisdictions.offerings]]
+game_slug = 'mega-millions'
+support_statuses = ['cataloged']
+blocking_reason = 'Rules and fetch adapter pending'
+
+[[jurisdictions.offerings]]
+game_slug = 'lotto-america'
+support_statuses = ['cataloged']
+blocking_reason = 'Rules and fetch adapter pending'
+
+[[jurisdictions.offerings]]
+game_slug = 'millionaire-for-life'
+support_statuses = ['cataloged']
+blocking_reason = 'Rules and fetch adapter pending'
+
+[[jurisdictions.offerings]]
+game_slug = 'dc-keno'
+support_statuses = ['cataloged']
+blocking_reason = 'Rules and fetch adapter pending'
+
+[[jurisdictions.offerings]]
+game_slug = 'race2riches'
 support_statuses = ['cataloged']
 blocking_reason = 'Rules and fetch adapter pending'

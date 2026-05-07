@@ -1,4 +1,34 @@
-# Florida representative draw-game catalog entries.
+# Florida active draw-game catalog entries.
+
+[[games]]
+slug = 'florida-cash-pop'
+name = 'Cash Pop'
+source_url = 'https://floridalottery.com/games/draw-games/cashpop'
+reviewed_on = '2026-05-07'
+
+[[games]]
+slug = 'florida-pick-2'
+name = 'Pick 2'
+source_url = 'https://floridalottery.com/games/draw-games/pick2'
+reviewed_on = '2026-05-07'
+
+[[games]]
+slug = 'florida-pick-3'
+name = 'Pick 3'
+source_url = 'https://floridalottery.com/games/draw-games/pick3'
+reviewed_on = '2026-05-07'
+
+[[games]]
+slug = 'florida-pick-4'
+name = 'Pick 4'
+source_url = 'https://floridalottery.com/games/draw-games/pick4'
+reviewed_on = '2026-05-07'
+
+[[games]]
+slug = 'florida-pick-5'
+name = 'Pick 5'
+source_url = 'https://floridalottery.com/games/draw-games/pick5'
+reviewed_on = '2026-05-07'
 
 [[games]]
 slug = 'florida-fantasy-5'
@@ -7,13 +37,19 @@ source_url = 'https://floridalottery.com/games/draw-games/fantasy5'
 reviewed_on = '2026-05-07'
 
 [[games]]
-slug = 'florida-lotto'
-name = 'Florida Lotto'
-source_url = 'https://floridalottery.com/games/draw-games'
+slug = 'cash4life'
+name = 'Cash4Life'
+source_url = 'https://floridalottery.com/games/draw-games/cash4life'
 reviewed_on = '2026-05-07'
 
 [[games]]
-slug = 'florida-pick-5'
-name = 'Pick 5'
-source_url = 'https://floridalottery.com/help/faqs/draw-games-faq'
+slug = 'jackpot-triple-play'
+name = 'Jackpot Triple Play'
+source_url = 'https://floridalottery.com/games/draw-games/jackpottripleplay'
+reviewed_on = '2026-05-07'
+
+[[games]]
+slug = 'florida-lotto'
+name = 'Florida Lotto'
+source_url = 'https://floridalottery.com/games/draw-games'
 reviewed_on = '2026-05-07'

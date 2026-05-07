@@ -1,3 +1,4 @@
+from nolottery import db
 from nolottery.metadata import load_default_games, load_default_jurisdictions
 
 
@@ -33,6 +34,39 @@ def test_load_default_jurisdictions_reads_bundled_catalog():
         "cashpop",
         "daily-keno",
     )
-    assert jurisdictions["ny"]["offerings"][0]["game_slug"] == "numbers"
-    assert jurisdictions["fl"]["offerings"][0]["game_slug"] == "florida-fantasy-5"
-    assert jurisdictions["dc"]["offerings"][0]["game_slug"] == "dc-3"
+    assert {
+        offering["game_slug"] for offering in jurisdictions["ca"]["offerings"]
+    } == {
+        "powerball",
+        "mega-millions",
+        "superlotto-plus",
+        "fantasy-5",
+        "daily-4",
+        "daily-3",
+        "daily-derby",
+        "hot-spot",
+    }
+    assert "new-york-lotto" in {
+        offering["game_slug"] for offering in jurisdictions["ny"]["offerings"]
+    }
+    assert "florida-cash-pop" in {
+        offering["game_slug"] for offering in jurisdictions["fl"]["offerings"]
+    }
+    assert "dc-keno" in {
+        offering["game_slug"] for offering in jurisdictions["dc"]["offerings"]
+    }
+
+
+def test_jurisdiction_offering_can_override_shared_game_results_source(tmp_path):
+    conn = db.connect(tmp_path)
+
+    washington_powerball = db.get_game(conn, "powerball", "wa")
+    california_powerball = db.get_game(conn, "powerball", "ca")
+
+    assert washington_powerball is not None
+    assert california_powerball is not None
+    assert washington_powerball.source_url.startswith("https://www.walottery.com/")
+    assert (
+        california_powerball.source_url
+        == "https://www.calottery.com/en/draw-games/powerball"
+    )

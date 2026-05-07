@@ -44,6 +44,22 @@ _Avoid_: Scraped catalog
 The current capability level Nolottery provides for a known draw game, such as cataloged, rules verified, EV supported, fetch supported, audit supported, or low-share supported.
 _Avoid_: Supported boolean
 
+**Catalog Coverage**:
+The completeness of the verified known draw-game list for a lottery jurisdiction, independent of whether each game has rules, EV, fetch, audit, or low-share support.
+_Avoid_: Full support
+
+**Active Draw Game**:
+A draw game currently offered for new ticket purchases by a lottery jurisdiction.
+_Avoid_: Current game
+
+**Historical Draw Game**:
+A retired, closed, renamed, or replaced draw game kept only when historical draw results, ledger entries, or rule history need to remain understandable.
+_Avoid_: Unsupported old game
+
+**Capability Coverage**:
+The extent to which known draw games have concrete support statuses beyond cataloged, such as rules verified, EV supported, fetch supported, audit supported, or low-share supported.
+_Avoid_: Coverage
+
 **Results Source**:
 An official page, API, or file published by a lottery jurisdiction for draw results.
 _Avoid_: URL
@@ -51,6 +67,10 @@ _Avoid_: URL
 **Results Adapter**:
 A source-specific fetcher and parser that converts a results source into normalized draw results.
 _Avoid_: Generic parser
+
+**Historical Results Backfill**:
+An import of older official draw results for a game offering, using jurisdiction-specific historical result sources when they differ from current-result pages.
+_Avoid_: Fetch
 
 **Structured Draw Result**:
 A normalized draw result that preserves display text while separately identifying primary numbers, bonus numbers, ordered digits, sessions, and source details where applicable.
@@ -91,19 +111,26 @@ _Avoid_: Portfolio recommendation
 - A **Lottery Jurisdiction** has one default **Jurisdiction Tax Treatment**.
 - A **Known Draw Game** may become a supported **Game Offering** once its rules and sources are verified.
 - A **Known Draw Game** has one or more **Support Statuses**.
+- **Catalog Coverage** can be complete for a **Lottery Jurisdiction** even when **Capability Coverage** is incomplete.
+- **Catalog Coverage** is measured against **Active Draw Games**.
+- A **Historical Draw Game** does not block active **Catalog Coverage**.
 - A **Game Offering** references exactly one **Draw Game**.
 - A **Game Offering** uses exactly one **Game Rules Version**.
+- Multi-jurisdiction games such as Powerball and Mega Millions appear as separate **Game Offerings** for each **Lottery Jurisdiction** even when they share a **Game Rules Version**.
+- Shared multi-jurisdiction games use shared game slugs across jurisdictions; jurisdiction-local games use local game slugs.
 - A **Game Offering** must pass **Rule Verification** before it is EV supported.
 - A **Game Offering** has one or more **Results Sources** when fetch support is available.
 - A ledger entry records a ticket for exactly one **Game Offering**.
 - A ledger entry should preserve the **Game Rules Version** that applied when the ticket was purchased or drawn.
 - A **Results Adapter** parses one family of **Results Sources**.
+- A **Results Adapter** may use different **Results Sources** for current-result fetches and **Historical Results Backfills**.
 - A **Results Adapter** produces **Structured Draw Results**.
 - A **Structured Draw Result** belongs to exactly one **Draw Event**.
 - A **Structured Draw Result** should reference the active **Game Rules Version** when it can be resolved.
 - **Game Rules** may contain **Fixed Prize Rules** and may require a **Variable Prize Estimate** for current EV analysis.
 - A **Game Rules Version** has exactly one **Number Format**.
 - A **Game Rules Version** may define one or more **Game Add-Ons**.
+- A **Game Add-On** is not a separate **Known Draw Game** unless the lottery jurisdiction presents it as its own standalone draw game with separate purchase identity.
 - A **Player Tax Profile** may override **Jurisdiction Tax Treatment** for after-tax EV.
 - A **Draw Game** has one or more wager options.
 - A **Draw Game** produces repeated official drawing results.
@@ -131,6 +158,10 @@ _Avoid_: Portfolio recommendation
 > **Domain expert:** "No, discovery can suggest entries, but the **Verified Catalog** is authoritative."
 > **Dev:** "Is a game supported if we only know its name?"
 > **Domain expert:** "No, that is cataloged; full initial support means EV and fetch support."
+> **Dev:** "Should increasing coverage mean every game must support EV and fetching immediately?"
+> **Domain expert:** "No, start with **Catalog Coverage** and use **Support Statuses** to expose gaps in **Capability Coverage**."
+> **Dev:** "Should a retired game count as missing catalog coverage?"
+> **Domain expert:** "No, only **Active Draw Games** count toward current **Catalog Coverage**; retired games are **Historical Draw Games** when needed."
 > **Dev:** "Can one parser fetch every jurisdiction?"
 > **Domain expert:** "No, each source family needs a **Results Adapter** that reads its official **Results Source**."
 > **Dev:** "Can Powerball EV use a jackpot value reviewed last month?"
@@ -164,7 +195,15 @@ _Avoid_: Portfolio recommendation
 - "unsupported game" was too vague; resolved: use **Known Draw Game** for a jurisdiction draw game that has been identified but is not fully supported yet.
 - "catalog" was ambiguous; resolved: **Verified Catalog** is human-reviewed and authoritative even if discovery tooling suggests entries.
 - "supported" was ambiguous; resolved: use **Support Status** rather than a single boolean, with EV and fetch support as the first completeness target.
+- "coverage" was ambiguous; resolved: distinguish **Catalog Coverage** from **Capability Coverage**.
+- California **Catalog Coverage** includes official California Lottery draw games only: Powerball, Mega Millions, SuperLotto Plus, Fantasy 5, Daily 4, Daily 3, Daily Derby, and Hot Spot. It excludes Scratchers, raffles, promotions, and 2nd Chance.
+- The first multi-jurisdiction catalog expansion targets already-seeded **Lottery Jurisdictions**: California, New York, Florida, and District of Columbia.
+- New York **Catalog Coverage** includes active official draw games only: Powerball, LOTTO, Mega Millions, Millionaire For Life, NUMBERS, Win4, Take 5, Quick Draw, and Pick 10.
+- Florida **Catalog Coverage** includes active official draw games only: Cash Pop, Pick 2, Pick 3, Pick 4, Pick 5, Fantasy 5, Cash4Life, Jackpot Triple Play, Florida Lotto, Mega Millions, and Powerball.
+- District of Columbia **Catalog Coverage** includes active draw-style official games only: DC 3, DC 4, DC 5, Powerball, Mega Millions, Lotto America, Millionaire For Life, DC Keno, and Race2Riches. It excludes DC Fast Play, TAP-N-PLAY, DC Scratchers, and e-Instants.
+- Current **Catalog Coverage** includes **Active Draw Games** only; retired, closed, renamed, or replaced games are tracked as **Historical Draw Games** only when historical results, ledger entries, or rule history require them.
 - "source URL" was too implementation-shaped; resolved: use **Results Source** for official draw-result publications and **Results Adapter** for source-specific parsing.
+- "backfill" was ambiguous; resolved: use **Historical Results Backfill** for historical imports, which may require a different official **Results Source** than current draw fetches.
 - "prize table" was ambiguous; resolved: distinguish **Fixed Prize Rules** from **Variable Prize Estimate**.
 - "verified" was implicit; resolved: **Rule Verification** is the gate for EV support.
 - "tax rate" was too broad; resolved: distinguish **Jurisdiction Tax Treatment** from **Player Tax Profile**.

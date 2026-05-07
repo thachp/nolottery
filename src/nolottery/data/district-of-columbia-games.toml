@@ -1,4 +1,4 @@
-# District of Columbia representative draw-game catalog entries.
+# District of Columbia active draw-style game catalog entries.
 
 [[games]]
 slug = 'dc-3'
@@ -16,4 +16,22 @@ reviewed_on = '2026-05-07'
 slug = 'dc-5'
 name = 'DC-5'
 source_url = 'https://lottery.dc.gov/page/our-games'
+reviewed_on = '2026-05-07'
+
+[[games]]
+slug = 'lotto-america'
+name = 'Lotto America'
+source_url = 'https://dclottery.com/games'
+reviewed_on = '2026-05-07'
+
+[[games]]
+slug = 'dc-keno'
+name = 'DC Keno'
+source_url = 'https://dclottery.com/games'
+reviewed_on = '2026-05-07'
+
+[[games]]
+slug = 'race2riches'
+name = 'Race2Riches'
+source_url = 'https://dclottery.com/games'
 reviewed_on = '2026-05-07'

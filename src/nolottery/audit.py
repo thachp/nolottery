@@ -60,6 +60,42 @@ AUDIT_RULES: dict[str, AuditRule] = {
         game_slug="daily-keno",
         pools=(AuditPool("numbers", 1, 80, 20),),
     ),
+    "hot-spot": AuditRule(
+        game_slug="hot-spot",
+        pools=(
+            AuditPool("numbers", 1, 80, 20),
+            AuditPool("bulls_eye", 1, 80, 1),
+        ),
+    ),
+    "daily-3": AuditRule(
+        game_slug="daily-3",
+        pools=(
+            AuditPool("position_1", 0, 9, 1, ordered=True),
+            AuditPool("position_2", 0, 9, 1, ordered=True),
+            AuditPool("position_3", 0, 9, 1, ordered=True),
+        ),
+    ),
+    "daily-4": AuditRule(
+        game_slug="daily-4",
+        pools=(
+            AuditPool("position_1", 0, 9, 1, ordered=True),
+            AuditPool("position_2", 0, 9, 1, ordered=True),
+            AuditPool("position_3", 0, 9, 1, ordered=True),
+            AuditPool("position_4", 0, 9, 1, ordered=True),
+        ),
+    ),
+    "daily-derby": AuditRule(
+        game_slug="daily-derby",
+        pools=(
+            AuditPool("first", 1, 12, 1, ordered=True),
+            AuditPool("second", 1, 12, 1, ordered=True),
+            AuditPool("third", 1, 12, 1, ordered=True),
+        ),
+    ),
+    "fantasy-5": AuditRule(
+        game_slug="fantasy-5",
+        pools=(AuditPool("numbers", 1, 39, 5),),
+    ),
     "hit-5": AuditRule(
         game_slug="hit-5",
         pools=(AuditPool("numbers", 1, 42, 5),),
@@ -77,6 +113,13 @@ AUDIT_RULES: dict[str, AuditRule] = {
         pools=(
             AuditPool("white", 1, 70, 5),
             AuditPool("mega_ball", 1, 24, 1),
+        ),
+    ),
+    "superlotto-plus": AuditRule(
+        game_slug="superlotto-plus",
+        pools=(
+            AuditPool("white", 1, 47, 5),
+            AuditPool("mega", 1, 27, 1),
         ),
     ),
     "pick-3": AuditRule(
@@ -101,9 +144,15 @@ def frequency_audit(
     conn: sqlite3.Connection,
     game_slug: str,
     *,
+    jurisdiction_code: str | None = None,
     last: int | None = None,
 ) -> list[dict[str, object]]:
-    draws, warnings = load_valid_draws(conn, game_slug, last=last)
+    draws, warnings = load_valid_draws(
+        conn,
+        game_slug,
+        jurisdiction_code=jurisdiction_code,
+        last=last,
+    )
     rule = _rule_for(game_slug)
     return [
         _frequency_result(game_slug, pool, draws, warnings)
@@ -115,9 +164,15 @@ def chi_square_audit(
     conn: sqlite3.Connection,
     game_slug: str,
     *,
+    jurisdiction_code: str | None = None,
     last: int | None = None,
 ) -> list[dict[str, object]]:
-    results = frequency_audit(conn, game_slug, last=last)
+    results = frequency_audit(
+        conn,
+        game_slug,
+        jurisdiction_code=jurisdiction_code,
+        last=last,
+    )
     for result in results:
         result["test"] = "chi-square"
     return results
@@ -128,12 +183,18 @@ def combination_audit(
     game_slug: str,
     *,
     size: int,
+    jurisdiction_code: str | None = None,
     last: int | None = None,
 ) -> list[dict[str, object]]:
-    draws, warnings = load_valid_draws(conn, game_slug, last=last)
+    draws, warnings = load_valid_draws(
+        conn,
+        game_slug,
+        jurisdiction_code=jurisdiction_code,
+        last=last,
+    )
     rule = _rule_for(game_slug)
-    if rule.game_slug == "pick-3":
-        return _pick3_combination_audit(game_slug, size, draws, warnings)
+    if rule.game_slug in {"pick-3", "daily-3", "daily-4", "daily-derby"}:
+        return _ordered_combination_audit(game_slug, size, draws, warnings)
     return [
         _combination_result(game_slug, pool, draws, warnings, size)
         for pool in rule.pools
@@ -144,9 +205,15 @@ def gap_audit(
     conn: sqlite3.Connection,
     game_slug: str,
     *,
+    jurisdiction_code: str | None = None,
     last: int | None = None,
 ) -> list[dict[str, object]]:
-    draws, warnings = load_valid_draws(conn, game_slug, last=last)
+    draws, warnings = load_valid_draws(
+        conn,
+        game_slug,
+        jurisdiction_code=jurisdiction_code,
+        last=last,
+    )
     rule = _rule_for(game_slug)
     return [_gap_result(game_slug, pool, draws, warnings) for pool in rule.pools]
 
@@ -155,13 +222,18 @@ def load_valid_draws(
     conn: sqlite3.Connection,
     game_slug: str,
     *,
+    jurisdiction_code: str | None = None,
     last: int | None = None,
 ) -> tuple[tuple[Draw, ...], tuple[str, ...]]:
     rule = _rule_for(game_slug)
     warnings: list[str] = []
     draws: list[Draw] = []
     skipped = 0
-    for draw_date, winning_number in _stored_draw_rows(conn, game_slug):
+    for draw_date, winning_number in _stored_draw_rows(
+        conn,
+        game_slug,
+        jurisdiction_code=jurisdiction_code,
+    ):
         draw = _parse_draw(rule, draw_date, winning_number)
         if draw is None:
             skipped += 1
@@ -386,16 +458,47 @@ def _combination_result(
     }
 
 
-def _pick3_combination_audit(
+def _ordered_combination_audit(
     game_slug: str,
     size: int,
     draws: tuple[Draw, ...],
     warnings: tuple[str, ...],
 ) -> list[dict[str, object]]:
-    if size == 2:
+    if game_slug in {"pick-3", "daily-3"} and size == 2:
         return [
             _ordered_digit_result(game_slug, "front_pair", draws, warnings, (0, 1)),
             _ordered_digit_result(game_slug, "back_pair", draws, warnings, (1, 2)),
+        ]
+    if game_slug == "daily-4" and size == 2:
+        return [
+            _ordered_digit_result(game_slug, "front_pair", draws, warnings, (0, 1)),
+            _ordered_digit_result(game_slug, "middle_pair", draws, warnings, (1, 2)),
+            _ordered_digit_result(game_slug, "back_pair", draws, warnings, (2, 3)),
+        ]
+    if game_slug == "daily-4":
+        return [
+            _ordered_digit_result(game_slug, "front_triple", draws, warnings, (0, 1, 2)),
+            _ordered_digit_result(game_slug, "back_triple", draws, warnings, (1, 2, 3)),
+        ]
+    if game_slug == "daily-derby":
+        if size == 2:
+            return [
+                _ordered_value_result(
+                    game_slug,
+                    "exacta",
+                    draws,
+                    warnings,
+                    ("first", "second"),
+                )
+            ]
+        return [
+            _ordered_value_result(
+                game_slug,
+                "trifecta",
+                draws,
+                warnings,
+                ("first", "second", "third"),
+            )
         ]
     return [
         _ordered_digit_result(game_slug, "triple", draws, warnings, (0, 1, 2)),
@@ -454,19 +557,82 @@ def _ordered_digit_result(
     }
 
 
+def _ordered_value_result(
+    game_slug: str,
+    pool_name: str,
+    draws: tuple[Draw, ...],
+    warnings: tuple[str, ...],
+    pool_order: tuple[str, ...],
+) -> dict[str, object]:
+    test_name = "pairs" if len(pool_order) == 2 else "triples"
+    labels = tuple(
+        values
+        for values in product(range(1, 13), repeat=len(pool_order))
+        if len(set(values)) == len(values)
+    )
+    observed = Counter(
+        tuple(draw.pools[pool][0] for pool in pool_order)
+        for draw in draws
+    )
+    expected = len(draws) / len(labels) if labels else 0
+    buckets = [
+        {
+            "combination": list(label),
+            "observed": observed[label],
+            "expected": expected,
+            "delta": observed[label] - expected,
+            "ratio": (observed[label] / expected if expected else None),
+        }
+        for label in labels
+    ]
+    statistic, p_value = _chi_square(
+        [bucket["observed"] for bucket in buckets],
+        expected,
+    )
+    result_warnings = list(warnings)
+    if expected < _MIN_EXPECTED:
+        result_warnings.append(f"expected count per bucket {expected:.2f} is below 5")
+    return {
+        "game_slug": game_slug,
+        "pool": pool_name,
+        "test": test_name,
+        "draw_count": len(draws),
+        "status": _status(expected, p_value),
+        "chi_square": statistic,
+        "degrees_of_freedom": len(labels) - 1,
+        "p_value": p_value,
+        "expected_per_bucket": expected,
+        "warnings": result_warnings,
+        "buckets": buckets,
+    }
+
+
 def _stored_draw_rows(
     conn: sqlite3.Connection,
     game_slug: str,
+    *,
+    jurisdiction_code: str | None = None,
 ) -> tuple[tuple[str, str], ...]:
+    jurisdiction_filter = (
+        "and jurisdiction_code = ?"
+        if jurisdiction_code is not None
+        else ""
+    )
+    params = (
+        (game_slug, jurisdiction_code)
+        if jurisdiction_code is not None
+        else (game_slug,)
+    )
     rows = conn.execute(
-        """
+        f"""
         select min(id) as first_id, draw_date, winning_number
         from draw_results
         where game_slug = ?
+            {jurisdiction_filter}
         group by draw_date, winning_number
         order by first_id
         """,
-        (game_slug,),
+        params,
     ).fetchall()
     return tuple((row["draw_date"], row["winning_number"]) for row in rows)
 
@@ -477,20 +643,37 @@ def _parse_draw(
     winning_number: str,
 ) -> Draw | None:
     numbers = _parse_numbers(rule.game_slug, winning_number)
-    if rule.game_slug == "pick-3":
-        if len(numbers) != 3:
+    if rule.game_slug in {"pick-3", "daily-3", "daily-4"}:
+        if len(numbers) != len(rule.pools):
             return None
         pools = {
-            "position_1": (numbers[0],),
-            "position_2": (numbers[1],),
-            "position_3": (numbers[2],),
+            f"position_{index + 1}": (number,)
+            for index, number in enumerate(numbers)
         }
-    elif rule.game_slug in {"powerball", "mega-millions"}:
+    elif rule.game_slug in {"powerball", "mega-millions", "superlotto-plus"}:
         if len(numbers) != 6:
             return None
         pools = {
             rule.pools[0].name: tuple(numbers[:5]),
             rule.pools[1].name: (numbers[5],),
+        }
+    elif rule.game_slug == "hot-spot":
+        if len(numbers) != 20:
+            return None
+        bulls_eye_match = re.search(r"(\d{1,2}) Bulls-eye", winning_number)
+        if bulls_eye_match is None:
+            return None
+        pools = {
+            "numbers": tuple(numbers),
+            "bulls_eye": (int(bulls_eye_match.group(1)),),
+        }
+    elif rule.game_slug == "daily-derby":
+        if len(numbers) != 3:
+            return None
+        pools = {
+            "first": (numbers[0],),
+            "second": (numbers[1],),
+            "third": (numbers[2],),
         }
     else:
         if len(numbers) != rule.pools[0].draw_size:
@@ -511,13 +694,26 @@ def _parse_draw(
 
 
 def _parse_numbers(game_slug: str, winning_number: str) -> tuple[int, ...]:
+    if game_slug == "daily-derby":
+        matches = re.findall(r"(?:First|Second|Third):\s*(\d{1,2})", winning_number)
+        return tuple(int(match) for match in matches)
     tokens = re.findall(r"\d+", winning_number)
-    if game_slug == "pick-3" and len(tokens) == 1 and len(tokens[0]) == 3:
+    if game_slug in {"pick-3", "daily-3"} and len(tokens) == 1 and len(tokens[0]) == 3:
         return tuple(int(digit) for digit in tokens[0])
+    if game_slug == "daily-4" and len(tokens) == 1 and len(tokens[0]) == 4:
+        return tuple(int(digit) for digit in tokens[0])
+    if game_slug == "hot-spot":
+        return tuple(int(token) for token in tokens[:20])
     return tuple(int(token) for token in tokens)
 
 
 def _sort_key(draw_date: str) -> tuple[int, str]:
+    if match := re.match(r"^([A-Z][a-z]{2}, [A-Z][a-z]{2} \d{2}, \d{4}) ", draw_date):
+        draw_date = match.group(1)
+    for session in (" Evening", " Midday"):
+        if draw_date.endswith(session):
+            draw_date = draw_date[: -len(session)]
+            break
     try:
         parsed = datetime.strptime(draw_date, _DRAW_DATE_FORMAT).date()
     except ValueError:

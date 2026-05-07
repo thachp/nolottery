@@ -75,6 +75,7 @@ def initialize(conn: sqlite3.Connection) -> None:
         create table if not exists game_offerings (
             jurisdiction_code text not null references jurisdictions(code),
             game_slug text not null references games(slug),
+            source_url text,
             primary key (jurisdiction_code, game_slug)
         );
 
@@ -119,6 +120,7 @@ def initialize(conn: sqlite3.Connection) -> None:
     _ensure_column(conn, "fetch_snapshots", "jurisdiction_code", "text not null default 'wa'")
     _ensure_column(conn, "draw_results", "jurisdiction_code", "text not null default 'wa'")
     _ensure_column(conn, "ledger_entries", "jurisdiction_code", "text not null default 'wa'")
+    _ensure_column(conn, "game_offerings", "source_url", "text")
     conn.commit()
 
 
@@ -207,11 +209,12 @@ def seed_default_metadata(conn: sqlite3.Connection) -> None:
                 continue
             conn.execute(
                 """
-                insert into game_offerings (jurisdiction_code, game_slug)
-                values (?, ?)
-                on conflict(jurisdiction_code, game_slug) do nothing
+                insert into game_offerings (jurisdiction_code, game_slug, source_url)
+                values (?, ?, ?)
+                on conflict(jurisdiction_code, game_slug) do update set
+                    source_url = excluded.source_url
                 """,
-                (code, game_slug),
+                (code, game_slug, offering.get("source_url")),
             )
     conn.commit()
 
@@ -244,7 +247,11 @@ def get_game(
 ) -> GameMetadata | None:
     game = conn.execute(
         """
-        select games.slug, games.name, games.source_url, games.reviewed_on
+        select
+            games.slug,
+            games.name,
+            coalesce(game_offerings.source_url, games.source_url) as source_url,
+            games.reviewed_on
         from games
         join game_offerings on game_offerings.game_slug = games.slug
         where games.slug = ? and game_offerings.jurisdiction_code = ?

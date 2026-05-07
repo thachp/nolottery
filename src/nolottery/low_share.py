@@ -8,6 +8,7 @@ from statistics import mean
 
 from .audit import Draw, load_valid_draws
 from .metadata import GameMetadata, WagerOption
+from .number_format import quick_pick
 from .recommend import format_number_label
 
 
@@ -125,6 +126,8 @@ def _candidate_numbers(rng, game_slug: str, option_slug: str) -> tuple[int, ...]
         return tuple(sorted(rng.sample(range(1, 16), _selection_count(option_slug))))
     if game_slug == "daily-keno":
         return tuple(sorted(rng.sample(range(1, 81), _selection_count(option_slug))))
+    if game_slug == "hot-spot":
+        return tuple(sorted(rng.sample(range(1, 81), _selection_count(option_slug))))
     if game_slug == "powerball":
         return (*sorted(rng.sample(range(1, 70), 5)), rng.randrange(1, 27))
     if game_slug == "mega-millions":
@@ -140,7 +143,10 @@ def _candidate_numbers(rng, game_slug: str, option_slug: str) -> tuple[int, ...]
         return tuple(sorted(rng.sample(range(1, 25), 4)))
     if game_slug == "pick-3":
         return _pick3_candidate(rng, option_slug)
-    raise ValueError(f"unknown game: {game_slug}")
+    try:
+        return quick_pick(game_slug, option_slug, rng=rng)
+    except ValueError as exc:
+        raise ValueError(f"unknown game: {game_slug}") from exc
 
 
 def _pick3_candidate(rng, option_slug: str) -> tuple[int, ...]:
@@ -176,8 +182,12 @@ def _score_numbers(
         return _score_play(game_slug, numbers[:5], bonus=numbers[5])
     if game_slug == "mega-millions":
         return _score_play(game_slug, numbers[:5], bonus=numbers[5])
+    if game_slug == "superlotto-plus":
+        return _score_play(game_slug, numbers[:5], bonus=numbers[5])
     if game_slug == "pick-3":
         return _score_pick3(option_slug, numbers)
+    if game_slug == "daily-derby":
+        return _score_play(game_slug, numbers[:3])
     return _score_play(game_slug, numbers)
 
 
@@ -315,9 +325,15 @@ def _draw_key(
         if "box" in option_slug or "superbox" in option_slug:
             return tuple(sorted(digits))
         return digits
-    if game_slug in {"powerball", "mega-millions"}:
+    if game_slug in {"powerball", "mega-millions", "superlotto-plus"}:
         first_pool, second_pool = tuple(draw.pools)
         return (*tuple(sorted(draw.pools[first_pool])), draw.pools[second_pool][0])
+    if game_slug == "daily-derby":
+        return (
+            draw.pools["first"][0],
+            draw.pools["second"][0],
+            draw.pools["third"][0],
+        )
     return tuple(sorted(next(iter(draw.pools.values()))))
 
 
@@ -364,11 +380,14 @@ def _target_spread(game_slug: str) -> int:
     return {
         "cashpop": 6,
         "daily-keno": 25,
+        "hot-spot": 25,
         "hit-5": 16,
         "lotto": 20,
         "match-4": 8,
         "mega-millions": 24,
         "powerball": 24,
+        "superlotto-plus": 18,
+        "fantasy-5": 14,
     }.get(game_slug, 0)
 
 

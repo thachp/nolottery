@@ -1,7 +1,247 @@
 # California local draw games with verified source metadata.
 
 [[games]]
+slug = 'superlotto-plus'
+name = 'SuperLotto Plus'
+source_url = 'https://www.calottery.com/en/draw-games/superlotto-plus'
+reviewed_on = '2026-05-07'
+
+[[games.wager_options]]
+slug = 'standard'
+label = 'Standard $1'
+ticket_cost = 1
+
+[[games.wager_options.prize_tiers]]
+label = '5 + Mega'
+probability = 0.0000000238492401
+prize = 7000000
+
+[[games.wager_options.prize_tiers]]
+label = '5'
+probability = 0.0000006200802426
+prize = 32000
+
+[[games.wager_options.prize_tiers]]
+label = '4 + Mega'
+probability = 0.0000050083404210
+prize = 1700
+
+[[games.wager_options.prize_tiers]]
+label = '4'
+probability = 0.0001302168509461
+prize = 80
+
+[[games.wager_options.prize_tiers]]
+label = '3 + Mega'
+probability = 0.0003355588082079
+prize = 45
+
+[[games.wager_options.prize_tiers]]
+label = '3'
+probability = 0.0087245282134057
+prize = 10
+
+[[games.wager_options.prize_tiers]]
+label = 'Mega'
+probability = 0.0249052707415311
+prize = 1
+
+[[games]]
+slug = 'fantasy-5'
+name = 'Fantasy 5'
+source_url = 'https://www.calottery.com/en/draw-games/fantasy-5'
+reviewed_on = '2026-05-07'
+
+[[games.wager_options]]
+slug = 'standard'
+label = 'Standard $1'
+ticket_cost = 1
+
+[[games.wager_options.prize_tiers]]
+label = '5 of 5'
+probability = 0.0000017391260417
+prize = 65000
+
+[[games.wager_options.prize_tiers]]
+label = '4 of 5'
+probability = 0.0002956514270858
+prize = 400
+
+[[games.wager_options.prize_tiers]]
+label = '3 of 5'
+probability = 0.0165552800992184
+prize = 15
+
+[[games]]
+slug = 'daily-4'
+name = 'Daily 4'
+source_url = 'https://www.calottery.com/en/draw-games/daily-4'
+reviewed_on = '2026-05-07'
+
+[[games.wager_options]]
+slug = 'straight-1'
+label = 'Straight $1'
+ticket_cost = 1
+
+[[games.wager_options.prize_tiers]]
+label = 'Straight'
+probability = 0.0001
+prize = 6600
+
+[[games]]
 slug = 'daily-3'
 name = 'Daily 3'
 source_url = 'https://www.calottery.com/en/draw-games/daily-3'
 reviewed_on = '2026-05-07'
+
+[[games.wager_options]]
+slug = 'straight-1'
+label = 'Straight $1'
+ticket_cost = 1
+
+[[games.wager_options.prize_tiers]]
+label = 'Straight'
+probability = 0.001
+prize = 425
+
+[[games]]
+slug = 'daily-derby'
+name = 'Daily Derby'
+source_url = 'https://www.calottery.com/en/draw-games/daily-derby'
+reviewed_on = '2026-05-07'
+
+[[games.wager_options]]
+slug = 'standard'
+label = 'Standard $2'
+ticket_cost = 2
+
+[[games.wager_options.prize_tiers]]
+label = 'Grand Prize'
+probability = 0.0000007575757576
+prize = 50000
+
+[[games.wager_options.prize_tiers]]
+label = 'Trifecta'
+probability = 0.0007564296520424
+prize = 500
+
+[[games.wager_options.prize_tiers]]
+label = 'Exacta'
+probability = 0.0068027210884354
+prize = 20
+
+[[games.wager_options.prize_tiers]]
+label = 'Win'
+probability = 0.0757575757575758
+prize = 3
+
+[[games]]
+slug = 'hot-spot'
+name = 'Hot Spot'
+source_url = 'https://www.calottery.com/en/draw-games/hot-spot'
+reviewed_on = '2026-05-07'
+
+[[games.wager_options]]
+slug = '10-spot'
+label = '10 Spot $1'
+ticket_cost = 1
+
+[[games.wager_options.prize_tiers]]
+label = '10 of 10'
+probability = 0.0000001227863869
+prize = 100000
+
+[[games.wager_options.prize_tiers]]
+label = '0 of 10'
+probability = 0.0006468864580206
+prize = 5
+
+[[games.wager_options]]
+slug = '9-spot'
+label = '9 Spot $1'
+ticket_cost = 1
+
+[[games.wager_options.prize_tiers]]
+label = '9 of 9'
+probability = 0.0000012278638691
+prize = 30000
+
+[[games.wager_options]]
+slug = '8-spot'
+label = '8 Spot $1'
+ticket_cost = 1
+
+[[games.wager_options.prize_tiers]]
+label = '8 of 8'
+probability = 0.0000109702128018
+prize = 10000
+
+[[games.wager_options]]
+slug = '7-spot'
+label = '7 Spot $1'
+ticket_cost = 1
+
+[[games.wager_options.prize_tiers]]
+label = '7 of 7'
+probability = 0.0000856662769394
+prize = 1000
+
+[[games.wager_options]]
+slug = '6-spot'
+label = '6 Spot $1'
+ticket_cost = 1
+
+[[games.wager_options.prize_tiers]]
+label = '6 of 6'
+probability = 0.0005711085129295
+prize = 300
+
+[[games.wager_options]]
+slug = '5-spot'
+label = '5 Spot $1'
+ticket_cost = 1
+
+[[games.wager_options.prize_tiers]]
+label = '5 of 5'
+probability = 0.0035359107943259
+prize = 75
+
+[[games.wager_options]]
+slug = '4-spot'
+label = '4 Spot $1'
+ticket_cost = 1
+
+[[games.wager_options.prize_tiers]]
+label = '4 of 4'
+probability = 0.0120921985815603
+prize = 18
+
+[[games.wager_options]]
+slug = '3-spot'
+label = '3 Spot $1'
+ticket_cost = 1
+
+[[games.wager_options.prize_tiers]]
+label = '3 of 3'
+probability = 0.0490506329113924
+prize = 6
+
+[[games.wager_options]]
+slug = '2-spot'
+label = '2 Spot $1'
+ticket_cost = 1
+
+[[games.wager_options.prize_tiers]]
+label = '2 of 2'
+probability = 0.0601265822784810
+prize = 3
+
+[[games.wager_options]]
+slug = '1-spot'
+label = '1 Spot $1'
+ticket_cost = 1
+
+[[games.wager_options.prize_tiers]]
+label = '1 of 1'
+probability = 0.25
+prize = 2
