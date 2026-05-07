@@ -1,0 +1,7 @@
+# California local draw games with verified source metadata.
+
+[[games]]
+slug = 'daily-3'
+name = 'Daily 3'
+source_url = 'https://www.calottery.com/en/draw-games/daily-3'
+reviewed_on = '2026-05-07'

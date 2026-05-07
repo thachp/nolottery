@@ -25,3 +25,15 @@ game_slug = 'cashpop'
 
 [[jurisdictions.offerings]]
 game_slug = 'daily-keno'
+support_statuses = ['cataloged', 'rules_verified', 'ev_supported', 'fetch_supported', 'audit_supported', 'low_share_supported']
+results_adapter = 'wa_past_drawings'
+
+[[jurisdictions]]
+code = 'ca'
+name = 'California'
+
+[[jurisdictions.offerings]]
+game_slug = 'daily-3'
+support_statuses = ['cataloged', 'rules_verified', 'fetch_supported']
+results_adapter = 'ca_daily3_page'
+blocking_reason = 'EV pending variable pari-mutuel prize estimates'

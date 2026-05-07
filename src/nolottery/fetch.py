@@ -52,7 +52,7 @@ def fetch_game(
     else:
         raw_html, source_url = _read_source(game.source_url, None, game.slug)
 
-    draws = parse_past_drawings(raw_html)
+    draws = _parse_draws(raw_html, jurisdiction_code, game.slug)
     _insert_snapshot(conn, jurisdiction_code, game.slug, source_url, raw_html, draws)
     new_draws = _filter_newer_draws(conn, jurisdiction_code, game.slug, draws)
     _insert_draw_results(conn, jurisdiction_code, game.slug, new_draws)
@@ -86,7 +86,7 @@ def fetch_game_backfill(
             source_dir,
             f"{game.slug}-{year}",
         )
-        draws = parse_past_drawings(raw_html)
+        draws = _parse_draws(raw_html, jurisdiction_code, game.slug)
         all_draws.extend(draws)
         _insert_snapshot(conn, jurisdiction_code, game.slug, source_url, raw_html, draws)
         page_count += 1
@@ -112,6 +112,72 @@ def parse_past_drawings(raw_html: str) -> tuple[ParsedDraw, ...]:
         if draw is not None:
             draws.append(draw)
     return tuple(draws)
+
+
+def parse_california_daily3(raw_html: str) -> tuple[ParsedDraw, ...]:
+    soup = BeautifulSoup(raw_html, "html.parser")
+    lines = [
+        line.strip()
+        for line in soup.get_text("\n", strip=True).splitlines()
+        if line.strip()
+    ]
+    draws: list[ParsedDraw] = []
+    index = 0
+    while index < len(lines):
+        match = re.fullmatch(
+            r"([A-Z]{3})/([A-Z]{3}) (\d{1,2}), (\d{4}) - (EVENING|MIDDAY)"
+            r"(?: \| Draw #(\d+))?",
+            lines[index],
+        )
+        if match is None:
+            index += 1
+            continue
+        draw_date = _california_draw_date(match)
+        numbers: list[str] = []
+        cursor = index + 1
+        while cursor < len(lines) and len(numbers) < 3:
+            if re.fullmatch(r"\d", lines[cursor]):
+                numbers.append(lines[cursor])
+            cursor += 1
+        prizes: list[PrizeRow] = []
+        while cursor < len(lines):
+            if re.fullmatch(r"[A-Z]{3}/[A-Z]{3} .*", lines[cursor]):
+                break
+            prize_match = re.fullmatch(
+                r"(Straight and Box|Box Only|Straight|Box) ([\d,]+) \$([\d,]+)",
+                lines[cursor],
+            )
+            if prize_match is not None:
+                winners = _int_from_text(prize_match.group(2))
+                prize = _money_to_float(prize_match.group(3))
+                prizes.append(
+                    PrizeRow(
+                        prize_amount=prize,
+                        wa_winners=winners,
+                        total=winners * prize,
+                    )
+                )
+            cursor += 1
+        if len(numbers) == 3:
+            draws.append(
+                ParsedDraw(
+                    draw_date=draw_date,
+                    winning_number=", ".join(numbers),
+                    prizes=tuple(prizes),
+                )
+            )
+        index = cursor
+    return tuple(draws)
+
+
+def _parse_draws(
+    raw_html: str,
+    jurisdiction_code: str,
+    game_slug: str,
+) -> tuple[ParsedDraw, ...]:
+    if jurisdiction_code == "ca" and game_slug == "daily-3":
+        return parse_california_daily3(raw_html)
+    return parse_past_drawings(raw_html)
 
 
 def parse_available_years(raw_html: str) -> tuple[int, ...]:
@@ -280,9 +346,25 @@ def _existing_draw_keys(
 
 def _parse_draw_date(draw_date: str) -> date | None:
     try:
-        return datetime.strptime(draw_date, _DRAW_DATE_FORMAT).date()
+        return _parse_stored_draw_date(draw_date)
     except ValueError:
         return None
+
+
+def _california_draw_date(match: re.Match[str]) -> str:
+    parsed = datetime.strptime(
+        f"{match.group(1).title()}, {match.group(2).title()} {match.group(3)}, {match.group(4)}",
+        _DRAW_DATE_FORMAT,
+    )
+    return f"{parsed.strftime(_DRAW_DATE_FORMAT)} {match.group(5).title()}"
+
+
+def _parse_stored_draw_date(draw_date: str) -> date:
+    for session in (" Evening", " Midday"):
+        if draw_date.endswith(session):
+            draw_date = draw_date[: -len(session)]
+            break
+    return datetime.strptime(draw_date, _DRAW_DATE_FORMAT).date()
 
 
 def _replace_draw_results(

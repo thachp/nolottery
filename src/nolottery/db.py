@@ -149,14 +149,6 @@ def seed_default_metadata(conn: sqlite3.Connection) -> None:
                 game.reviewed_on,
             ),
         )
-        conn.execute(
-            """
-            insert into game_offerings (jurisdiction_code, game_slug)
-            values (?, ?)
-            on conflict(jurisdiction_code, game_slug) do nothing
-            """,
-            (DEFAULT_JURISDICTION_CODE, game.slug),
-        )
         option_slugs = tuple(option.slug for option in game.wager_options)
         if option_slugs:
             placeholders = ", ".join("?" for _ in option_slugs)
@@ -208,6 +200,19 @@ def seed_default_metadata(conn: sqlite3.Connection) -> None:
                     """,
                     (game.slug, option.slug, tier.label, tier.probability, tier.prize),
                 )
+    for code, jurisdiction in DEFAULT_JURISDICTIONS.items():
+        for offering in jurisdiction["offerings"]:
+            game_slug = offering["game_slug"]
+            if game_slug not in DEFAULT_GAMES:
+                continue
+            conn.execute(
+                """
+                insert into game_offerings (jurisdiction_code, game_slug)
+                values (?, ?)
+                on conflict(jurisdiction_code, game_slug) do nothing
+                """,
+                (code, game_slug),
+            )
     conn.commit()
 
 
@@ -371,9 +376,15 @@ def _ensure_column(
         conn.execute(f"alter table {table_name} add column {column_name} {definition}")
 
 
-def _draw_sort_key(draw_date: str, first_id: int) -> tuple[bool, date, int]:
+def _draw_sort_key(draw_date: str, first_id: int) -> tuple[bool, date, int, int]:
+    session_rank = 0
+    for session, rank in {" Midday": 1, " Evening": 2}.items():
+        if draw_date.endswith(session):
+            draw_date = draw_date[: -len(session)]
+            session_rank = rank
+            break
     try:
         parsed = datetime.strptime(draw_date, _DRAW_DATE_FORMAT).date()
     except ValueError:
-        return (False, date.min, first_id)
-    return (True, parsed, first_id)
+        return (False, date.min, session_rank, first_id)
+    return (True, parsed, session_rank, first_id)

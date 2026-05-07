@@ -56,7 +56,9 @@ ledger_app = typer.Typer(help="Track purchased tickets and realized winnings.")
 app.add_typer(audit_app, name="audit")
 app.add_typer(ledger_app, name="ledger")
 console = Console()
-WASHINGTON_RESULTS_ADAPTER = "wa_past_drawings"
+DEFAULT_RESULTS_ADAPTERS = {
+    "wa": "wa_past_drawings",
+}
 SUPPORTED_STATUSES = [
     "cataloged",
     "rules_verified",
@@ -943,17 +945,31 @@ def _validate_jurisdiction(conn, jurisdiction_code: str) -> None:
 
 
 def _coverage_game(metadata: GameMetadata, jurisdiction_code: str) -> dict[str, object]:
+    offering = _coverage_offering(jurisdiction_code, metadata.slug)
+    statuses = offering.get("support_statuses", SUPPORTED_STATUSES)
+    results_adapter = offering.get(
+        "results_adapter",
+        DEFAULT_RESULTS_ADAPTERS.get(jurisdiction_code),
+    )
     return {
         "jurisdiction_code": jurisdiction_code,
         "game_slug": metadata.slug,
         "game": metadata.name,
-        "support_statuses": SUPPORTED_STATUSES,
+        "support_statuses": list(statuses),
         "reviewed_on": metadata.reviewed_on,
-        "results_adapter": WASHINGTON_RESULTS_ADAPTER,
+        "results_adapter": results_adapter,
         "rule_source_present": True,
         "results_source_present": bool(metadata.source_url),
-        "blocking_reason": None,
+        "blocking_reason": offering.get("blocking_reason"),
     }
+
+
+def _coverage_offering(jurisdiction_code: str, game_slug: str) -> dict[str, object]:
+    jurisdiction = db.DEFAULT_JURISDICTIONS[jurisdiction_code]
+    for offering in jurisdiction["offerings"]:
+        if offering["game_slug"] == game_slug:
+            return offering
+    return {"game_slug": game_slug}
 
 
 def _load_games(

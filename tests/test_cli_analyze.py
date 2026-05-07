@@ -65,14 +65,14 @@ def test_analyze_rejects_unknown_jurisdiction(tmp_path):
             "analyze",
             "cashpop",
             "-j",
-            "ca",
+            "xx",
             "--output",
             "json",
         ],
     )
 
     assert result.exit_code != 0
-    assert "unknown jurisdiction: ca" in result.output
+    assert "unknown jurisdiction: xx" in result.output
 
 
 def test_rank_compares_supported_games_by_ev_and_hit_rate(tmp_path):

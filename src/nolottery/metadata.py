@@ -30,37 +30,38 @@ class GameMetadata:
 
 
 def load_default_games() -> dict[str, GameMetadata]:
-    raw_data = (
-        resources.files(__package__)
-        .joinpath("data", "washington-games.toml")
-        .read_bytes()
-    )
-    payload = tomllib.loads(raw_data.decode("utf-8"))
-    games = {
-        game["slug"]: GameMetadata(
-            slug=game["slug"],
-            name=game["name"],
-            source_url=game["source_url"],
-            reviewed_on=game["reviewed_on"],
-            wager_options=tuple(
-                WagerOption(
-                    slug=option["slug"],
-                    label=option["label"],
-                    ticket_cost=float(option["ticket_cost"]),
-                    prize_tiers=tuple(
-                        PrizeTier(
-                            label=tier["label"],
-                            probability=float(tier["probability"]),
-                            prize=float(tier["prize"]),
+    games = {}
+    for data_file in resources.files(__package__).joinpath("data").iterdir():
+        if not data_file.name.endswith("-games.toml"):
+            continue
+        payload = tomllib.loads(data_file.read_bytes().decode("utf-8"))
+        games.update(
+            {
+                game["slug"]: GameMetadata(
+                    slug=game["slug"],
+                    name=game["name"],
+                    source_url=game["source_url"],
+                    reviewed_on=game["reviewed_on"],
+                    wager_options=tuple(
+                        WagerOption(
+                            slug=option["slug"],
+                            label=option["label"],
+                            ticket_cost=float(option["ticket_cost"]),
+                            prize_tiers=tuple(
+                                PrizeTier(
+                                    label=tier["label"],
+                                    probability=float(tier["probability"]),
+                                    prize=float(tier["prize"]),
+                                )
+                                for tier in option.get("prize_tiers", ())
+                            ),
                         )
-                        for tier in option.get("prize_tiers", ())
+                        for option in game.get("wager_options", ())
                     ),
                 )
-                for option in game.get("wager_options", ())
-            ),
+                for game in payload["games"]
+            }
         )
-        for game in payload["games"]
-    }
     return dict(sorted(games.items()))
 
 
@@ -75,10 +76,7 @@ def load_default_jurisdictions() -> dict[str, dict[str, object]]:
     for jurisdiction in payload["jurisdictions"]:
         jurisdictions[jurisdiction["code"]] = {
             "name": jurisdiction["name"],
-            "offerings": tuple(
-                offering["game_slug"]
-                for offering in jurisdiction.get("offerings", ())
-            ),
+            "offerings": tuple(jurisdiction.get("offerings", ())),
         }
     return jurisdictions
 
