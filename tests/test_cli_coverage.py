@@ -7,6 +7,34 @@ from nolottery.cli import app
 
 
 runner = CliRunner()
+FULL_SUPPORT_STATUSES = [
+    "cataloged",
+    "rules_verified",
+    "ev_supported",
+    "fetch_supported",
+    "audit_supported",
+    "low_share_supported",
+]
+NATIONAL_GAME_SLUGS = {"powerball", "mega-millions"}
+
+
+def _assert_supported_national_games(games):
+    for game_slug in NATIONAL_GAME_SLUGS:
+        assert games[game_slug]["support_statuses"] == FULL_SUPPORT_STATUSES
+        assert games[game_slug]["results_adapter"] == "official_national_results_page"
+
+
+def _assert_cataloged_local_blockers(games):
+    assert all(
+        game["support_statuses"] == ["cataloged"]
+        for game_slug, game in games.items()
+        if game_slug not in NATIONAL_GAME_SLUGS
+    )
+    assert all(
+        game["blocking_reason"] == "Rules and fetch adapter pending"
+        for game_slug, game in games.items()
+        if game_slug not in NATIONAL_GAME_SLUGS
+    )
 
 
 def test_coverage_reports_washington_game_support_statuses(tmp_path):
@@ -600,11 +628,8 @@ def test_coverage_reports_new_jersey_full_draw_game_catalog(tmp_path):
         "new-jersey-quick-draw",
         "powerball",
     }
-    assert all(game["support_statuses"] == ["cataloged"] for game in games.values())
-    assert all(
-        game["blocking_reason"] == "Rules and fetch adapter pending"
-        for game in games.values()
-    )
+    _assert_supported_national_games(games)
+    _assert_cataloged_local_blockers(games)
 
 
 def test_coverage_reports_new_mexico_full_draw_game_catalog(tmp_path):
