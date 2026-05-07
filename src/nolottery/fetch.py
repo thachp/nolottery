@@ -50,6 +50,10 @@ _NEW_YORK_DAILY_NUMBERS_URL = (
     "$limit=50000&$order=draw_date%20DESC"
 )
 _NEW_YORK_DAILY_GAMES = {"numbers", "win-4"}
+_TEXAS_SPECIAL_NUMBER_NAMES = {
+    "mega-millions": "Mega Ball",
+    "powerball": "Powerball",
+}
 
 
 @dataclass(frozen=True)
@@ -173,6 +177,19 @@ def fetch_game_backfill(
         )
         draws = parse_new_york_daily_numbers_json(raw_json, game.slug)
         _insert_snapshot(conn, jurisdiction_code, game.slug, source_url, raw_json, draws)
+        _replace_draw_results(conn, jurisdiction_code, game.slug, draws)
+        conn.commit()
+        return FetchResult(
+            game_name=game.name,
+            source_url=source_url,
+            draw_count=len(draws),
+            prize_row_count=sum(len(draw.prizes) for draw in draws),
+            page_count=1,
+        )
+    if jurisdiction_code == "tx" and game.slug in _TEXAS_SPECIAL_NUMBER_NAMES:
+        raw_html, source_url = _read_source(game.source_url, source_dir, game.slug)
+        draws = parse_texas_winning_numbers(raw_html, game.slug)
+        _insert_snapshot(conn, jurisdiction_code, game.slug, source_url, raw_html, draws)
         _replace_draw_results(conn, jurisdiction_code, game.slug, draws)
         conn.commit()
         return FetchResult(
@@ -502,6 +519,43 @@ def parse_new_york_daily_numbers_json(
     return tuple(draws)
 
 
+def parse_texas_winning_numbers(
+    raw_html: str,
+    game_slug: str,
+) -> tuple[ParsedDraw, ...]:
+    special_number_name = _TEXAS_SPECIAL_NUMBER_NAMES[game_slug]
+    soup = BeautifulSoup(raw_html, "html.parser")
+    draws: list[ParsedDraw] = []
+    for row in soup.select("tr"):
+        cells = [cell.get_text(" ", strip=True) for cell in row.find_all("td")]
+        if len(cells) < 3:
+            continue
+        draw_date = _texas_draw_date(cells[0])
+        if draw_date is None:
+            continue
+        numbers = re.findall(r"\d{1,2}", cells[1])
+        special_number = re.search(r"\d{1,2}", cells[2])
+        if len(numbers) != 5 or special_number is None:
+            continue
+        draws.append(
+            ParsedDraw(
+                draw_date=draw_date,
+                winning_number=", ".join(
+                    [*numbers, f"{special_number.group(0)} {special_number_name}"]
+                ),
+                prizes=(),
+            )
+        )
+    return tuple(draws)
+
+
+def _texas_draw_date(raw_value: str) -> str | None:
+    try:
+        return datetime.strptime(raw_value, "%m/%d/%Y").strftime(_DRAW_DATE_FORMAT)
+    except ValueError:
+        return None
+
+
 def _new_york_draw_date(raw_value: object) -> str | None:
     if not isinstance(raw_value, str) or not raw_value:
         return None
@@ -751,6 +805,8 @@ def _parse_draws(
         return parse_california_hot_spot(raw_html)
     if jurisdiction_code == "ca" and game_slug in _CALIFORNIA_GAME_SLUGS:
         return parse_california_draw_game(raw_html)
+    if jurisdiction_code == "tx" and game_slug in _TEXAS_SPECIAL_NUMBER_NAMES:
+        return parse_texas_winning_numbers(raw_html, game_slug)
     return parse_past_drawings(raw_html)
 
 

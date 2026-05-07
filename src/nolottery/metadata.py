@@ -76,6 +76,10 @@ def load_default_jurisdictions() -> dict[str, dict[str, object]]:
     for jurisdiction in payload["jurisdictions"]:
         jurisdictions[jurisdiction["code"]] = {
             "name": jurisdiction["name"],
+            "support_statuses": tuple(
+                jurisdiction.get("support_statuses", ("cataloged",))
+            ),
+            "blocking_reason": jurisdiction.get("blocking_reason"),
             "offerings": tuple(jurisdiction.get("offerings", ())),
         }
     return jurisdictions

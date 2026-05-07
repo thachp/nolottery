@@ -244,3 +244,292 @@ blocking_reason = 'Rules and fetch adapter pending'
 game_slug = 'race2riches'
 support_statuses = ['cataloged']
 blocking_reason = 'Rules and fetch adapter pending'
+
+[[jurisdictions]]
+code = 'al'
+name = 'Alabama'
+support_statuses = ['no_state_lottery']
+blocking_reason = 'No state lottery established'
+
+[[jurisdictions]]
+code = 'ak'
+name = 'Alaska'
+support_statuses = ['no_state_lottery']
+blocking_reason = 'No state lottery established'
+
+[[jurisdictions]]
+code = 'az'
+name = 'Arizona'
+support_statuses = ['catalog_pending']
+blocking_reason = 'Lottery jurisdiction offering catalog pending'
+
+[[jurisdictions]]
+code = 'ar'
+name = 'Arkansas'
+support_statuses = ['catalog_pending']
+blocking_reason = 'Lottery jurisdiction offering catalog pending'
+
+[[jurisdictions]]
+code = 'co'
+name = 'Colorado'
+support_statuses = ['catalog_pending']
+blocking_reason = 'Lottery jurisdiction offering catalog pending'
+
+[[jurisdictions]]
+code = 'ct'
+name = 'Connecticut'
+support_statuses = ['catalog_pending']
+blocking_reason = 'Lottery jurisdiction offering catalog pending'
+
+[[jurisdictions]]
+code = 'de'
+name = 'Delaware'
+support_statuses = ['catalog_pending']
+blocking_reason = 'Lottery jurisdiction offering catalog pending'
+
+[[jurisdictions]]
+code = 'ga'
+name = 'Georgia'
+support_statuses = ['catalog_pending']
+blocking_reason = 'Lottery jurisdiction offering catalog pending'
+
+[[jurisdictions]]
+code = 'hi'
+name = 'Hawaii'
+support_statuses = ['no_state_lottery']
+blocking_reason = 'No state lottery established'
+
+[[jurisdictions]]
+code = 'id'
+name = 'Idaho'
+support_statuses = ['catalog_pending']
+blocking_reason = 'Lottery jurisdiction offering catalog pending'
+
+[[jurisdictions]]
+code = 'il'
+name = 'Illinois'
+support_statuses = ['catalog_pending']
+blocking_reason = 'Lottery jurisdiction offering catalog pending'
+
+[[jurisdictions]]
+code = 'in'
+name = 'Indiana'
+support_statuses = ['catalog_pending']
+blocking_reason = 'Lottery jurisdiction offering catalog pending'
+
+[[jurisdictions]]
+code = 'ia'
+name = 'Iowa'
+support_statuses = ['catalog_pending']
+blocking_reason = 'Lottery jurisdiction offering catalog pending'
+
+[[jurisdictions]]
+code = 'ks'
+name = 'Kansas'
+support_statuses = ['catalog_pending']
+blocking_reason = 'Lottery jurisdiction offering catalog pending'
+
+[[jurisdictions]]
+code = 'ky'
+name = 'Kentucky'
+support_statuses = ['catalog_pending']
+blocking_reason = 'Lottery jurisdiction offering catalog pending'
+
+[[jurisdictions]]
+code = 'la'
+name = 'Louisiana'
+support_statuses = ['catalog_pending']
+blocking_reason = 'Lottery jurisdiction offering catalog pending'
+
+[[jurisdictions]]
+code = 'me'
+name = 'Maine'
+support_statuses = ['catalog_pending']
+blocking_reason = 'Lottery jurisdiction offering catalog pending'
+
+[[jurisdictions]]
+code = 'md'
+name = 'Maryland'
+support_statuses = ['catalog_pending']
+blocking_reason = 'Lottery jurisdiction offering catalog pending'
+
+[[jurisdictions]]
+code = 'ma'
+name = 'Massachusetts'
+support_statuses = ['catalog_pending']
+blocking_reason = 'Lottery jurisdiction offering catalog pending'
+
+[[jurisdictions]]
+code = 'mi'
+name = 'Michigan'
+support_statuses = ['catalog_pending']
+blocking_reason = 'Lottery jurisdiction offering catalog pending'
+
+[[jurisdictions]]
+code = 'mn'
+name = 'Minnesota'
+support_statuses = ['catalog_pending']
+blocking_reason = 'Lottery jurisdiction offering catalog pending'
+
+[[jurisdictions]]
+code = 'ms'
+name = 'Mississippi'
+support_statuses = ['catalog_pending']
+blocking_reason = 'Lottery jurisdiction offering catalog pending'
+
+[[jurisdictions]]
+code = 'mo'
+name = 'Missouri'
+support_statuses = ['catalog_pending']
+blocking_reason = 'Lottery jurisdiction offering catalog pending'
+
+[[jurisdictions]]
+code = 'mt'
+name = 'Montana'
+support_statuses = ['catalog_pending']
+blocking_reason = 'Lottery jurisdiction offering catalog pending'
+
+[[jurisdictions]]
+code = 'ne'
+name = 'Nebraska'
+support_statuses = ['catalog_pending']
+blocking_reason = 'Lottery jurisdiction offering catalog pending'
+
+[[jurisdictions]]
+code = 'nv'
+name = 'Nevada'
+support_statuses = ['no_state_lottery']
+blocking_reason = 'No state lottery established'
+
+[[jurisdictions]]
+code = 'nh'
+name = 'New Hampshire'
+support_statuses = ['catalog_pending']
+blocking_reason = 'Lottery jurisdiction offering catalog pending'
+
+[[jurisdictions]]
+code = 'nj'
+name = 'New Jersey'
+support_statuses = ['catalog_pending']
+blocking_reason = 'Lottery jurisdiction offering catalog pending'
+
+[[jurisdictions]]
+code = 'nm'
+name = 'New Mexico'
+support_statuses = ['catalog_pending']
+blocking_reason = 'Lottery jurisdiction offering catalog pending'
+
+[[jurisdictions]]
+code = 'nc'
+name = 'North Carolina'
+support_statuses = ['catalog_pending']
+blocking_reason = 'Lottery jurisdiction offering catalog pending'
+
+[[jurisdictions]]
+code = 'nd'
+name = 'North Dakota'
+support_statuses = ['catalog_pending']
+blocking_reason = 'Lottery jurisdiction offering catalog pending'
+
+[[jurisdictions]]
+code = 'oh'
+name = 'Ohio'
+support_statuses = ['catalog_pending']
+blocking_reason = 'Lottery jurisdiction offering catalog pending'
+
+[[jurisdictions]]
+code = 'ok'
+name = 'Oklahoma'
+support_statuses = ['catalog_pending']
+blocking_reason = 'Lottery jurisdiction offering catalog pending'
+
+[[jurisdictions]]
+code = 'or'
+name = 'Oregon'
+support_statuses = ['catalog_pending']
+blocking_reason = 'Lottery jurisdiction offering catalog pending'
+
+[[jurisdictions]]
+code = 'pa'
+name = 'Pennsylvania'
+support_statuses = ['catalog_pending']
+blocking_reason = 'Lottery jurisdiction offering catalog pending'
+
+[[jurisdictions]]
+code = 'ri'
+name = 'Rhode Island'
+support_statuses = ['catalog_pending']
+blocking_reason = 'Lottery jurisdiction offering catalog pending'
+
+[[jurisdictions]]
+code = 'sc'
+name = 'South Carolina'
+support_statuses = ['catalog_pending']
+blocking_reason = 'Lottery jurisdiction offering catalog pending'
+
+[[jurisdictions]]
+code = 'sd'
+name = 'South Dakota'
+support_statuses = ['catalog_pending']
+blocking_reason = 'Lottery jurisdiction offering catalog pending'
+
+[[jurisdictions]]
+code = 'tn'
+name = 'Tennessee'
+support_statuses = ['catalog_pending']
+blocking_reason = 'Lottery jurisdiction offering catalog pending'
+
+[[jurisdictions]]
+code = 'tx'
+name = 'Texas'
+blocking_reason = 'Additional Texas draw-game offerings pending'
+
+[[jurisdictions.offerings]]
+game_slug = 'powerball'
+source_url = 'https://www.texaslottery.com/export/sites/lottery/Games/Powerball/Winning_Numbers/index.html'
+support_statuses = ['cataloged', 'rules_verified', 'ev_supported', 'fetch_supported', 'audit_supported', 'low_share_supported']
+results_adapter = 'tx_winning_numbers'
+blocking_reason = ''
+
+[[jurisdictions.offerings]]
+game_slug = 'mega-millions'
+source_url = 'https://www.texaslottery.com/export/sites/lottery/Games/Mega_Millions/Winning_Numbers/index.html'
+support_statuses = ['cataloged', 'rules_verified', 'ev_supported', 'fetch_supported', 'audit_supported', 'low_share_supported']
+results_adapter = 'tx_winning_numbers'
+blocking_reason = ''
+
+[[jurisdictions]]
+code = 'ut'
+name = 'Utah'
+support_statuses = ['no_state_lottery']
+blocking_reason = 'No state lottery established'
+
+[[jurisdictions]]
+code = 'vt'
+name = 'Vermont'
+support_statuses = ['catalog_pending']
+blocking_reason = 'Lottery jurisdiction offering catalog pending'
+
+[[jurisdictions]]
+code = 'va'
+name = 'Virginia'
+support_statuses = ['catalog_pending']
+blocking_reason = 'Lottery jurisdiction offering catalog pending'
+
+[[jurisdictions]]
+code = 'wv'
+name = 'West Virginia'
+support_statuses = ['catalog_pending']
+blocking_reason = 'Lottery jurisdiction offering catalog pending'
+
+[[jurisdictions]]
+code = 'wi'
+name = 'Wisconsin'
+support_statuses = ['catalog_pending']
+blocking_reason = 'Lottery jurisdiction offering catalog pending'
+
+[[jurisdictions]]
+code = 'wy'
+name = 'Wyoming'
+support_statuses = ['catalog_pending']
+blocking_reason = 'Lottery jurisdiction offering catalog pending'

@@ -350,6 +350,7 @@ def coverage(
     conn = db.connect(ctx.obj["data_dir"])
     _validate_jurisdiction(conn, jurisdiction)
     jurisdiction_name = db.get_jurisdiction_name(conn, jurisdiction)
+    jurisdiction_metadata = db.DEFAULT_JURISDICTIONS[jurisdiction]
     games = [
         _coverage_game(metadata, jurisdiction)
         for metadata in _load_games(conn, jurisdiction)
@@ -357,6 +358,10 @@ def coverage(
     payload = {
         "jurisdiction_code": jurisdiction,
         "jurisdiction": jurisdiction_name,
+        "jurisdiction_support_statuses": list(
+            jurisdiction_metadata["support_statuses"]
+        ),
+        "blocking_reason": jurisdiction_metadata["blocking_reason"],
         "games": games,
     }
     if output == "json":

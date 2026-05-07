@@ -126,6 +126,49 @@ def _drawing_with_extra_ball_cell_html(
     """
 
 
+def _texas_powerball_history_html() -> str:
+    return """
+    <html>
+      <body>
+        <h1>Powerball Winning Numbers</h1>
+        <table>
+          <thead>
+            <tr>
+              <th>Draw Date</th>
+              <th>Winning Numbers</th>
+              <th>Powerball</th>
+              <th>Power Play</th>
+              <th>Estimated Jackpot</th>
+              <th>Jackpot Winners</th>
+              <th>Jackpot Option</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>05/06/2026</td>
+              <td>18 - 27 - 51 - 65 - 68</td>
+              <td>5</td>
+              <td>3</td>
+              <td>$30 Million</td>
+              <td>Roll</td>
+              <td></td>
+            </tr>
+            <tr>
+              <td>05/04/2026</td>
+              <td>30 - 36 - 42 - 60 - 63</td>
+              <td>13</td>
+              <td>2</td>
+              <td>$20 Million</td>
+              <td>Roll</td>
+              <td></td>
+            </tr>
+          </tbody>
+        </table>
+      </body>
+    </html>
+    """
+
+
 def test_fetch_cashpop_persists_official_page_snapshot_and_draws(tmp_path):
     fixture = tmp_path / "cashpop.html"
     fixture.write_text(DRAWING_HTML, encoding="utf-8")
@@ -618,6 +661,64 @@ def test_fetch_reports_cataloged_game_without_fetch_support(tmp_path):
 
     assert result.exit_code != 0
     assert "fetch support pending for game: new-york-lotto" in result.output
+
+
+def test_fetch_texas_powerball_backfill_reads_official_history_fixture(tmp_path):
+    fixtures = tmp_path / "fixtures"
+    fixtures.mkdir()
+    (fixtures / "powerball.html").write_text(
+        _texas_powerball_history_html(),
+        encoding="utf-8",
+    )
+
+    result = runner.invoke(
+        app,
+        [
+            "--data-dir",
+            str(tmp_path / "data"),
+            "fetch",
+            "powerball",
+            "-j",
+            "tx",
+            "--backfill",
+            "--source-dir",
+            str(fixtures),
+        ],
+    )
+
+    assert result.exit_code == 0, result.output
+    assert "Powerball" in result.output
+    assert "2 draws" in result.output
+    assert "1 page" in result.output
+
+    draws_result = runner.invoke(
+        app,
+        [
+            "--data-dir",
+            str(tmp_path / "data"),
+            "draws",
+            "powerball",
+            "-j",
+            "tx",
+            "--output",
+            "json",
+        ],
+    )
+
+    assert draws_result.exit_code == 0, draws_result.output
+    payload = json.loads(draws_result.output)
+    assert payload["games"][0]["draws"] == [
+        {
+            "jurisdiction_code": "tx",
+            "draw_date": "Wed, May 06, 2026",
+            "winning_number": "18, 27, 51, 65, 68, 5 Powerball",
+        },
+        {
+            "jurisdiction_code": "tx",
+            "draw_date": "Mon, May 04, 2026",
+            "winning_number": "30, 36, 42, 60, 63, 13 Powerball",
+        },
+    ]
 
 
 def test_fetch_all_backfill_uses_supported_subset_for_florida(tmp_path):

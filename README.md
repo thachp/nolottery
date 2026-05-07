@@ -42,6 +42,12 @@ Coverage uses support statuses rather than a single supported/unsupported flag:
 - `audit_supported`: stored draws can be audited.
 - `low_share_supported`: low-share picks can be generated.
 
+Coverage also reports jurisdiction-level statuses:
+
+- `cataloged`: at least one draw-game offering is cataloged for the jurisdiction.
+- `catalog_pending`: the state is recognized, but its draw-game offerings are not cataloged yet.
+- `no_state_lottery`: the state does not have a state lottery.
+
 Washington draw games currently have EV, fetch, audit, and low-share support:
 
 - Powerball
@@ -53,22 +59,16 @@ Washington draw games currently have EV, fetch, audit, and low-share support:
 - Cash Pop
 - Daily Keno
 
-California currently has a first local-game slice:
+California currently has EV, fetch, audit, and low-share support for its cataloged draw games. New York, Florida, and District of Columbia have representative catalog entries, with New York Numbers/Win 4 and Florida Pick 2/Pick 3/Pick 4/Pick 5 also supporting EV, fetch, and low-share. Texas Powerball and Mega Millions support EV, fetch, audit, low-share, and one-page historical backfill from Texas Lottery past winning-number pages.
 
-- Daily 3: cataloged, rules reviewed, and fetch supported. EV is intentionally blocked until variable pari-mutuel prize estimates are modeled.
-
-Representative catalog-only jurisdictions are also tracked so coverage gaps are explicit:
-
-- New York: Numbers, Win 4, Take 5, Pick 10
-- Florida: Fantasy 5, Florida Lotto, Pick 5
-- District of Columbia: DC-3, DC-4, DC-5
+Every U.S. state code is recognized by coverage. States whose game catalogs have not been verified yet report `catalog_pending`; Alabama, Alaska, Hawaii, Nevada, and Utah report `no_state_lottery`.
 
 Run coverage to see current status and blocking reasons:
 
 ```bash
 uv run lottery coverage -j wa
 uv run lottery coverage -j ca --output json
-uv run lottery coverage -j ny
+uv run lottery coverage -j tx
 ```
 
 ## Features
@@ -90,7 +90,7 @@ uv run lottery coverage -j ny
 
 ## How It Works
 
-The app has bundled, reviewed metadata for known draw games by lottery jurisdiction. Washington currently has full EV metadata for its supported draw games. California Daily 3 and the representative New York, Florida, and DC entries are present in the coverage catalog with their current support statuses.
+The app has bundled, reviewed metadata for known draw games by lottery jurisdiction. Washington and California currently have full EV metadata for their supported draw games. Representative New York, Florida, DC, and Texas entries are present in the coverage catalog with their current support statuses. Other U.S. states are recognized as jurisdictions so expansion blockers are explicit instead of appearing as unknown jurisdiction errors.
 
 For EV-supported games, the app uses reviewed prize and odds metadata to calculate:
 
@@ -243,10 +243,10 @@ Use `coverage` to inspect known draw games and the current support level for a l
 ```bash
 uv run lottery coverage -j wa
 uv run lottery coverage -j ca --output json
-uv run lottery coverage -j ny
+uv run lottery coverage -j tx
 ```
 
-Catalog-only games are visible in coverage but excluded from EV commands until rules metadata is verified. Games with fetch support but no EV support, such as California Daily 3, can fetch and display draw results while reporting the EV blocker.
+Catalog-only games are visible in coverage but excluded from EV commands until rules metadata is verified. Catalog-pending jurisdictions are accepted by coverage and excluded from game commands until their official game offerings, result sources, and backfill adapters are added.
 
 ## Fetching Draw Data
 

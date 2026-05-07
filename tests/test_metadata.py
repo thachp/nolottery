@@ -2,6 +2,60 @@ from nolottery import db
 from nolottery.metadata import load_default_games, load_default_jurisdictions
 
 
+US_STATE_CODES = {
+    "al",
+    "ak",
+    "az",
+    "ar",
+    "ca",
+    "co",
+    "ct",
+    "de",
+    "fl",
+    "ga",
+    "hi",
+    "id",
+    "il",
+    "in",
+    "ia",
+    "ks",
+    "ky",
+    "la",
+    "me",
+    "md",
+    "ma",
+    "mi",
+    "mn",
+    "ms",
+    "mo",
+    "mt",
+    "ne",
+    "nv",
+    "nh",
+    "nj",
+    "nm",
+    "ny",
+    "nc",
+    "nd",
+    "oh",
+    "ok",
+    "or",
+    "pa",
+    "ri",
+    "sc",
+    "sd",
+    "tn",
+    "tx",
+    "ut",
+    "vt",
+    "va",
+    "wa",
+    "wv",
+    "wi",
+    "wy",
+}
+
+
 def test_load_default_games_reads_bundled_metadata_files():
     games = load_default_games()
 
@@ -20,7 +74,8 @@ def test_load_default_games_reads_bundled_metadata_files():
 def test_load_default_jurisdictions_reads_bundled_catalog():
     jurisdictions = load_default_jurisdictions()
 
-    assert tuple(jurisdictions) == ("wa", "ca", "ny", "fl", "dc")
+    assert US_STATE_CODES.issubset(jurisdictions)
+    assert "dc" in jurisdictions
     assert jurisdictions["wa"]["name"] == "Washington"
     assert tuple(
         offering["game_slug"] for offering in jurisdictions["wa"]["offerings"]
@@ -55,6 +110,20 @@ def test_load_default_jurisdictions_reads_bundled_catalog():
     assert "dc-keno" in {
         offering["game_slug"] for offering in jurisdictions["dc"]["offerings"]
     }
+
+
+def test_remaining_state_catalog_marks_jurisdiction_level_blockers():
+    jurisdictions = load_default_jurisdictions()
+
+    assert jurisdictions["al"]["support_statuses"] == ("no_state_lottery",)
+    assert jurisdictions["al"]["blocking_reason"] == "No state lottery established"
+    assert jurisdictions["al"]["offerings"] == ()
+
+    assert jurisdictions["az"]["support_statuses"] == ("catalog_pending",)
+    assert jurisdictions["az"]["blocking_reason"] == (
+        "Lottery jurisdiction offering catalog pending"
+    )
+    assert jurisdictions["az"]["offerings"] == ()
 
 
 def test_jurisdiction_offering_can_override_shared_game_results_source(tmp_path):

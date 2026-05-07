@@ -176,3 +176,87 @@ def test_coverage_reports_florida_and_new_york_ev_supported_games(tmp_path):
                 "fl_pick_history_pdf",
                 "ny_daily_numbers_socrata",
             }
+
+
+def test_coverage_reports_state_without_lottery_as_supported_jurisdiction(tmp_path):
+    result = runner.invoke(
+        app,
+        [
+            "--data-dir",
+            str(tmp_path),
+            "coverage",
+            "-j",
+            "al",
+            "--output",
+            "json",
+        ],
+    )
+
+    assert result.exit_code == 0, result.output
+    payload = json.loads(result.output)
+    assert payload["jurisdiction_code"] == "al"
+    assert payload["jurisdiction"] == "Alabama"
+    assert payload["jurisdiction_support_statuses"] == ["no_state_lottery"]
+    assert payload["blocking_reason"] == "No state lottery established"
+    assert payload["games"] == []
+
+
+def test_coverage_reports_pending_state_catalog_as_supported_jurisdiction(tmp_path):
+    result = runner.invoke(
+        app,
+        [
+            "--data-dir",
+            str(tmp_path),
+            "coverage",
+            "-j",
+            "az",
+            "--output",
+            "json",
+        ],
+    )
+
+    assert result.exit_code == 0, result.output
+    payload = json.loads(result.output)
+    assert payload["jurisdiction_code"] == "az"
+    assert payload["jurisdiction"] == "Arizona"
+    assert payload["jurisdiction_support_statuses"] == ["catalog_pending"]
+    assert payload["blocking_reason"] == "Lottery jurisdiction offering catalog pending"
+    assert payload["games"] == []
+
+
+def test_coverage_reports_texas_backfill_supported_national_games(tmp_path):
+    result = runner.invoke(
+        app,
+        [
+            "--data-dir",
+            str(tmp_path),
+            "coverage",
+            "-j",
+            "tx",
+            "--output",
+            "json",
+        ],
+    )
+
+    assert result.exit_code == 0, result.output
+    payload = json.loads(result.output)
+    assert payload["jurisdiction_code"] == "tx"
+    assert payload["jurisdiction"] == "Texas"
+    games = {game["game_slug"]: game for game in payload["games"]}
+    assert set(games) == {"mega-millions", "powerball"}
+    assert all(
+        game["support_statuses"]
+        == [
+            "cataloged",
+            "rules_verified",
+            "ev_supported",
+            "fetch_supported",
+            "audit_supported",
+            "low_share_supported",
+        ]
+        for game in games.values()
+    )
+    assert all(
+        game["results_adapter"] == "tx_winning_numbers"
+        for game in games.values()
+    )
