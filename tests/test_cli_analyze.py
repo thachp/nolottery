@@ -1,5 +1,6 @@
 import json
 
+import pytest
 from typer.testing import CliRunner
 
 from nolottery.cli import app
@@ -381,7 +382,18 @@ def test_recommend_supports_florida_pick_2(tmp_path):
     assert len(payload["best"]["prediction"]) == 2
 
 
-def test_recommend_reports_alabama_has_no_state_lottery(tmp_path):
+@pytest.mark.parametrize(
+    ("jurisdiction_code", "jurisdiction_name"),
+    [
+        ("al", "Alabama"),
+        ("ak", "Alaska"),
+    ],
+)
+def test_recommend_reports_no_state_lottery(
+    tmp_path,
+    jurisdiction_code,
+    jurisdiction_name,
+):
     result = runner.invoke(
         app,
         [
@@ -389,14 +401,14 @@ def test_recommend_reports_alabama_has_no_state_lottery(tmp_path):
             str(tmp_path),
             "recommend",
             "-j",
-            "al",
+            jurisdiction_code,
             "--output",
             "json",
         ],
     )
 
     assert result.exit_code != 0
-    assert "No EV-supported games for Alabama" in result.output
+    assert f"No EV-supported games for {jurisdiction_name}" in result.output
     assert "No state lottery" in result.output
     assert "established" in result.output
 
