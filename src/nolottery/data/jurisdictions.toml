@@ -1,0 +1,27 @@
+[[jurisdictions]]
+code = 'wa'
+name = 'Washington'
+
+[[jurisdictions.offerings]]
+game_slug = 'powerball'
+
+[[jurisdictions.offerings]]
+game_slug = 'mega-millions'
+
+[[jurisdictions.offerings]]
+game_slug = 'lotto'
+
+[[jurisdictions.offerings]]
+game_slug = 'hit-5'
+
+[[jurisdictions.offerings]]
+game_slug = 'match-4'
+
+[[jurisdictions.offerings]]
+game_slug = 'pick-3'
+
+[[jurisdictions.offerings]]
+game_slug = 'cashpop'
+
+[[jurisdictions.offerings]]
+game_slug = 'daily-keno'

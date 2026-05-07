@@ -5,13 +5,17 @@ from dataclasses import dataclass
 from datetime import date, datetime
 from pathlib import Path
 
-from .metadata import DEFAULT_GAMES, GameMetadata, PrizeTier, WagerOption
+from .metadata import (
+    DEFAULT_GAMES,
+    GameMetadata,
+    PrizeTier,
+    WagerOption,
+    load_default_jurisdictions,
+)
 
 _DRAW_DATE_FORMAT = "%a, %b %d, %Y"
 DEFAULT_JURISDICTION_CODE = "wa"
-DEFAULT_JURISDICTIONS = {
-    DEFAULT_JURISDICTION_CODE: "Washington",
-}
+DEFAULT_JURISDICTIONS = load_default_jurisdictions()
 
 
 @dataclass(frozen=True)
@@ -119,14 +123,14 @@ def initialize(conn: sqlite3.Connection) -> None:
 
 
 def seed_default_metadata(conn: sqlite3.Connection) -> None:
-    for code, name in DEFAULT_JURISDICTIONS.items():
+    for code, jurisdiction in DEFAULT_JURISDICTIONS.items():
         conn.execute(
             """
             insert into jurisdictions (code, name)
             values (?, ?)
             on conflict(code) do update set name = excluded.name
             """,
-            (code, name),
+            (code, jurisdiction["name"]),
         )
     for game in DEFAULT_GAMES.values():
         conn.execute(

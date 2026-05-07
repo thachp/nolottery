@@ -1,0 +1,1534 @@
+# Generated from the original Washington metadata. Edit by review, not by scraper.
+
+[[games]]
+slug = 'powerball'
+name = 'Powerball'
+source_url = 'https://www.walottery.com/WinningNumbers/PastDrawings.aspx?gamename=powerball&unitcount=180&unittype=day'
+reviewed_on = '2026-05-05'
+
+[[games.wager_options]]
+slug = 'standard'
+label = 'Standard $2'
+ticket_cost = 2.0
+
+[[games.wager_options.prize_tiers]]
+label = '5 White + Powerball'
+probability = 3.4246575342465753e-09
+prize = 13500000
+
+[[games.wager_options.prize_tiers]]
+label = '5 White'
+probability = 8.547008547008547e-08
+prize = 1000000
+
+[[games.wager_options.prize_tiers]]
+label = '4 White + Powerball'
+probability = 1.095290251916758e-06
+prize = 50000
+
+[[games.wager_options.prize_tiers]]
+label = '4 White'
+probability = 2.7397260273972603e-05
+prize = 100
+
+[[games.wager_options.prize_tiers]]
+label = '3 White + Powerball'
+probability = 6.896551724137931e-05
+prize = 100
+
+[[games.wager_options.prize_tiers]]
+label = '3 White'
+probability = 0.0017241379310344827
+prize = 7
+
+[[games.wager_options.prize_tiers]]
+label = '2 White + Powerball'
+probability = 0.0014265335235378032
+prize = 7
+
+[[games.wager_options.prize_tiers]]
+label = '1 White + Powerball'
+probability = 0.010869565217391304
+prize = 4
+
+[[games.wager_options.prize_tiers]]
+label = 'Powerball'
+probability = 0.026109660574412535
+prize = 4
+
+[[games]]
+slug = 'mega-millions'
+name = 'Mega Millions'
+source_url = 'https://www.walottery.com/WinningNumbers/PastDrawings.aspx?gamename=megamillions&unitcount=180&unittype=day'
+reviewed_on = '2026-05-05'
+
+[[games.wager_options]]
+slug = 'standard'
+label = 'Standard $5'
+ticket_cost = 5.0
+
+[[games.wager_options.prize_tiers]]
+label = '5 White + Mega Ball'
+probability = 3.4482758620689654e-09
+prize = 86300000
+
+[[games.wager_options.prize_tiers]]
+label = '5 White 10X'
+probability = 2.4801587301587303e-09
+prize = 10000000
+
+[[games.wager_options.prize_tiers]]
+label = '5 White 5X'
+probability = 4.960317460317461e-09
+prize = 5000000
+
+[[games.wager_options.prize_tiers]]
+label = '5 White 4X'
+probability = 9.920634920634921e-09
+prize = 4000000
+
+[[games.wager_options.prize_tiers]]
+label = '5 White 3X'
+probability = 2.4801587301587302e-08
+prize = 3000000
+
+[[games.wager_options.prize_tiers]]
+label = '5 White 2X'
+probability = 3.7202380952380956e-08
+prize = 2000000
+
+[[games.wager_options.prize_tiers]]
+label = '4 White + Mega Ball 10X'
+probability = 3.495525727069351e-08
+prize = 100000
+
+[[games.wager_options.prize_tiers]]
+label = '4 White + Mega Ball 5X'
+probability = 6.991051454138702e-08
+prize = 50000
+
+[[games.wager_options.prize_tiers]]
+label = '4 White + Mega Ball 4X'
+probability = 1.3982102908277404e-07
+prize = 40000
+
+[[games.wager_options.prize_tiers]]
+label = '4 White + Mega Ball 3X'
+probability = 3.495525727069351e-07
+prize = 30000
+
+[[games.wager_options.prize_tiers]]
+label = '4 White + Mega Ball 2X'
+probability = 5.243288590604026e-07
+prize = 20000
+
+[[games.wager_options.prize_tiers]]
+label = '4 White 10X'
+probability = 8.033419023136247e-07
+prize = 5000
+
+[[games.wager_options.prize_tiers]]
+label = '4 White 5X'
+probability = 1.6066838046272494e-06
+prize = 2500
+
+[[games.wager_options.prize_tiers]]
+label = '4 White 4X'
+probability = 3.213367609254499e-06
+prize = 2000
+
+[[games.wager_options.prize_tiers]]
+label = '4 White 3X'
+probability = 8.033419023136246e-06
+prize = 1500
+
+[[games.wager_options.prize_tiers]]
+label = '4 White 2X'
+probability = 1.2050128534704371e-05
+prize = 1000
+
+[[games.wager_options.prize_tiers]]
+label = '3 White + Mega Ball 10X'
+probability = 2.2321428571428573e-06
+prize = 2000
+
+[[games.wager_options.prize_tiers]]
+label = '3 White + Mega Ball 5X'
+probability = 4.464285714285715e-06
+prize = 1000
+
+[[games.wager_options.prize_tiers]]
+label = '3 White + Mega Ball 4X'
+probability = 8.92857142857143e-06
+prize = 800
+
+[[games.wager_options.prize_tiers]]
+label = '3 White + Mega Ball 3X'
+probability = 2.2321428571428575e-05
+prize = 600
+
+[[games.wager_options.prize_tiers]]
+label = '3 White + Mega Ball 2X'
+probability = 3.348214285714286e-05
+prize = 400
+
+[[games.wager_options.prize_tiers]]
+label = '3 White 10X'
+probability = 5.1482701812191104e-05
+prize = 100
+
+[[games.wager_options.prize_tiers]]
+label = '3 White 5X'
+probability = 0.00010296540362438221
+prize = 50
+
+[[games.wager_options.prize_tiers]]
+label = '3 White 4X'
+probability = 0.00020593080724876442
+prize = 40
+
+[[games.wager_options.prize_tiers]]
+label = '3 White 3X'
+probability = 0.000514827018121911
+prize = 30
+
+[[games.wager_options.prize_tiers]]
+label = '3 White 2X'
+probability = 0.0007722405271828666
+prize = 20
+
+[[games.wager_options.prize_tiers]]
+label = '2 White + Mega Ball 10X'
+probability = 4.699248120300752e-05
+prize = 100
+
+[[games.wager_options.prize_tiers]]
+label = '2 White + Mega Ball 5X'
+probability = 9.398496240601504e-05
+prize = 50
+
+[[games.wager_options.prize_tiers]]
+label = '2 White + Mega Ball 4X'
+probability = 0.00018796992481203009
+prize = 40
+
+[[games.wager_options.prize_tiers]]
+label = '2 White + Mega Ball 3X'
+probability = 0.0004699248120300752
+prize = 30
+
+[[games.wager_options.prize_tiers]]
+label = '2 White + Mega Ball 2X'
+probability = 0.0007048872180451129
+prize = 20
+
+[[games.wager_options.prize_tiers]]
+label = '1 White + Mega Ball 10X'
+probability = 0.0003633720930232558
+prize = 70
+
+[[games.wager_options.prize_tiers]]
+label = '1 White + Mega Ball 5X'
+probability = 0.0007267441860465116
+prize = 35
+
+[[games.wager_options.prize_tiers]]
+label = '1 White + Mega Ball 4X'
+probability = 0.0014534883720930232
+prize = 28
+
+[[games.wager_options.prize_tiers]]
+label = '1 White + Mega Ball 3X'
+probability = 0.003633720930232558
+prize = 21
+
+[[games.wager_options.prize_tiers]]
+label = '1 White + Mega Ball 2X'
+probability = 0.005450581395348837
+prize = 14
+
+[[games.wager_options.prize_tiers]]
+label = 'Mega Ball 10X'
+probability = 0.0008928571428571428
+prize = 50
+
+[[games.wager_options.prize_tiers]]
+label = 'Mega Ball 5X'
+probability = 0.0017857142857142857
+prize = 25
+
+[[games.wager_options.prize_tiers]]
+label = 'Mega Ball 4X'
+probability = 0.0035714285714285713
+prize = 20
+
+[[games.wager_options.prize_tiers]]
+label = 'Mega Ball 3X'
+probability = 0.008928571428571428
+prize = 15
+
+[[games.wager_options.prize_tiers]]
+label = 'Mega Ball 2X'
+probability = 0.013392857142857142
+prize = 10
+
+[[games]]
+slug = 'lotto'
+name = 'Lotto'
+source_url = 'https://www.walottery.com/WinningNumbers/PastDrawings.aspx?gamename=lotto&unitcount=180&unittype=day'
+reviewed_on = '2026-05-05'
+
+[[games.wager_options]]
+slug = 'two-plays'
+label = 'Two Plays $1'
+ticket_cost = 1.0
+
+[[games.wager_options.prize_tiers]]
+label = '6 White'
+probability = 2.8612303290414876e-07
+prize = 550000
+
+[[games.wager_options.prize_tiers]]
+label = '5 White'
+probability = 7.380073800738008e-05
+prize = 1000
+
+[[games.wager_options.prize_tiers]]
+label = '4 White'
+probability = 0.003875968992248062
+prize = 30
+
+[[games.wager_options.prize_tiers]]
+label = '3 White'
+probability = 0.0706713780918728
+prize = 3
+
+[[games]]
+slug = 'hit-5'
+name = 'Hit 5'
+source_url = 'https://www.walottery.com/WinningNumbers/PastDrawings.aspx?gamename=hit5&unitcount=180&unittype=day'
+reviewed_on = '2026-05-05'
+
+[[games.wager_options]]
+slug = 'standard'
+label = 'Standard $1'
+ticket_cost = 1.0
+
+[[games.wager_options.prize_tiers]]
+label = '5 White'
+probability = 1.1750881316098707e-06
+prize = 115000
+
+[[games.wager_options.prize_tiers]]
+label = '4 White'
+probability = 0.0002173913043478261
+prize = 150
+
+[[games.wager_options.prize_tiers]]
+label = '3 White'
+probability = 0.0078125
+prize = 15
+
+[[games.wager_options.prize_tiers]]
+label = '2 White'
+probability = 0.09090909090909091
+prize = 1
+
+[[games]]
+slug = 'match-4'
+name = 'Match 4'
+source_url = 'https://www.walottery.com/WinningNumbers/PastDrawings.aspx?gamename=match4&unitcount=180&unittype=day'
+reviewed_on = '2026-05-05'
+
+[[games.wager_options]]
+slug = 'standard'
+label = 'Standard $2'
+ticket_cost = 2.0
+
+[[games.wager_options.prize_tiers]]
+label = '4 White'
+probability = 9.433962264150943e-05
+prize = 10000
+
+[[games.wager_options.prize_tiers]]
+label = '3 White'
+probability = 0.007518796992481203
+prize = 20
+
+[[games.wager_options.prize_tiers]]
+label = '2 White'
+probability = 0.1072961373390558
+prize = 2
+
+[[games]]
+slug = 'pick-3'
+name = 'Pick 3'
+source_url = 'https://www.walottery.com/WinningNumbers/PastDrawings.aspx?gamename=pick3&unitcount=180&unittype=day'
+reviewed_on = '2026-05-05'
+
+[[games.wager_options]]
+slug = 'straight-50c'
+label = 'Straight $0.50'
+ticket_cost = 0.5
+
+[[games.wager_options.prize_tiers]]
+label = 'Straight'
+probability = 0.001
+prize = 250
+
+[[games.wager_options]]
+slug = 'straight-1'
+label = 'Straight $1'
+ticket_cost = 1.0
+
+[[games.wager_options.prize_tiers]]
+label = 'Straight'
+probability = 0.001
+prize = 500
+
+[[games.wager_options]]
+slug = 'box-6-way-50c'
+label = '6-Way Box $0.50'
+ticket_cost = 0.5
+
+[[games.wager_options.prize_tiers]]
+label = '6-Way Box'
+probability = 0.005988023952095809
+prize = 40
+
+[[games.wager_options]]
+slug = 'box-6-way-1'
+label = '6-Way Box $1'
+ticket_cost = 1.0
+
+[[games.wager_options.prize_tiers]]
+label = '6-Way Box'
+probability = 0.005988023952095809
+prize = 80
+
+[[games.wager_options]]
+slug = 'box-3-way-50c'
+label = '3-Way Box $0.50'
+ticket_cost = 0.5
+
+[[games.wager_options.prize_tiers]]
+label = '3-Way Box'
+probability = 0.003003003003003003
+prize = 80
+
+[[games.wager_options]]
+slug = 'box-3-way-1'
+label = '3-Way Box $1'
+ticket_cost = 1.0
+
+[[games.wager_options.prize_tiers]]
+label = '3-Way Box'
+probability = 0.003003003003003003
+prize = 160
+
+[[games.wager_options]]
+slug = 'straight-box-6-way'
+label = '6-Way Straight/Box $1'
+ticket_cost = 1.0
+
+[[games.wager_options.prize_tiers]]
+label = 'Straight'
+probability = 0.001
+prize = 290
+
+[[games.wager_options.prize_tiers]]
+label = 'Box'
+probability = 0.005
+prize = 40
+
+[[games.wager_options]]
+slug = 'straight-box-3-way'
+label = '3-Way Straight/Box $1'
+ticket_cost = 1.0
+
+[[games.wager_options.prize_tiers]]
+label = 'Straight'
+probability = 0.001
+prize = 330
+
+[[games.wager_options.prize_tiers]]
+label = 'Box'
+probability = 0.002
+prize = 80
+
+[[games.wager_options]]
+slug = 'front-pair-50c'
+label = 'Front Pair $0.50'
+ticket_cost = 0.5
+
+[[games.wager_options.prize_tiers]]
+label = 'Front Pair'
+probability = 0.01
+prize = 25
+
+[[games.wager_options]]
+slug = 'front-pair-1'
+label = 'Front Pair $1'
+ticket_cost = 1.0
+
+[[games.wager_options.prize_tiers]]
+label = 'Front Pair'
+probability = 0.01
+prize = 50
+
+[[games.wager_options]]
+slug = 'back-pair-50c'
+label = 'Back Pair $0.50'
+ticket_cost = 0.5
+
+[[games.wager_options.prize_tiers]]
+label = 'Back Pair'
+probability = 0.01
+prize = 25
+
+[[games.wager_options]]
+slug = 'back-pair-1'
+label = 'Back Pair $1'
+ticket_cost = 1.0
+
+[[games.wager_options.prize_tiers]]
+label = 'Back Pair'
+probability = 0.01
+prize = 50
+
+[[games.wager_options]]
+slug = 'superbox-6-way-3'
+label = '6-Way Superbox $3'
+ticket_cost = 3.0
+
+[[games.wager_options.prize_tiers]]
+label = '6-Way Superbox'
+probability = 0.005988023952095809
+prize = 250
+
+[[games.wager_options]]
+slug = 'superbox-6-way-6'
+label = '6-Way Superbox $6'
+ticket_cost = 6.0
+
+[[games.wager_options.prize_tiers]]
+label = '6-Way Superbox'
+probability = 0.005988023952095809
+prize = 500
+
+[[games.wager_options]]
+slug = 'superbox-3-way-150c'
+label = '3-Way Superbox $1.50'
+ticket_cost = 1.5
+
+[[games.wager_options.prize_tiers]]
+label = '3-Way Superbox'
+probability = 0.003003003003003003
+prize = 250
+
+[[games.wager_options]]
+slug = 'superbox-3-way-3'
+label = '3-Way Superbox $3'
+ticket_cost = 3.0
+
+[[games.wager_options.prize_tiers]]
+label = '3-Way Superbox'
+probability = 0.003003003003003003
+prize = 500
+
+[[games]]
+slug = 'cashpop'
+name = 'Cash Pop'
+source_url = 'https://www.walottery.com/WinningNumbers/PastDrawings.aspx?gamename=cashpop&unitcount=180&unittype=day'
+reviewed_on = '2026-05-05'
+
+[[games.wager_options]]
+slug = 'one-pop'
+label = '1 POP'
+ticket_cost = 5.0
+
+[[games.wager_options.prize_tiers]]
+label = '$500'
+probability = 0.00013333333333333334
+prize = 500
+
+[[games.wager_options.prize_tiers]]
+label = '$250'
+probability = 0.00022222222222222223
+prize = 250
+
+[[games.wager_options.prize_tiers]]
+label = '$200'
+probability = 0.00038022813688212925
+prize = 200
+
+[[games.wager_options.prize_tiers]]
+label = '$125'
+probability = 0.0014814814814814814
+prize = 125
+
+[[games.wager_options.prize_tiers]]
+label = '$100'
+probability = 0.006666666666666667
+prize = 100
+
+[[games.wager_options.prize_tiers]]
+label = '$70'
+probability = 0.008333333333333333
+prize = 70
+
+[[games.wager_options.prize_tiers]]
+label = '$50'
+probability = 0.011111111111111112
+prize = 50
+
+[[games.wager_options.prize_tiers]]
+label = '$35'
+probability = 0.013333333333333334
+prize = 35
+
+[[games.wager_options.prize_tiers]]
+label = '$25'
+probability = 0.025
+prize = 25
+
+[[games.wager_options]]
+slug = '2-pop'
+label = '2 POPs'
+ticket_cost = 10.0
+
+[[games.wager_options.prize_tiers]]
+label = '$500'
+probability = 0.0002666666666666667
+prize = 500
+
+[[games.wager_options.prize_tiers]]
+label = '$250'
+probability = 0.00044444444444444447
+prize = 250
+
+[[games.wager_options.prize_tiers]]
+label = '$200'
+probability = 0.0007604562737642585
+prize = 200
+
+[[games.wager_options.prize_tiers]]
+label = '$125'
+probability = 0.002962962962962963
+prize = 125
+
+[[games.wager_options.prize_tiers]]
+label = '$100'
+probability = 0.013333333333333334
+prize = 100
+
+[[games.wager_options.prize_tiers]]
+label = '$70'
+probability = 0.016666666666666666
+prize = 70
+
+[[games.wager_options.prize_tiers]]
+label = '$50'
+probability = 0.022222222222222223
+prize = 50
+
+[[games.wager_options.prize_tiers]]
+label = '$35'
+probability = 0.02666666666666667
+prize = 35
+
+[[games.wager_options.prize_tiers]]
+label = '$25'
+probability = 0.05
+prize = 25
+
+[[games.wager_options]]
+slug = '3-pop'
+label = '3 POPs'
+ticket_cost = 15.0
+
+[[games.wager_options.prize_tiers]]
+label = '$500'
+probability = 0.0004
+prize = 500
+
+[[games.wager_options.prize_tiers]]
+label = '$250'
+probability = 0.0006666666666666668
+prize = 250
+
+[[games.wager_options.prize_tiers]]
+label = '$200'
+probability = 0.0011406844106463879
+prize = 200
+
+[[games.wager_options.prize_tiers]]
+label = '$125'
+probability = 0.0044444444444444444
+prize = 125
+
+[[games.wager_options.prize_tiers]]
+label = '$100'
+probability = 0.02
+prize = 100
+
+[[games.wager_options.prize_tiers]]
+label = '$70'
+probability = 0.025
+prize = 70
+
+[[games.wager_options.prize_tiers]]
+label = '$50'
+probability = 0.03333333333333333
+prize = 50
+
+[[games.wager_options.prize_tiers]]
+label = '$35'
+probability = 0.04
+prize = 35
+
+[[games.wager_options.prize_tiers]]
+label = '$25'
+probability = 0.07500000000000001
+prize = 25
+
+[[games.wager_options]]
+slug = '4-pop'
+label = '4 POPs'
+ticket_cost = 20.0
+
+[[games.wager_options.prize_tiers]]
+label = '$500'
+probability = 0.0005333333333333334
+prize = 500
+
+[[games.wager_options.prize_tiers]]
+label = '$250'
+probability = 0.0008888888888888889
+prize = 250
+
+[[games.wager_options.prize_tiers]]
+label = '$200'
+probability = 0.001520912547528517
+prize = 200
+
+[[games.wager_options.prize_tiers]]
+label = '$125'
+probability = 0.005925925925925926
+prize = 125
+
+[[games.wager_options.prize_tiers]]
+label = '$100'
+probability = 0.02666666666666667
+prize = 100
+
+[[games.wager_options.prize_tiers]]
+label = '$70'
+probability = 0.03333333333333333
+prize = 70
+
+[[games.wager_options.prize_tiers]]
+label = '$50'
+probability = 0.044444444444444446
+prize = 50
+
+[[games.wager_options.prize_tiers]]
+label = '$35'
+probability = 0.05333333333333334
+prize = 35
+
+[[games.wager_options.prize_tiers]]
+label = '$25'
+probability = 0.1
+prize = 25
+
+[[games.wager_options]]
+slug = '5-pop'
+label = '5 POPs'
+ticket_cost = 25.0
+
+[[games.wager_options.prize_tiers]]
+label = '$500'
+probability = 0.0006666666666666668
+prize = 500
+
+[[games.wager_options.prize_tiers]]
+label = '$250'
+probability = 0.0011111111111111111
+prize = 250
+
+[[games.wager_options.prize_tiers]]
+label = '$200'
+probability = 0.0019011406844106462
+prize = 200
+
+[[games.wager_options.prize_tiers]]
+label = '$125'
+probability = 0.007407407407407407
+prize = 125
+
+[[games.wager_options.prize_tiers]]
+label = '$100'
+probability = 0.03333333333333333
+prize = 100
+
+[[games.wager_options.prize_tiers]]
+label = '$70'
+probability = 0.041666666666666664
+prize = 70
+
+[[games.wager_options.prize_tiers]]
+label = '$50'
+probability = 0.05555555555555556
+prize = 50
+
+[[games.wager_options.prize_tiers]]
+label = '$35'
+probability = 0.06666666666666667
+prize = 35
+
+[[games.wager_options.prize_tiers]]
+label = '$25'
+probability = 0.125
+prize = 25
+
+[[games.wager_options]]
+slug = '6-pop'
+label = '6 POPs'
+ticket_cost = 30.0
+
+[[games.wager_options.prize_tiers]]
+label = '$500'
+probability = 0.0008
+prize = 500
+
+[[games.wager_options.prize_tiers]]
+label = '$250'
+probability = 0.0013333333333333335
+prize = 250
+
+[[games.wager_options.prize_tiers]]
+label = '$200'
+probability = 0.0022813688212927757
+prize = 200
+
+[[games.wager_options.prize_tiers]]
+label = '$125'
+probability = 0.008888888888888889
+prize = 125
+
+[[games.wager_options.prize_tiers]]
+label = '$100'
+probability = 0.04
+prize = 100
+
+[[games.wager_options.prize_tiers]]
+label = '$70'
+probability = 0.05
+prize = 70
+
+[[games.wager_options.prize_tiers]]
+label = '$50'
+probability = 0.06666666666666667
+prize = 50
+
+[[games.wager_options.prize_tiers]]
+label = '$35'
+probability = 0.08
+prize = 35
+
+[[games.wager_options.prize_tiers]]
+label = '$25'
+probability = 0.15000000000000002
+prize = 25
+
+[[games.wager_options]]
+slug = '7-pop'
+label = '7 POPs'
+ticket_cost = 35.0
+
+[[games.wager_options.prize_tiers]]
+label = '$500'
+probability = 0.0009333333333333333
+prize = 500
+
+[[games.wager_options.prize_tiers]]
+label = '$250'
+probability = 0.0015555555555555557
+prize = 250
+
+[[games.wager_options.prize_tiers]]
+label = '$200'
+probability = 0.002661596958174905
+prize = 200
+
+[[games.wager_options.prize_tiers]]
+label = '$125'
+probability = 0.01037037037037037
+prize = 125
+
+[[games.wager_options.prize_tiers]]
+label = '$100'
+probability = 0.04666666666666667
+prize = 100
+
+[[games.wager_options.prize_tiers]]
+label = '$70'
+probability = 0.058333333333333334
+prize = 70
+
+[[games.wager_options.prize_tiers]]
+label = '$50'
+probability = 0.07777777777777778
+prize = 50
+
+[[games.wager_options.prize_tiers]]
+label = '$35'
+probability = 0.09333333333333334
+prize = 35
+
+[[games.wager_options.prize_tiers]]
+label = '$25'
+probability = 0.17500000000000002
+prize = 25
+
+[[games.wager_options]]
+slug = '8-pop'
+label = '8 POPs'
+ticket_cost = 40.0
+
+[[games.wager_options.prize_tiers]]
+label = '$500'
+probability = 0.0010666666666666667
+prize = 500
+
+[[games.wager_options.prize_tiers]]
+label = '$250'
+probability = 0.0017777777777777779
+prize = 250
+
+[[games.wager_options.prize_tiers]]
+label = '$200'
+probability = 0.003041825095057034
+prize = 200
+
+[[games.wager_options.prize_tiers]]
+label = '$125'
+probability = 0.011851851851851851
+prize = 125
+
+[[games.wager_options.prize_tiers]]
+label = '$100'
+probability = 0.05333333333333334
+prize = 100
+
+[[games.wager_options.prize_tiers]]
+label = '$70'
+probability = 0.06666666666666667
+prize = 70
+
+[[games.wager_options.prize_tiers]]
+label = '$50'
+probability = 0.08888888888888889
+prize = 50
+
+[[games.wager_options.prize_tiers]]
+label = '$35'
+probability = 0.10666666666666667
+prize = 35
+
+[[games.wager_options.prize_tiers]]
+label = '$25'
+probability = 0.2
+prize = 25
+
+[[games.wager_options]]
+slug = '9-pop'
+label = '9 POPs'
+ticket_cost = 45.0
+
+[[games.wager_options.prize_tiers]]
+label = '$500'
+probability = 0.0012000000000000001
+prize = 500
+
+[[games.wager_options.prize_tiers]]
+label = '$250'
+probability = 0.002
+prize = 250
+
+[[games.wager_options.prize_tiers]]
+label = '$200'
+probability = 0.003422053231939163
+prize = 200
+
+[[games.wager_options.prize_tiers]]
+label = '$125'
+probability = 0.013333333333333332
+prize = 125
+
+[[games.wager_options.prize_tiers]]
+label = '$100'
+probability = 0.060000000000000005
+prize = 100
+
+[[games.wager_options.prize_tiers]]
+label = '$70'
+probability = 0.075
+prize = 70
+
+[[games.wager_options.prize_tiers]]
+label = '$50'
+probability = 0.1
+prize = 50
+
+[[games.wager_options.prize_tiers]]
+label = '$35'
+probability = 0.12000000000000001
+prize = 35
+
+[[games.wager_options.prize_tiers]]
+label = '$25'
+probability = 0.225
+prize = 25
+
+[[games.wager_options]]
+slug = '10-pop'
+label = '10 POPs'
+ticket_cost = 50.0
+
+[[games.wager_options.prize_tiers]]
+label = '$500'
+probability = 0.0013333333333333335
+prize = 500
+
+[[games.wager_options.prize_tiers]]
+label = '$250'
+probability = 0.0022222222222222222
+prize = 250
+
+[[games.wager_options.prize_tiers]]
+label = '$200'
+probability = 0.0038022813688212923
+prize = 200
+
+[[games.wager_options.prize_tiers]]
+label = '$125'
+probability = 0.014814814814814814
+prize = 125
+
+[[games.wager_options.prize_tiers]]
+label = '$100'
+probability = 0.06666666666666667
+prize = 100
+
+[[games.wager_options.prize_tiers]]
+label = '$70'
+probability = 0.08333333333333333
+prize = 70
+
+[[games.wager_options.prize_tiers]]
+label = '$50'
+probability = 0.11111111111111112
+prize = 50
+
+[[games.wager_options.prize_tiers]]
+label = '$35'
+probability = 0.13333333333333333
+prize = 35
+
+[[games.wager_options.prize_tiers]]
+label = '$25'
+probability = 0.25
+prize = 25
+
+[[games.wager_options]]
+slug = '11-pop'
+label = '11 POPs'
+ticket_cost = 55.0
+
+[[games.wager_options.prize_tiers]]
+label = '$500'
+probability = 0.0014666666666666667
+prize = 500
+
+[[games.wager_options.prize_tiers]]
+label = '$250'
+probability = 0.0024444444444444444
+prize = 250
+
+[[games.wager_options.prize_tiers]]
+label = '$200'
+probability = 0.004182509505703422
+prize = 200
+
+[[games.wager_options.prize_tiers]]
+label = '$125'
+probability = 0.016296296296296295
+prize = 125
+
+[[games.wager_options.prize_tiers]]
+label = '$100'
+probability = 0.07333333333333333
+prize = 100
+
+[[games.wager_options.prize_tiers]]
+label = '$70'
+probability = 0.09166666666666666
+prize = 70
+
+[[games.wager_options.prize_tiers]]
+label = '$50'
+probability = 0.12222222222222223
+prize = 50
+
+[[games.wager_options.prize_tiers]]
+label = '$35'
+probability = 0.14666666666666667
+prize = 35
+
+[[games.wager_options.prize_tiers]]
+label = '$25'
+probability = 0.275
+prize = 25
+
+[[games.wager_options]]
+slug = '12-pop'
+label = '12 POPs'
+ticket_cost = 60.0
+
+[[games.wager_options.prize_tiers]]
+label = '$500'
+probability = 0.0016
+prize = 500
+
+[[games.wager_options.prize_tiers]]
+label = '$250'
+probability = 0.002666666666666667
+prize = 250
+
+[[games.wager_options.prize_tiers]]
+label = '$200'
+probability = 0.0045627376425855515
+prize = 200
+
+[[games.wager_options.prize_tiers]]
+label = '$125'
+probability = 0.017777777777777778
+prize = 125
+
+[[games.wager_options.prize_tiers]]
+label = '$100'
+probability = 0.08
+prize = 100
+
+[[games.wager_options.prize_tiers]]
+label = '$70'
+probability = 0.1
+prize = 70
+
+[[games.wager_options.prize_tiers]]
+label = '$50'
+probability = 0.13333333333333333
+prize = 50
+
+[[games.wager_options.prize_tiers]]
+label = '$35'
+probability = 0.16
+prize = 35
+
+[[games.wager_options.prize_tiers]]
+label = '$25'
+probability = 0.30000000000000004
+prize = 25
+
+[[games.wager_options]]
+slug = '13-pop'
+label = '13 POPs'
+ticket_cost = 65.0
+
+[[games.wager_options.prize_tiers]]
+label = '$500'
+probability = 0.0017333333333333335
+prize = 500
+
+[[games.wager_options.prize_tiers]]
+label = '$250'
+probability = 0.002888888888888889
+prize = 250
+
+[[games.wager_options.prize_tiers]]
+label = '$200'
+probability = 0.00494296577946768
+prize = 200
+
+[[games.wager_options.prize_tiers]]
+label = '$125'
+probability = 0.019259259259259257
+prize = 125
+
+[[games.wager_options.prize_tiers]]
+label = '$100'
+probability = 0.08666666666666667
+prize = 100
+
+[[games.wager_options.prize_tiers]]
+label = '$70'
+probability = 0.10833333333333334
+prize = 70
+
+[[games.wager_options.prize_tiers]]
+label = '$50'
+probability = 0.14444444444444446
+prize = 50
+
+[[games.wager_options.prize_tiers]]
+label = '$35'
+probability = 0.17333333333333334
+prize = 35
+
+[[games.wager_options.prize_tiers]]
+label = '$25'
+probability = 0.325
+prize = 25
+
+[[games.wager_options]]
+slug = '14-pop'
+label = '14 POPs'
+ticket_cost = 70.0
+
+[[games.wager_options.prize_tiers]]
+label = '$500'
+probability = 0.0018666666666666666
+prize = 500
+
+[[games.wager_options.prize_tiers]]
+label = '$250'
+probability = 0.0031111111111111114
+prize = 250
+
+[[games.wager_options.prize_tiers]]
+label = '$200'
+probability = 0.00532319391634981
+prize = 200
+
+[[games.wager_options.prize_tiers]]
+label = '$125'
+probability = 0.02074074074074074
+prize = 125
+
+[[games.wager_options.prize_tiers]]
+label = '$100'
+probability = 0.09333333333333334
+prize = 100
+
+[[games.wager_options.prize_tiers]]
+label = '$70'
+probability = 0.11666666666666667
+prize = 70
+
+[[games.wager_options.prize_tiers]]
+label = '$50'
+probability = 0.15555555555555556
+prize = 50
+
+[[games.wager_options.prize_tiers]]
+label = '$35'
+probability = 0.18666666666666668
+prize = 35
+
+[[games.wager_options.prize_tiers]]
+label = '$25'
+probability = 0.35000000000000003
+prize = 25
+
+[[games.wager_options]]
+slug = '15-pop'
+label = '15 POPs'
+ticket_cost = 75.0
+
+[[games.wager_options.prize_tiers]]
+label = '$500'
+probability = 0.002
+prize = 500
+
+[[games.wager_options.prize_tiers]]
+label = '$250'
+probability = 0.0033333333333333335
+prize = 250
+
+[[games.wager_options.prize_tiers]]
+label = '$200'
+probability = 0.0057034220532319385
+prize = 200
+
+[[games.wager_options.prize_tiers]]
+label = '$125'
+probability = 0.02222222222222222
+prize = 125
+
+[[games.wager_options.prize_tiers]]
+label = '$100'
+probability = 0.1
+prize = 100
+
+[[games.wager_options.prize_tiers]]
+label = '$70'
+probability = 0.125
+prize = 70
+
+[[games.wager_options.prize_tiers]]
+label = '$50'
+probability = 0.16666666666666669
+prize = 50
+
+[[games.wager_options.prize_tiers]]
+label = '$35'
+probability = 0.2
+prize = 35
+
+[[games.wager_options.prize_tiers]]
+label = '$25'
+probability = 0.375
+prize = 25
+
+[[games]]
+slug = 'daily-keno'
+name = 'Daily Keno'
+source_url = 'https://www.walottery.com/WinningNumbers/PastDrawings.aspx?gamename=dailykeno&unitcount=180&unittype=day'
+reviewed_on = '2026-05-05'
+
+[[games.wager_options]]
+slug = '10-spot'
+label = '10-Spot $1'
+ticket_cost = 1.0
+
+[[games.wager_options.prize_tiers]]
+label = 'Match 10'
+probability = 1.122334455667789e-07
+prize = 100000
+
+[[games.wager_options.prize_tiers]]
+label = 'Match 9'
+probability = 6.134969325153374e-06
+prize = 5000
+
+[[games.wager_options.prize_tiers]]
+label = 'Match 8'
+probability = 0.00013550135501355014
+prize = 500
+
+[[games.wager_options.prize_tiers]]
+label = 'Match 7'
+probability = 0.001610305958132045
+prize = 50
+
+[[games.wager_options.prize_tiers]]
+label = 'Match 6'
+probability = 0.011481056257175661
+prize = 5
+
+[[games.wager_options.prize_tiers]]
+label = 'Match 5'
+probability = 0.051546391752577324
+prize = 2
+
+[[games.wager_options.prize_tiers]]
+label = 'Match 0'
+probability = 0.04587155963302752
+prize = 3
+
+[[games.wager_options]]
+slug = '9-spot'
+label = '9-Spot $1'
+ticket_cost = 1.0
+
+[[games.wager_options.prize_tiers]]
+label = 'Match 9'
+probability = 7.246376811594203e-07
+prize = 25000
+
+[[games.wager_options.prize_tiers]]
+label = 'Match 8'
+probability = 3.257328990228013e-05
+prize = 2500
+
+[[games.wager_options.prize_tiers]]
+label = 'Match 7'
+probability = 0.000591715976331361
+prize = 100
+
+[[games.wager_options.prize_tiers]]
+label = 'Match 6'
+probability = 0.005714285714285714
+prize = 10
+
+[[games.wager_options.prize_tiers]]
+label = 'Match 5'
+probability = 0.03257328990228013
+prize = 5
+
+[[games.wager_options.prize_tiers]]
+label = 'Match 4'
+probability = 0.11415525114155252
+prize = 1
+
+[[games.wager_options]]
+slug = '8-spot'
+label = '8-Spot $1'
+ticket_cost = 1.0
+
+[[games.wager_options.prize_tiers]]
+label = 'Match 8'
+probability = 4.347826086956521e-06
+prize = 10000
+
+[[games.wager_options.prize_tiers]]
+label = 'Match 7'
+probability = 0.00016051364365971107
+prize = 500
+
+[[games.wager_options.prize_tiers]]
+label = 'Match 6'
+probability = 0.002364066193853428
+prize = 50
+
+[[games.wager_options.prize_tiers]]
+label = 'Match 5'
+probability = 0.018315018315018316
+prize = 5
+
+[[games.wager_options.prize_tiers]]
+label = 'Match 4'
+probability = 0.08130081300813008
+prize = 2
+
+[[games.wager_options]]
+slug = '7-spot'
+label = '7-Spot $1'
+ticket_cost = 1.0
+
+[[games.wager_options.prize_tiers]]
+label = 'Match 7'
+probability = 2.4390243902439026e-05
+prize = 2500
+
+[[games.wager_options.prize_tiers]]
+label = 'Match 6'
+probability = 0.00072992700729927
+prize = 100
+
+[[games.wager_options.prize_tiers]]
+label = 'Match 5'
+probability = 0.008620689655172414
+prize = 10
+
+[[games.wager_options.prize_tiers]]
+label = 'Match 4'
+probability = 0.052083333333333336
+prize = 2
+
+[[games.wager_options.prize_tiers]]
+label = 'Match 3'
+probability = 0.17543859649122806
+prize = 1
+
+[[games.wager_options]]
+slug = '6-spot'
+label = '6-Spot $1'
+ticket_cost = 1.0
+
+[[games.wager_options.prize_tiers]]
+label = 'Match 6'
+probability = 0.00012903225806451613
+prize = 1000
+
+[[games.wager_options.prize_tiers]]
+label = 'Match 5'
+probability = 0.0030959752321981426
+prize = 40
+
+[[games.wager_options.prize_tiers]]
+label = 'Match 4'
+probability = 0.02857142857142857
+prize = 4
+
+[[games.wager_options.prize_tiers]]
+label = 'Match 3'
+probability = 0.12987012987012986
+prize = 1
+
+[[games.wager_options]]
+slug = '5-spot'
+label = '5-Spot $1'
+ticket_cost = 1.0
+
+[[games.wager_options.prize_tiers]]
+label = 'Match 5'
+probability = 0.0006451612903225806
+prize = 200
+
+[[games.wager_options.prize_tiers]]
+label = 'Match 4'
+probability = 0.012091898428053204
+prize = 17
+
+[[games.wager_options.prize_tiers]]
+label = 'Match 3'
+probability = 0.08403361344537814
+prize = 2
+
+[[games.wager_options]]
+slug = '4-spot'
+label = '4-Spot $1'
+ticket_cost = 1.0
+
+[[games.wager_options.prize_tiers]]
+label = 'Match 4'
+probability = 0.003067484662576687
+prize = 24
+
+[[games.wager_options.prize_tiers]]
+label = 'Match 3'
+probability = 0.04329004329004329
+prize = 5
+
+[[games.wager_options.prize_tiers]]
+label = 'Match 2'
+probability = 0.2127659574468085
+prize = 1
+
+[[games.wager_options]]
+slug = '3-spot'
+label = '3-Spot $1'
+ticket_cost = 1.0
+
+[[games.wager_options.prize_tiers]]
+label = 'Match 3'
+probability = 0.013888888888888888
+prize = 16
+
+[[games.wager_options.prize_tiers]]
+label = 'Match 2'
+probability = 0.13869625520110956
+prize = 2
+
+[[games.wager_options]]
+slug = '2-spot'
+label = '2-Spot $1'
+ticket_cost = 1.0
+
+[[games.wager_options.prize_tiers]]
+label = 'Match 2'
+probability = 0.06024096385542168
+prize = 8
+
+[[games.wager_options]]
+slug = '1-spot'
+label = '1-Spot $1'
+ticket_cost = 1.0
+
+[[games.wager_options.prize_tiers]]
+label = 'Match 1'
+probability = 0.25
+prize = 2
