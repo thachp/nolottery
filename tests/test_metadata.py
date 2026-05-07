@@ -55,6 +55,8 @@ US_STATE_CODES = {
     "wy",
 }
 
+POWERBALL_AND_MEGA_MILLIONS = {"powerball", "mega-millions"}
+
 
 def test_load_default_games_reads_bundled_metadata_files():
     games = load_default_games()
@@ -133,6 +135,37 @@ def test_no_lottery_and_remaining_state_catalog_blockers_are_explicit():
         for code, jurisdiction in jurisdictions.items()
         if code in US_STATE_CODES
     )
+
+
+def test_cataloged_state_lotteries_include_games_beyond_powerball_and_mega_millions():
+    jurisdictions = load_default_jurisdictions()
+
+    only_national_games = {
+        code: tuple(offering["game_slug"] for offering in jurisdiction["offerings"])
+        for code, jurisdiction in jurisdictions.items()
+        if code in US_STATE_CODES
+        and jurisdiction["support_statuses"] != ("no_state_lottery",)
+        and not any(
+            offering["game_slug"] not in POWERBALL_AND_MEGA_MILLIONS
+            for offering in jurisdiction["offerings"]
+        )
+    }
+
+    assert only_national_games == {}
+
+
+def test_every_catalog_offering_has_game_metadata_and_no_orphaned_game_metadata():
+    games = load_default_games()
+    jurisdictions = load_default_jurisdictions()
+
+    offering_slugs = {
+        offering["game_slug"]
+        for jurisdiction in jurisdictions.values()
+        for offering in jurisdiction["offerings"]
+    }
+
+    assert offering_slugs - set(games) == set()
+    assert set(games) - offering_slugs == set()
 
 
 def test_jurisdiction_offering_can_override_shared_game_results_source(tmp_path):
