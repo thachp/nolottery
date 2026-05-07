@@ -1,0 +1,25 @@
+# Rhode Island active draw-game catalog entries.
+
+[[games]]
+slug = 'rhode-island-wild-money'
+name = 'Wild Money'
+source_url = 'https://www.rilot.com/content/interactive/ilottery/en/wild-money.html'
+reviewed_on = '2026-05-07'
+
+[[games]]
+slug = 'rhode-island-numbers'
+name = 'The Numbers'
+source_url = 'https://www.rilot.com/content/interactive/ilottery/en/the-numbers.html'
+reviewed_on = '2026-05-07'
+
+[[games]]
+slug = 'rhode-island-keno'
+name = 'Keno'
+source_url = 'https://www.rilot.com/content/interactive/ilottery/en/keno.html'
+reviewed_on = '2026-05-07'
+
+[[games]]
+slug = 'rhode-island-bingo'
+name = 'Bingo'
+source_url = 'https://www.rilot.com/content/interactive/ilottery/en/bingo.html'
+reviewed_on = '2026-05-07'
