@@ -260,8 +260,41 @@ blocking_reason = 'No state lottery established'
 [[jurisdictions]]
 code = 'az'
 name = 'Arizona'
-support_statuses = ['catalog_pending']
-blocking_reason = 'Lottery jurisdiction offering catalog pending'
+blocking_reason = 'Arizona local draw-game rules and adapters pending'
+
+[[jurisdictions.offerings]]
+game_slug = 'powerball'
+source_url = 'https://files.arizonalottery.com/past-180-days/Past180Days_Powerball.pdf'
+support_statuses = ['cataloged', 'rules_verified', 'ev_supported', 'fetch_supported', 'audit_supported', 'low_share_supported']
+results_adapter = 'az_past_180_pdf'
+blocking_reason = ''
+
+[[jurisdictions.offerings]]
+game_slug = 'mega-millions'
+source_url = 'https://files.arizonalottery.com/past-180-days/Past180Days_Mega_Millions.pdf'
+support_statuses = ['cataloged', 'rules_verified', 'ev_supported', 'fetch_supported', 'audit_supported', 'low_share_supported']
+results_adapter = 'az_past_180_pdf'
+blocking_reason = ''
+
+[[jurisdictions.offerings]]
+game_slug = 'arizona-the-pick'
+support_statuses = ['cataloged']
+blocking_reason = 'Rules and fetch adapter pending'
+
+[[jurisdictions.offerings]]
+game_slug = 'arizona-fantasy-5'
+support_statuses = ['cataloged']
+blocking_reason = 'Rules and fetch adapter pending'
+
+[[jurisdictions.offerings]]
+game_slug = 'arizona-pick-3'
+support_statuses = ['cataloged']
+blocking_reason = 'Rules and fetch adapter pending'
+
+[[jurisdictions.offerings]]
+game_slug = 'arizona-triple-twist'
+support_statuses = ['cataloged']
+blocking_reason = 'Rules and fetch adapter pending'
 
 [[jurisdictions]]
 code = 'ar'

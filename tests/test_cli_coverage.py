@@ -209,6 +209,31 @@ def test_coverage_reports_pending_state_catalog_as_supported_jurisdiction(tmp_pa
             str(tmp_path),
             "coverage",
             "-j",
+            "ar",
+            "--output",
+            "json",
+        ],
+    )
+
+    assert result.exit_code == 0, result.output
+    payload = json.loads(result.output)
+    assert payload["jurisdiction_code"] == "ar"
+    assert payload["jurisdiction"] == "Arkansas"
+    assert payload["jurisdiction_support_statuses"] == ["catalog_pending"]
+    assert payload["blocking_reason"] == "Lottery jurisdiction offering catalog pending"
+    assert payload["games"] == []
+
+
+def test_coverage_reports_arizona_catalog_and_backfill_supported_national_games(
+    tmp_path,
+):
+    result = runner.invoke(
+        app,
+        [
+            "--data-dir",
+            str(tmp_path),
+            "coverage",
+            "-j",
             "az",
             "--output",
             "json",
@@ -219,9 +244,28 @@ def test_coverage_reports_pending_state_catalog_as_supported_jurisdiction(tmp_pa
     payload = json.loads(result.output)
     assert payload["jurisdiction_code"] == "az"
     assert payload["jurisdiction"] == "Arizona"
-    assert payload["jurisdiction_support_statuses"] == ["catalog_pending"]
-    assert payload["blocking_reason"] == "Lottery jurisdiction offering catalog pending"
-    assert payload["games"] == []
+    games = {game["game_slug"]: game for game in payload["games"]}
+    assert set(games) == {
+        "arizona-fantasy-5",
+        "arizona-pick-3",
+        "arizona-the-pick",
+        "arizona-triple-twist",
+        "mega-millions",
+        "powerball",
+    }
+    assert games["powerball"]["support_statuses"] == [
+        "cataloged",
+        "rules_verified",
+        "ev_supported",
+        "fetch_supported",
+        "audit_supported",
+        "low_share_supported",
+    ]
+    assert games["mega-millions"]["results_adapter"] == "az_past_180_pdf"
+    assert games["arizona-the-pick"]["support_statuses"] == ["cataloged"]
+    assert games["arizona-the-pick"]["blocking_reason"] == (
+        "Rules and fetch adapter pending"
+    )
 
 
 def test_coverage_reports_texas_backfill_supported_national_games(tmp_path):

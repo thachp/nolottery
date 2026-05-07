@@ -50,6 +50,10 @@ _NEW_YORK_DAILY_NUMBERS_URL = (
     "$limit=50000&$order=draw_date%20DESC"
 )
 _NEW_YORK_DAILY_GAMES = {"numbers", "win-4"}
+_ARIZONA_PAST_180_GAMES = {
+    "mega-millions": "Mega Ball",
+    "powerball": "Powerball",
+}
 _TEXAS_SPECIAL_NUMBER_NAMES = {
     "mega-millions": "Mega Ball",
     "powerball": "Powerball",
@@ -85,6 +89,25 @@ def fetch_game(
     source_file: Path | None = None,
     jurisdiction_code: str = DEFAULT_JURISDICTION_CODE,
 ) -> FetchResult:
+    if (
+        source_file is None
+        and jurisdiction_code == "az"
+        and game.slug in _ARIZONA_PAST_180_GAMES
+    ):
+        raw_text, source_url, draws = _arizona_past_180_draws(
+            game,
+            source_dir=None,
+        )
+        _insert_snapshot(conn, jurisdiction_code, game.slug, source_url, raw_text, draws)
+        new_draws = _filter_newer_draws(conn, jurisdiction_code, game.slug, draws)
+        _insert_draw_results(conn, jurisdiction_code, game.slug, new_draws)
+        conn.commit()
+        return FetchResult(
+            game_name=game.name,
+            source_url=source_url,
+            draw_count=len(new_draws),
+            prize_row_count=sum(len(draw.prizes) for draw in new_draws),
+        )
     if (
         source_file is None
         and jurisdiction_code == "fl"
@@ -177,6 +200,21 @@ def fetch_game_backfill(
         )
         draws = parse_new_york_daily_numbers_json(raw_json, game.slug)
         _insert_snapshot(conn, jurisdiction_code, game.slug, source_url, raw_json, draws)
+        _replace_draw_results(conn, jurisdiction_code, game.slug, draws)
+        conn.commit()
+        return FetchResult(
+            game_name=game.name,
+            source_url=source_url,
+            draw_count=len(draws),
+            prize_row_count=sum(len(draw.prizes) for draw in draws),
+            page_count=1,
+        )
+    if jurisdiction_code == "az" and game.slug in _ARIZONA_PAST_180_GAMES:
+        raw_text, source_url, draws = _arizona_past_180_draws(
+            game,
+            source_dir=source_dir,
+        )
+        _insert_snapshot(conn, jurisdiction_code, game.slug, source_url, raw_text, draws)
         _replace_draw_results(conn, jurisdiction_code, game.slug, draws)
         conn.commit()
         return FetchResult(
@@ -354,6 +392,15 @@ def _florida_pick_history_draws(
     return raw_text, source_url, parse_florida_pick_history_text(raw_text, game_slug)
 
 
+def _arizona_past_180_draws(
+    game: GameMetadata,
+    *,
+    source_dir: Path | None,
+) -> tuple[str, str, tuple[ParsedDraw, ...]]:
+    raw_text, source_url = _read_arizona_past_180_source(game, source_dir)
+    return raw_text, source_url, parse_arizona_past_180_text(raw_text, game.slug)
+
+
 def parse_past_drawings(raw_html: str) -> tuple[ParsedDraw, ...]:
     soup = BeautifulSoup(raw_html, "html.parser")
     draws: list[ParsedDraw] = []
@@ -517,6 +564,45 @@ def parse_new_york_daily_numbers_json(
                     )
                 )
     return tuple(draws)
+
+
+def parse_arizona_past_180_text(
+    raw_text: str,
+    game_slug: str,
+) -> tuple[ParsedDraw, ...]:
+    special_number_name = _ARIZONA_PAST_180_GAMES[game_slug]
+    special_label = "MEGA BALL" if game_slug == "mega-millions" else "POWER BALL"
+    entry_re = re.compile(
+        rf"DRAW DATE\s+(?P<date>\d{{4}}-\d{{2}}-\d{{2}}).*?"
+        rf"WINNING NUMBERS\s+(?P<numbers>\d{{1,2}}\s*-\s*\d{{1,2}}\s*-\s*"
+        rf"\d{{1,2}}\s*-\s*\d{{1,2}}\s*-\s*\d{{1,2}}).*?"
+        rf"{special_label}\s+(?P<special>\d{{1,2}})",
+        re.DOTALL,
+    )
+    draws: list[ParsedDraw] = []
+    for match in entry_re.finditer(raw_text):
+        draw_date = _arizona_draw_date(match.group("date"))
+        if draw_date is None:
+            continue
+        numbers = re.findall(r"\d{1,2}", match.group("numbers"))
+        special_number = match.group("special")
+        draws.append(
+            ParsedDraw(
+                draw_date=draw_date,
+                winning_number=", ".join(
+                    [*numbers, f"{special_number} {special_number_name}"]
+                ),
+                prizes=(),
+            )
+        )
+    return tuple(draws)
+
+
+def _arizona_draw_date(raw_value: str) -> str | None:
+    try:
+        return datetime.strptime(raw_value, "%Y-%m-%d").strftime(_DRAW_DATE_FORMAT)
+    except ValueError:
+        return None
 
 
 def parse_texas_winning_numbers(
@@ -805,6 +891,8 @@ def _parse_draws(
         return parse_california_hot_spot(raw_html)
     if jurisdiction_code == "ca" and game_slug in _CALIFORNIA_GAME_SLUGS:
         return parse_california_draw_game(raw_html)
+    if jurisdiction_code == "az" and game_slug in _ARIZONA_PAST_180_GAMES:
+        return parse_arizona_past_180_text(raw_html, game_slug)
     if jurisdiction_code == "tx" and game_slug in _TEXAS_SPECIAL_NUMBER_NAMES:
         return parse_texas_winning_numbers(raw_html, game_slug)
     return parse_past_drawings(raw_html)
@@ -869,6 +957,23 @@ def _read_source(
 
     source_file = source_dir / f"{source_name}{suffix}"
     return source_file.read_text(encoding="utf-8"), source_file.as_uri()
+
+
+def _read_arizona_past_180_source(
+    game: GameMetadata,
+    source_dir: Path | None,
+) -> tuple[str, str]:
+    source_name = f"{game.slug}-az-backfill"
+    if source_dir is not None:
+        text_file = source_dir / f"{source_name}.txt"
+        if text_file.exists():
+            return text_file.read_text(encoding="utf-8"), text_file.as_uri()
+        pdf_file = source_dir / f"{source_name}.pdf"
+        return _extract_pdf_text(pdf_file.read_bytes()), pdf_file.as_uri()
+
+    response = httpx.get(game.source_url, follow_redirects=True, timeout=30)
+    response.raise_for_status()
+    return _extract_pdf_text(response.content), str(response.url)
 
 
 def _read_florida_pick_history_source(

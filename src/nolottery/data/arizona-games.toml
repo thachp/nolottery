@@ -1,0 +1,25 @@
+# Arizona local draw-game catalog entries.
+
+[[games]]
+slug = 'arizona-the-pick'
+name = 'The Pick'
+source_url = 'https://files.arizonalottery.com/past-180-days/Past180Days_The_Pick.pdf'
+reviewed_on = '2026-05-07'
+
+[[games]]
+slug = 'arizona-fantasy-5'
+name = 'Fantasy 5'
+source_url = 'https://files.arizonalottery.com/past-180-days/Past180Days_Fantasy_5.pdf'
+reviewed_on = '2026-05-07'
+
+[[games]]
+slug = 'arizona-pick-3'
+name = 'Pick 3'
+source_url = 'https://files.arizonalottery.com/past-180-days/Past180Days_Pick_3.pdf'
+reviewed_on = '2026-05-07'
+
+[[games]]
+slug = 'arizona-triple-twist'
+name = 'Triple Twist'
+source_url = 'https://files.arizonalottery.com/past-180-days/Past180Days_Triple_Twist.pdf'
+reviewed_on = '2026-05-07'

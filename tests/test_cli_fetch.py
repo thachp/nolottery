@@ -169,6 +169,31 @@ def _texas_powerball_history_html() -> str:
     """
 
 
+def _arizona_powerball_past_180_text() -> str:
+    return """
+    Past 180 Days Drawing Information
+    Arizona Lottery
+    POWERBALL
+    DRAW DATE 2026-05-06 | DAY WED | EXP DATE 2026-11-02 |
+    WINNING NUMBERS 18 - 27 - 51 - 65 - 68 | POWER BALL 5 |
+    POWER PLAY 3 | EST JACKPOT $30,000,000
+    DRAW DATE 2026-05-04 | DAY MON | EXP DATE 2026-10-31 |
+    WINNING NUMBERS 30 - 36 - 42 - 60 - 63 | POWER BALL 13 |
+    POWER PLAY 2 | EST JACKPOT $20,000,000
+    """
+
+
+def _arizona_mega_millions_past_180_text() -> str:
+    return """
+    Past 180 Days Drawing Information
+    Arizona Lottery
+    MEGA MILLIONS
+    DRAW DATE 2026-05-05 | DAY TUE | EXP DATE 2026-11-01 |
+    WINNING NUMBERS 5 - 11 - 22 - 25 - 69 | MEGA BALL 21 |
+    MEGAPLIER 3 | EST JACKPOT $323,000,000
+    """
+
+
 def test_fetch_cashpop_persists_official_page_snapshot_and_draws(tmp_path):
     fixture = tmp_path / "cashpop.html"
     fixture.write_text(DRAWING_HTML, encoding="utf-8")
@@ -719,6 +744,97 @@ def test_fetch_texas_powerball_backfill_reads_official_history_fixture(tmp_path)
             "winning_number": "30, 36, 42, 60, 63, 13 Powerball",
         },
     ]
+
+
+def test_fetch_arizona_powerball_backfill_reads_official_past_180_fixture(tmp_path):
+    fixtures = tmp_path / "fixtures"
+    fixtures.mkdir()
+    (fixtures / "powerball-az-backfill.txt").write_text(
+        _arizona_powerball_past_180_text(),
+        encoding="utf-8",
+    )
+
+    result = runner.invoke(
+        app,
+        [
+            "--data-dir",
+            str(tmp_path / "data"),
+            "fetch",
+            "powerball",
+            "-j",
+            "az",
+            "--backfill",
+            "--source-dir",
+            str(fixtures),
+        ],
+    )
+
+    assert result.exit_code == 0, result.output
+    assert "Powerball" in result.output
+    assert "2 draws" in result.output
+    assert "1 page" in result.output
+
+    draws_result = runner.invoke(
+        app,
+        [
+            "--data-dir",
+            str(tmp_path / "data"),
+            "draws",
+            "powerball",
+            "-j",
+            "az",
+            "--output",
+            "json",
+        ],
+    )
+
+    assert draws_result.exit_code == 0, draws_result.output
+    payload = json.loads(draws_result.output)
+    assert payload["games"][0]["draws"] == [
+        {
+            "jurisdiction_code": "az",
+            "draw_date": "Wed, May 06, 2026",
+            "winning_number": "18, 27, 51, 65, 68, 5 Powerball",
+        },
+        {
+            "jurisdiction_code": "az",
+            "draw_date": "Mon, May 04, 2026",
+            "winning_number": "30, 36, 42, 60, 63, 13 Powerball",
+        },
+    ]
+
+
+def test_fetch_all_arizona_backfill_uses_supported_national_games(tmp_path):
+    fixtures = tmp_path / "fixtures"
+    fixtures.mkdir()
+    (fixtures / "powerball-az-backfill.txt").write_text(
+        _arizona_powerball_past_180_text(),
+        encoding="utf-8",
+    )
+    (fixtures / "mega-millions-az-backfill.txt").write_text(
+        _arizona_mega_millions_past_180_text(),
+        encoding="utf-8",
+    )
+
+    result = runner.invoke(
+        app,
+        [
+            "--data-dir",
+            str(tmp_path / "data"),
+            "fetch",
+            "all",
+            "-j",
+            "az",
+            "--backfill",
+            "--source-dir",
+            str(fixtures),
+        ],
+    )
+
+    assert result.exit_code == 0, result.output
+    assert "Powerball" in result.output
+    assert "Mega Millions" in result.output
+    assert "2 games fetched" in result.output
 
 
 def test_fetch_all_backfill_uses_supported_subset_for_florida(tmp_path):
