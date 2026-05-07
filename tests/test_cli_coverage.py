@@ -1,5 +1,6 @@
 import json
 
+import pytest
 from typer.testing import CliRunner
 
 from nolottery.cli import app
@@ -178,7 +179,18 @@ def test_coverage_reports_florida_and_new_york_ev_supported_games(tmp_path):
             }
 
 
-def test_coverage_reports_state_without_lottery_as_supported_jurisdiction(tmp_path):
+@pytest.mark.parametrize(
+    ("jurisdiction", "name"),
+    [
+        ("al", "Alabama"),
+        ("hi", "Hawaii"),
+    ],
+)
+def test_coverage_reports_state_without_lottery_as_supported_jurisdiction(
+    tmp_path,
+    jurisdiction,
+    name,
+):
     result = runner.invoke(
         app,
         [
@@ -186,7 +198,7 @@ def test_coverage_reports_state_without_lottery_as_supported_jurisdiction(tmp_pa
             str(tmp_path),
             "coverage",
             "-j",
-            "al",
+            jurisdiction,
             "--output",
             "json",
         ],
@@ -194,8 +206,8 @@ def test_coverage_reports_state_without_lottery_as_supported_jurisdiction(tmp_pa
 
     assert result.exit_code == 0, result.output
     payload = json.loads(result.output)
-    assert payload["jurisdiction_code"] == "al"
-    assert payload["jurisdiction"] == "Alabama"
+    assert payload["jurisdiction_code"] == jurisdiction
+    assert payload["jurisdiction"] == name
     assert payload["jurisdiction_support_statuses"] == ["no_state_lottery"]
     assert payload["blocking_reason"] == "No state lottery established"
     assert payload["games"] == []

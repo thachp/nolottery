@@ -118,6 +118,9 @@ def test_remaining_state_catalog_marks_jurisdiction_level_blockers():
     assert jurisdictions["al"]["support_statuses"] == ("no_state_lottery",)
     assert jurisdictions["al"]["blocking_reason"] == "No state lottery established"
     assert jurisdictions["al"]["offerings"] == ()
+    assert jurisdictions["hi"]["support_statuses"] == ("no_state_lottery",)
+    assert jurisdictions["hi"]["blocking_reason"] == "No state lottery established"
+    assert jurisdictions["hi"]["offerings"] == ()
 
     assert jurisdictions["id"]["support_statuses"] == ("catalog_pending",)
     assert jurisdictions["id"]["blocking_reason"] == (
