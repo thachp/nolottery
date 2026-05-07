@@ -1,0 +1,25 @@
+# North Carolina active draw-game catalog entries.
+
+[[games]]
+slug = 'north-carolina-cash-5'
+name = 'Cash 5'
+source_url = 'https://nclottery.com/cash5'
+reviewed_on = '2026-05-07'
+
+[[games]]
+slug = 'north-carolina-pick-3'
+name = 'Pick 3'
+source_url = 'https://nclottery.com/pick3'
+reviewed_on = '2026-05-07'
+
+[[games]]
+slug = 'north-carolina-pick-4'
+name = 'Pick 4'
+source_url = 'https://nclottery.com/pick4'
+reviewed_on = '2026-05-07'
+
+[[games]]
+slug = 'north-carolina-cash-pop'
+name = 'Cash Pop'
+source_url = 'https://nclottery.com/cash-pop'
+reviewed_on = '2026-05-07'
