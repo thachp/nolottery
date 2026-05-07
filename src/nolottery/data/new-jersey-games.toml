@@ -1,0 +1,37 @@
+# New Jersey active draw-game catalog entries.
+
+[[games]]
+slug = 'new-jersey-pick-6'
+name = 'Pick-6'
+source_url = 'https://www.njlottery.com/en-us/drawgames.html'
+reviewed_on = '2026-05-07'
+
+[[games]]
+slug = 'new-jersey-cash-5'
+name = 'Jersey Cash 5'
+source_url = 'https://www.njlottery.com/en-us/drawgames.html'
+reviewed_on = '2026-05-07'
+
+[[games]]
+slug = 'new-jersey-pick-4'
+name = 'Pick-4'
+source_url = 'https://www.njlottery.com/en-us/drawgames.html'
+reviewed_on = '2026-05-07'
+
+[[games]]
+slug = 'new-jersey-pick-3'
+name = 'Pick-3'
+source_url = 'https://www.njlottery.com/en-us/drawgames.html'
+reviewed_on = '2026-05-07'
+
+[[games]]
+slug = 'new-jersey-quick-draw'
+name = 'Quick Draw'
+source_url = 'https://www.njlottery.com/en-us/drawgames.html'
+reviewed_on = '2026-05-07'
+
+[[games]]
+slug = 'new-jersey-cash-pop'
+name = 'Cash Pop'
+source_url = 'https://www.njlottery.com/en-us/drawgames.html'
+reviewed_on = '2026-05-07'
