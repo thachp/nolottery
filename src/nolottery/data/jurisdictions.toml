@@ -928,8 +928,64 @@ blocking_reason = 'Rules and fetch adapter pending'
 [[jurisdictions]]
 code = 'me'
 name = 'Maine'
-support_statuses = ['catalog_pending']
-blocking_reason = 'Lottery jurisdiction offering catalog pending'
+blocking_reason = 'Maine local draw-game rules and adapters pending'
+
+[[jurisdictions.offerings]]
+game_slug = 'powerball'
+source_url = 'https://www.mainelottery.com/'
+support_statuses = ['cataloged', 'rules_verified', 'ev_supported', 'fetch_supported', 'audit_supported', 'low_share_supported']
+results_adapter = 'me_home_page'
+blocking_reason = ''
+
+[[jurisdictions.offerings]]
+game_slug = 'mega-millions'
+source_url = 'https://www.mainelottery.com/'
+support_statuses = ['cataloged', 'rules_verified', 'ev_supported', 'fetch_supported', 'audit_supported', 'low_share_supported']
+results_adapter = 'me_home_page'
+blocking_reason = ''
+
+[[jurisdictions.offerings]]
+game_slug = 'lotto-america'
+source_url = 'https://www.mainelottery.com/'
+support_statuses = ['cataloged']
+blocking_reason = 'Rules and fetch adapter pending'
+
+[[jurisdictions.offerings]]
+game_slug = 'millionaire-for-life'
+source_url = 'https://www.mainelottery.com/'
+support_statuses = ['cataloged']
+blocking_reason = 'Rules and fetch adapter pending'
+
+[[jurisdictions.offerings]]
+game_slug = 'lucky-for-life'
+source_url = 'https://www.mainelottery.com/'
+support_statuses = ['cataloged']
+blocking_reason = 'Rules and fetch adapter pending'
+
+[[jurisdictions.offerings]]
+game_slug = 'maine-megabucks'
+support_statuses = ['cataloged']
+blocking_reason = 'Rules and fetch adapter pending'
+
+[[jurisdictions.offerings]]
+game_slug = 'maine-gimme-5'
+support_statuses = ['cataloged']
+blocking_reason = 'Rules and fetch adapter pending'
+
+[[jurisdictions.offerings]]
+game_slug = 'maine-pick-3'
+support_statuses = ['cataloged']
+blocking_reason = 'Rules and fetch adapter pending'
+
+[[jurisdictions.offerings]]
+game_slug = 'maine-pick-4'
+support_statuses = ['cataloged']
+blocking_reason = 'Rules and fetch adapter pending'
+
+[[jurisdictions.offerings]]
+game_slug = 'maine-cash-pop'
+support_statuses = ['cataloged']
+blocking_reason = 'Rules and fetch adapter pending'
 
 [[jurisdictions]]
 code = 'md'

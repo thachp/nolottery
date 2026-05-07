@@ -14,7 +14,7 @@ from zoneinfo import ZoneInfo
 
 import httpx
 import pdfplumber
-from bs4 import BeautifulSoup, Tag
+from bs4 import BeautifulSoup, NavigableString, Tag
 
 from .db import DEFAULT_JURISDICTION_CODE
 from .metadata import GameMetadata
@@ -104,6 +104,10 @@ _LOUISIANA_LATEST_DRAW_GAMES = {
     "mega-millions": "Mega Ball",
     "powerball": "Powerball",
 }
+_MAINE_HOME_PAGE_GAMES = {
+    "mega-millions": ("Mega Millions", "Mega Ball"),
+    "powerball": ("Powerball", "Powerball"),
+}
 
 
 @dataclass(frozen=True)
@@ -135,6 +139,27 @@ def fetch_game(
     source_file: Path | None = None,
     jurisdiction_code: str = DEFAULT_JURISDICTION_CODE,
 ) -> FetchResult:
+    if (
+        source_file is None
+        and jurisdiction_code == "me"
+        and game.slug in _MAINE_HOME_PAGE_GAMES
+    ):
+        raw_html, source_url = _read_source(
+            game.source_url,
+            None,
+            f"{game.slug}-me-backfill",
+        )
+        draws = parse_maine_home_page(raw_html, game.slug)
+        _insert_snapshot(conn, jurisdiction_code, game.slug, source_url, raw_html, draws)
+        new_draws = _filter_newer_draws(conn, jurisdiction_code, game.slug, draws)
+        _insert_draw_results(conn, jurisdiction_code, game.slug, new_draws)
+        conn.commit()
+        return FetchResult(
+            game_name=game.name,
+            source_url=source_url,
+            draw_count=len(new_draws),
+            prize_row_count=sum(len(draw.prizes) for draw in new_draws),
+        )
     if (
         source_file is None
         and jurisdiction_code == "la"
@@ -683,6 +708,23 @@ def fetch_game_backfill(
             f"{game.slug}-la-backfill",
         )
         draws = parse_louisiana_latest_draw_page(raw_html, game.slug)
+        _insert_snapshot(conn, jurisdiction_code, game.slug, source_url, raw_html, draws)
+        _replace_draw_results(conn, jurisdiction_code, game.slug, draws)
+        conn.commit()
+        return FetchResult(
+            game_name=game.name,
+            source_url=source_url,
+            draw_count=len(draws),
+            prize_row_count=sum(len(draw.prizes) for draw in draws),
+            page_count=1,
+        )
+    if jurisdiction_code == "me" and game.slug in _MAINE_HOME_PAGE_GAMES:
+        raw_html, source_url = _read_source(
+            game.source_url,
+            source_dir,
+            f"{game.slug}-me-backfill",
+        )
+        draws = parse_maine_home_page(raw_html, game.slug)
         _insert_snapshot(conn, jurisdiction_code, game.slug, source_url, raw_html, draws)
         _replace_draw_results(conn, jurisdiction_code, game.slug, draws)
         conn.commit()
@@ -1641,6 +1683,57 @@ def _louisiana_draw_date(raw_value: str) -> str | None:
         return None
 
 
+def parse_maine_home_page(raw_html: str, game_slug: str) -> tuple[ParsedDraw, ...]:
+    game_label, special_number_name = _MAINE_HOME_PAGE_GAMES[game_slug]
+    soup = BeautifulSoup(raw_html, "html.parser")
+    image = soup.find("img", alt=re.compile(rf"^{re.escape(game_label)}$", re.I))
+    if not isinstance(image, Tag):
+        return ()
+    block = _maine_game_block_text(image)
+    date_match = re.search(r"\b[A-Z][a-z]+ \d{2}/\d{2}/\d{4}\b", block)
+    if date_match is None:
+        return ()
+    numbers = [
+        number
+        for number in re.findall(r"\b\d{1,2}\b", block[date_match.end() :])
+    ][:6]
+    if len(numbers) != 6:
+        return ()
+    draw_date = _maine_draw_date(date_match.group(0))
+    if draw_date is None:
+        return ()
+    return (
+        ParsedDraw(
+            draw_date=draw_date,
+            winning_number=", ".join(
+                [*numbers[:5], f"{numbers[5]} {special_number_name}"]
+            ),
+            prizes=(),
+        ),
+    )
+
+
+def _maine_game_block_text(image: Tag) -> str:
+    parts: list[str] = []
+    for node in image.next_elements:
+        if isinstance(node, Tag) and node.name == "img":
+            break
+        if isinstance(node, NavigableString):
+            text = str(node).strip()
+            if text:
+                parts.append(text)
+    return " ".join(parts)
+
+
+def _maine_draw_date(raw_value: str) -> str | None:
+    try:
+        return datetime.strptime(raw_value, "%A %m/%d/%Y").strftime(
+            _DRAW_DATE_FORMAT
+        )
+    except ValueError:
+        return None
+
+
 def _new_york_draw_date(raw_value: object) -> str | None:
     if not isinstance(raw_value, str) or not raw_value:
         return None
@@ -1916,6 +2009,8 @@ def _parse_draws(
         return parse_kentucky_winning_numbers_json(raw_html, game_slug)
     if jurisdiction_code == "la" and game_slug in _LOUISIANA_LATEST_DRAW_GAMES:
         return parse_louisiana_latest_draw_page(raw_html, game_slug)
+    if jurisdiction_code == "me" and game_slug in _MAINE_HOME_PAGE_GAMES:
+        return parse_maine_home_page(raw_html, game_slug)
     return parse_past_drawings(raw_html)
 
 

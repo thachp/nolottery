@@ -1,0 +1,31 @@
+# Maine active draw-game catalog entries.
+
+[[games]]
+slug = 'maine-megabucks'
+name = 'Megabucks Plus'
+source_url = 'https://www.mainelottery.com/'
+reviewed_on = '2026-05-07'
+
+[[games]]
+slug = 'maine-gimme-5'
+name = 'Gimme 5'
+source_url = 'https://www.mainelottery.com/'
+reviewed_on = '2026-05-07'
+
+[[games]]
+slug = 'maine-pick-3'
+name = 'Pick 3'
+source_url = 'https://www.mainelottery.com/'
+reviewed_on = '2026-05-07'
+
+[[games]]
+slug = 'maine-pick-4'
+name = 'Pick 4'
+source_url = 'https://www.mainelottery.com/'
+reviewed_on = '2026-05-07'
+
+[[games]]
+slug = 'maine-cash-pop'
+name = 'Cash POP'
+source_url = 'https://www.mainelottery.com/'
+reviewed_on = '2026-05-07'
