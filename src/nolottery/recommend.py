@@ -1,11 +1,11 @@
 from __future__ import annotations
 
 import re
-import random
 from dataclasses import dataclass
 
 from .ev import OptionResult, analyze_game
 from .metadata import GameMetadata
+from .number_format import quick_pick
 from .settings import AppSettings
 
 
@@ -71,38 +71,10 @@ def _recommendation(game: GameMetadata, option: OptionResult) -> Recommendation:
 
 
 def predict_numbers(game_slug: str, option_slug: str) -> tuple[int, ...]:
-    rng = random.SystemRandom()
-    if game_slug == "cashpop":
-        count = _selection_count(option_slug)
-        if count >= 15:
-            return tuple(range(1, 16))
-        return tuple(sorted(rng.sample(range(1, 16), count)))
-    if game_slug == "daily-keno":
-        count = _selection_count(option_slug)
-        return tuple(sorted(rng.sample(range(1, 81), count)))
-    if game_slug == "powerball":
-        white = sorted(rng.sample(range(1, 70), 5))
-        return (*white, rng.randrange(1, 27))
-    if game_slug == "mega-millions":
-        white = sorted(rng.sample(range(1, 71), 5))
-        return (*white, rng.randrange(1, 25))
-    if game_slug == "lotto":
-        play_one = sorted(rng.sample(range(1, 50), 6))
-        play_two = sorted(rng.sample(range(1, 50), 6))
-        return tuple(play_one + play_two)
-    if game_slug == "hit-5":
-        return tuple(sorted(rng.sample(range(1, 43), 5)))
-    if game_slug == "match-4":
-        return tuple(sorted(rng.sample(range(1, 25), 4)))
-    if game_slug == "pick-3":
-        if "-3-way-" in option_slug:
-            digit = rng.randrange(0, 10)
-            other = _different_digit(rng, digit)
-            return tuple(sorted((digit, digit, other)))
-        if "pair" in option_slug:
-            return (rng.randrange(0, 10), rng.randrange(0, 10))
-        return tuple(rng.randrange(0, 10) for _ in range(3))
-    return ()
+    try:
+        return quick_pick(game_slug, option_slug)
+    except ValueError:
+        return ()
 
 
 def format_number_label(
@@ -122,13 +94,6 @@ def format_number_label(
     if numbers:
         return _join_numbers(numbers)
     return "n/a"
-
-
-def _different_digit(rng: random.SystemRandom, digit: int) -> int:
-    other = rng.randrange(0, 10)
-    while other == digit:
-        other = rng.randrange(0, 10)
-    return other
 
 
 def _join_numbers(numbers: tuple[int, ...]) -> str:
