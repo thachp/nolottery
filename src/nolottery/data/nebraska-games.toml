@@ -1,0 +1,31 @@
+# Nebraska active draw-game catalog entries.
+
+[[games]]
+slug = 'nebraska-pick-5'
+name = 'Pick 5'
+source_url = 'https://nelottery.com/homeapp/lotto/31/gamedetail'
+reviewed_on = '2026-05-07'
+
+[[games]]
+slug = 'nebraska-pick-4'
+name = 'Pick 4'
+source_url = 'https://nelottery.com/homeapp/lotto/41/gamedetail'
+reviewed_on = '2026-05-07'
+
+[[games]]
+slug = 'nebraska-pick-3'
+name = 'Pick 3'
+source_url = 'https://nelottery.com/homeapp/lotto/32/gamedetail'
+reviewed_on = '2026-05-07'
+
+[[games]]
+slug = 'nebraska-myday'
+name = 'MyDaY'
+source_url = 'https://nelottery.com/homeapp/lotto/33/gamedetail'
+reviewed_on = '2026-05-07'
+
+[[games]]
+slug = 'nebraska-2by2'
+name = '2by2'
+source_url = 'https://nelottery.com/homeapp/lotto/34/gamedetail'
+reviewed_on = '2026-05-07'

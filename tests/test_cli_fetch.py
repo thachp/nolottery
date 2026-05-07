@@ -1009,6 +1009,71 @@ def _montana_mega_millions_winning_numbers_html() -> str:
     """
 
 
+def _nebraska_draw_results_html() -> str:
+    return """
+    <html>
+      <body>
+        <div class="draw_results_print_game_info_block">
+          <h2 class="semantic_item">Powerball</h2>
+        </div>
+        <div class="draw_results_print_table_box">
+          <h3 class="tableLabel draw_results_print_tab_head">
+            Powerball Numbers
+          </h3>
+          <table class="numbertable">
+            <tr class="tableheader">
+              <th>Date</th><th>White</th><th>Powerball</th><th>Power Play</th>
+            </tr>
+            <tr class="dark">
+              <td><strong>05/06/2026</strong></td>
+              <td>18, 27, 51, 65, 68</td>
+              <td>05</td>
+              <td>03</td>
+            </tr>
+          </table>
+        </div>
+        <div class="draw_results_print_game_info_block">
+          <h2 class="semantic_item">Double Play</h2>
+        </div>
+        <div class="draw_results_print_table_box">
+          <h3 class="tableLabel draw_results_print_tab_head">
+            Double Play Numbers
+          </h3>
+          <table class="numbertable">
+            <tr class="tableheader">
+              <th>Date</th><th>Double Play White</th>
+              <th>Double Play Powerball</th>
+            </tr>
+            <tr class="dark">
+              <td><strong>05/06/2026</strong></td>
+              <td>04, 21, 36, 48, 69</td>
+              <td>05</td>
+            </tr>
+          </table>
+        </div>
+        <div class="draw_results_print_game_info_block">
+          <h2 class="semantic_item">Mega Millions</h2>
+        </div>
+        <div class="draw_results_print_table_box">
+          <h3 class="tableLabel draw_results_print_tab_head">
+            Mega Millions Numbers
+          </h3>
+          <table class="numbertable">
+            <tr class="tableheader">
+              <th>Date</th><th>White</th><th>Mega Ball</th>
+            </tr>
+            <tr class="dark">
+              <td><strong>05/05/2026</strong></td>
+              <td>12, 22, 50, 51, 55</td>
+              <td>10</td>
+            </tr>
+          </table>
+        </div>
+      </body>
+    </html>
+    """
+
+
 def test_fetch_cashpop_persists_official_page_snapshot_and_draws(tmp_path):
     fixture = tmp_path / "cashpop.html"
     fixture.write_text(DRAWING_HTML, encoding="utf-8")
@@ -3717,6 +3782,114 @@ def test_fetch_montana_mega_millions_backfill_reads_official_page_fixture(
     assert payload["games"][0]["draws"] == [
         {
             "jurisdiction_code": "mt",
+            "draw_date": "Tue, May 05, 2026",
+            "winning_number": "12, 22, 50, 51, 55, 10 Mega Ball",
+        }
+    ]
+
+
+def test_fetch_nebraska_powerball_backfill_reads_official_page_fixture(tmp_path):
+    fixtures = tmp_path / "fixtures"
+    fixtures.mkdir()
+    (fixtures / "powerball-ne-backfill.html").write_text(
+        _nebraska_draw_results_html(),
+        encoding="utf-8",
+    )
+
+    result = runner.invoke(
+        app,
+        [
+            "--data-dir",
+            str(tmp_path / "data"),
+            "fetch",
+            "powerball",
+            "-j",
+            "ne",
+            "--backfill",
+            "--source-dir",
+            str(fixtures),
+        ],
+    )
+
+    assert result.exit_code == 0, result.output
+    assert "Powerball" in result.output
+    assert "1 draw" in result.output
+    assert "1 page" in result.output
+
+    draws_result = runner.invoke(
+        app,
+        [
+            "--data-dir",
+            str(tmp_path / "data"),
+            "draws",
+            "powerball",
+            "-j",
+            "ne",
+            "--output",
+            "json",
+        ],
+    )
+
+    assert draws_result.exit_code == 0, draws_result.output
+    payload = json.loads(draws_result.output)
+    assert payload["games"][0]["draws"] == [
+        {
+            "jurisdiction_code": "ne",
+            "draw_date": "Wed, May 06, 2026",
+            "winning_number": "18, 27, 51, 65, 68, 5 Powerball",
+        }
+    ]
+
+
+def test_fetch_nebraska_mega_millions_backfill_reads_official_page_fixture(
+    tmp_path,
+):
+    fixtures = tmp_path / "fixtures"
+    fixtures.mkdir()
+    (fixtures / "mega-millions-ne-backfill.html").write_text(
+        _nebraska_draw_results_html(),
+        encoding="utf-8",
+    )
+
+    result = runner.invoke(
+        app,
+        [
+            "--data-dir",
+            str(tmp_path / "data"),
+            "fetch",
+            "mega-millions",
+            "-j",
+            "ne",
+            "--backfill",
+            "--source-dir",
+            str(fixtures),
+        ],
+    )
+
+    assert result.exit_code == 0, result.output
+    assert "Mega Millions" in result.output
+    assert "1 draw" in result.output
+    assert "1 page" in result.output
+
+    draws_result = runner.invoke(
+        app,
+        [
+            "--data-dir",
+            str(tmp_path / "data"),
+            "draws",
+            "mega-millions",
+            "-j",
+            "ne",
+            "--output",
+            "json",
+        ],
+    )
+
+    assert draws_result.exit_code == 0, draws_result.output
+    payload = json.loads(draws_result.output)
+    assert payload["games"][0]["draws"] == [
+        {
+            "jurisdiction_code": "ne",
             "draw_date": "Tue, May 05, 2026",
             "winning_number": "12, 22, 50, 51, 55, 10 Mega Ball",
         }
