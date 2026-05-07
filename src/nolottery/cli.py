@@ -56,6 +56,14 @@ ledger_app = typer.Typer(help="Track purchased tickets and realized winnings.")
 app.add_typer(audit_app, name="audit")
 app.add_typer(ledger_app, name="ledger")
 console = Console()
+JurisdictionOption = Annotated[
+    str,
+    typer.Option(
+        "--jurisdiction",
+        "-j",
+        help="Lottery jurisdiction code, such as wa. Use all only where supported.",
+    ),
+]
 
 
 def _data_dir_option() -> Path:
@@ -80,6 +88,7 @@ def main(
 def analyze(
     ctx: typer.Context,
     game: Annotated[str, typer.Argument(help="Game slug, such as cashpop.")],
+    jurisdiction: JurisdictionOption = db.DEFAULT_JURISDICTION_CODE,
     output: Annotated[
         str,
         typer.Option("--output", "-o", help="Output format: table or json."),
@@ -87,14 +96,25 @@ def analyze(
 ) -> None:
     """Analyze expected value for a supported Washington Lottery game."""
     conn = db.connect(ctx.obj["data_dir"])
+    _validate_jurisdiction(conn, jurisdiction)
     if game == "all":
         results = tuple(
-            analyze_game(metadata, AppSettings()) for metadata in _load_games(conn)
+            analyze_game(metadata, AppSettings())
+            for metadata in _load_games(conn, jurisdiction)
         )
         if output == "json":
             console.print_json(
                 json.dumps(
-                    {"games": [analysis_to_dict(result) for result in results]}
+                    {
+                        "jurisdiction_code": jurisdiction,
+                        "games": [
+                            analysis_to_dict(
+                                result,
+                                jurisdiction_code=jurisdiction,
+                            )
+                            for result in results
+                        ],
+                    }
                 )
             )
             return
@@ -104,13 +124,15 @@ def analyze(
             print_analysis_table(console, result)
         return
 
-    metadata = db.get_game(conn, game)
+    metadata = db.get_game(conn, game, jurisdiction)
     if metadata is None:
         raise typer.BadParameter(f"unknown game: {game}")
 
     result = analyze_game(metadata, AppSettings())
     if output == "json":
-        console.print_json(json.dumps(analysis_to_dict(result)))
+        console.print_json(
+            json.dumps(analysis_to_dict(result, jurisdiction_code=jurisdiction))
+        )
         return
     if output != "table":
         raise typer.BadParameter("output must be table or json")
@@ -122,6 +144,7 @@ def analyze(
 def fetch(
     ctx: typer.Context,
     game: Annotated[str, typer.Argument(help="Game slug, such as cashpop.")],
+    jurisdiction: JurisdictionOption = db.DEFAULT_JURISDICTION_CODE,
     source_file: Annotated[
         Path | None,
         typer.Option(
@@ -146,18 +169,33 @@ def fetch(
 ) -> None:
     """Fetch official past drawing data and persist a local snapshot."""
     conn = db.connect(ctx.obj["data_dir"])
+    _validate_jurisdiction(conn, jurisdiction)
     if game == "all":
         if source_file is not None:
             raise typer.BadParameter("--source-file cannot be used with game 'all'")
         results = []
-        for metadata in _load_games(conn):
+        for metadata in _load_games(conn, jurisdiction):
             game_source_file = (
                 source_dir / f"{metadata.slug}.html" if source_dir is not None else None
             )
             if backfill:
-                results.append(fetch_game_backfill(conn, metadata, source_dir))
+                results.append(
+                    fetch_game_backfill(
+                        conn,
+                        metadata,
+                        source_dir,
+                        jurisdiction_code=jurisdiction,
+                    )
+                )
             else:
-                results.append(fetch_game(conn, metadata, game_source_file))
+                results.append(
+                    fetch_game(
+                        conn,
+                        metadata,
+                        game_source_file,
+                        jurisdiction_code=jurisdiction,
+                    )
+                )
         for result in results:
             print_fetch_result(console, result)
         console.print(f"{len(results)} games fetched")
@@ -168,14 +206,24 @@ def fetch(
     if source_file is not None and backfill:
         raise typer.BadParameter("--source-file cannot be used with --backfill")
 
-    metadata = db.get_game(conn, game)
+    metadata = db.get_game(conn, game, jurisdiction)
     if metadata is None:
         raise typer.BadParameter(f"unknown game: {game}")
 
     if backfill:
-        result = fetch_game_backfill(conn, metadata, source_dir)
+        result = fetch_game_backfill(
+            conn,
+            metadata,
+            source_dir,
+            jurisdiction_code=jurisdiction,
+        )
     else:
-        result = fetch_game(conn, metadata, source_file)
+        result = fetch_game(
+            conn,
+            metadata,
+            source_file,
+            jurisdiction_code=jurisdiction,
+        )
     print_fetch_result(console, result)
 
 
@@ -183,6 +231,7 @@ def fetch(
 def draws(
     ctx: typer.Context,
     game: Annotated[str, typer.Argument(help="Game slug, or all.")] = "all",
+    jurisdiction: JurisdictionOption = db.DEFAULT_JURISDICTION_CODE,
     limit: Annotated[
         int,
         typer.Option(
@@ -202,32 +251,51 @@ def draws(
         raise typer.BadParameter("output must be table or json")
 
     conn = db.connect(ctx.obj["data_dir"])
+    _validate_jurisdiction(conn, jurisdiction)
     if game == "all":
-        games = _load_games(conn)
+        games = _load_games(conn, jurisdiction)
     else:
-        metadata = db.get_game(conn, game)
+        metadata = db.get_game(conn, game, jurisdiction)
         if metadata is None:
             raise typer.BadParameter(f"unknown game: {game}")
         games = (metadata,)
 
     draws_by_game = {
-        metadata.slug: db.recent_draws(conn, metadata.slug, limit=limit)
+        metadata.slug: db.recent_draws(
+            conn,
+            metadata.slug,
+            jurisdiction_code=jurisdiction,
+            limit=limit,
+        )
         for metadata in games
     }
     if output == "json":
-        console.print_json(json.dumps(draws_to_dict(games, draws_by_game, limit)))
+        console.print_json(
+            json.dumps(
+                draws_to_dict(
+                    games,
+                    draws_by_game,
+                    limit,
+                    jurisdiction_code=jurisdiction,
+                )
+            )
+        )
         return
 
     print_draws_table(console, games, draws_by_game)
 
 
 @app.command()
-def rank(ctx: typer.Context) -> None:
+def rank(
+    ctx: typer.Context,
+    jurisdiction: JurisdictionOption = db.DEFAULT_JURISDICTION_CODE,
+) -> None:
     """Rank supported games by best after-tax expected value."""
     conn = db.connect(ctx.obj["data_dir"])
+    _validate_jurisdiction(conn, jurisdiction)
     results = []
-    for slug in db.list_game_slugs(conn):
-        metadata = db.get_game(conn, slug)
+    for slug in db.list_game_slugs(conn, jurisdiction):
+        metadata = db.get_game(conn, slug, jurisdiction)
         if metadata is not None:
             results.append(analyze_game(metadata, AppSettings()))
     results.sort(key=lambda result: result.best_option.net_after_tax_ev, reverse=True)
@@ -257,6 +325,7 @@ def rank(ctx: typer.Context) -> None:
 @app.command()
 def recommend(
     ctx: typer.Context,
+    jurisdiction: JurisdictionOption = db.DEFAULT_JURISDICTION_CODE,
     budget: Annotated[
         float,
         typer.Option(
@@ -281,7 +350,8 @@ def recommend(
 ) -> None:
     """Recommend the highest hit-rate play style within a small budget."""
     conn = db.connect(ctx.obj["data_dir"])
-    games = _load_games(conn)
+    _validate_jurisdiction(conn, jurisdiction)
+    games = _load_games(conn, jurisdiction)
     settings = AppSettings()
     generated_at = _generated_at()
     recommendations = recommend_highest_hit_rate(games, settings, budget)
@@ -294,6 +364,7 @@ def recommend(
 
     response_payload: dict[str, object] = {
         "generated_at": generated_at,
+        "jurisdiction_code": jurisdiction,
         "budget": budget,
         "best": recommendation_to_dict(recommendations[0]),
         "recommendations": [
@@ -334,6 +405,7 @@ def _generated_at() -> str:
 def low_share(
     ctx: typer.Context,
     game: Annotated[str, typer.Argument(help="Game slug, or all.")],
+    jurisdiction: JurisdictionOption = db.DEFAULT_JURISDICTION_CODE,
     count: Annotated[
         int,
         typer.Option(
@@ -394,10 +466,11 @@ def low_share(
     if candidates < count:
         raise typer.BadParameter("candidates must be greater than or equal to count")
     conn = db.connect(ctx.obj["data_dir"])
+    _validate_jurisdiction(conn, jurisdiction)
     if game == "all":
-        games = _load_games(conn)
+        games = _load_games(conn, jurisdiction)
     else:
-        metadata = db.get_game(conn, game)
+        metadata = db.get_game(conn, game, jurisdiction)
         if metadata is None:
             raise typer.BadParameter(f"unknown game: {game}")
         games = (metadata,)
@@ -812,10 +885,18 @@ def _evaluate_audits_if_requested(
         raise typer.BadParameter(str(exc)) from exc
 
 
-def _load_games(conn) -> tuple[GameMetadata, ...]:
+def _validate_jurisdiction(conn, jurisdiction_code: str) -> None:
+    if not db.jurisdiction_exists(conn, jurisdiction_code):
+        raise typer.BadParameter(f"unknown jurisdiction: {jurisdiction_code}")
+
+
+def _load_games(
+    conn,
+    jurisdiction_code: str = db.DEFAULT_JURISDICTION_CODE,
+) -> tuple[GameMetadata, ...]:
     games = []
-    for slug in db.list_game_slugs(conn):
-        metadata = db.get_game(conn, slug)
+    for slug in db.list_game_slugs(conn, jurisdiction_code):
+        metadata = db.get_game(conn, slug, jurisdiction_code)
         if metadata is not None:
             games.append(metadata)
     return tuple(games)

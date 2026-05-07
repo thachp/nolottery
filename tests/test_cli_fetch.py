@@ -195,10 +195,52 @@ def test_fetch_persists_draw_numbers_when_prize_rows_are_absent(tmp_path):
     payload = json.loads(draws_result.output)
     assert payload["games"][0]["draws"] == [
         {
+            "jurisdiction_code": "wa",
             "draw_date": "Mon, May 04, 2026",
             "winning_number": "01, 02, 03, 04, 05, 06",
         }
     ]
+
+
+def test_fetch_and_draws_accept_explicit_washington_jurisdiction(tmp_path):
+    data_dir = tmp_path / "data"
+    fixture = tmp_path / "cashpop.html"
+    fixture.write_text(DRAWING_HTML, encoding="utf-8")
+
+    fetch_result = runner.invoke(
+        app,
+        [
+            "--data-dir",
+            str(data_dir),
+            "fetch",
+            "cashpop",
+            "-j",
+            "wa",
+            "--source-file",
+            str(fixture),
+        ],
+    )
+    assert fetch_result.exit_code == 0, fetch_result.output
+
+    draws_result = runner.invoke(
+        app,
+        [
+            "--data-dir",
+            str(data_dir),
+            "draws",
+            "cashpop",
+            "-j",
+            "wa",
+            "--output",
+            "json",
+        ],
+    )
+
+    assert draws_result.exit_code == 0, draws_result.output
+    payload = json.loads(draws_result.output)
+    assert payload["jurisdiction_code"] == "wa"
+    assert payload["games"][0]["jurisdiction_code"] == "wa"
+    assert payload["games"][0]["draws"][0]["jurisdiction_code"] == "wa"
 
 
 def test_fetch_uses_first_ball_cell_when_a_draw_table_has_extra_ball_cells(tmp_path):
@@ -464,8 +506,16 @@ def test_draws_lists_recent_numbers_newest_first_and_deduped(tmp_path):
     payload = json.loads(result.output)
     draws = payload["games"][0]["draws"]
     assert draws == [
-        {"draw_date": "Tue, May 05, 2026", "winning_number": "05"},
-        {"draw_date": "Mon, May 04, 2026", "winning_number": "04"},
+        {
+            "jurisdiction_code": "wa",
+            "draw_date": "Tue, May 05, 2026",
+            "winning_number": "05",
+        },
+        {
+            "jurisdiction_code": "wa",
+            "draw_date": "Mon, May 04, 2026",
+            "winning_number": "04",
+        },
     ]
 
 

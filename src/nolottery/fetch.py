@@ -11,6 +11,7 @@ from urllib.parse import parse_qsl, urlencode, urlparse, urlunparse
 import httpx
 from bs4 import BeautifulSoup, Tag
 
+from .db import DEFAULT_JURISDICTION_CODE
 from .metadata import GameMetadata
 
 _DRAW_DATE_FORMAT = "%a, %b %d, %Y"
@@ -43,6 +44,7 @@ def fetch_game(
     conn: sqlite3.Connection,
     game: GameMetadata,
     source_file: Path | None = None,
+    jurisdiction_code: str = DEFAULT_JURISDICTION_CODE,
 ) -> FetchResult:
     if source_file is not None:
         raw_html = source_file.read_text(encoding="utf-8")
@@ -51,9 +53,9 @@ def fetch_game(
         raw_html, source_url = _read_source(game.source_url, None, game.slug)
 
     draws = parse_past_drawings(raw_html)
-    _insert_snapshot(conn, game.slug, source_url, raw_html, draws)
-    new_draws = _filter_newer_draws(conn, game.slug, draws)
-    _insert_draw_results(conn, game.slug, new_draws)
+    _insert_snapshot(conn, jurisdiction_code, game.slug, source_url, raw_html, draws)
+    new_draws = _filter_newer_draws(conn, jurisdiction_code, game.slug, draws)
+    _insert_draw_results(conn, jurisdiction_code, game.slug, new_draws)
     conn.commit()
 
     return FetchResult(
@@ -68,6 +70,7 @@ def fetch_game_backfill(
     conn: sqlite3.Connection,
     game: GameMetadata,
     source_dir: Path | None = None,
+    jurisdiction_code: str = DEFAULT_JURISDICTION_CODE,
 ) -> FetchResult:
     discovery_html, discovery_url = _read_source(game.source_url, source_dir, game.slug)
     years = parse_available_years(discovery_html)
@@ -85,11 +88,11 @@ def fetch_game_backfill(
         )
         draws = parse_past_drawings(raw_html)
         all_draws.extend(draws)
-        _insert_snapshot(conn, game.slug, source_url, raw_html, draws)
+        _insert_snapshot(conn, jurisdiction_code, game.slug, source_url, raw_html, draws)
         page_count += 1
 
     deduped_draws = _dedupe_draws(tuple(all_draws))
-    _replace_draw_results(conn, game.slug, deduped_draws)
+    _replace_draw_results(conn, jurisdiction_code, game.slug, deduped_draws)
     conn.commit()
 
     return FetchResult(
@@ -180,6 +183,7 @@ def _year_url(source_url: str, year: int) -> str:
 
 def _insert_snapshot(
     conn: sqlite3.Connection,
+    jurisdiction_code: str,
     game_slug: str,
     source_url: str,
     raw_html: str,
@@ -189,10 +193,17 @@ def _insert_snapshot(
     fetched_at = datetime.now(tz=UTC).isoformat()
     conn.execute(
         """
-        insert into fetch_snapshots (game_slug, source_url, fetched_at, raw_html, parsed_json)
-        values (?, ?, ?, ?, ?)
+        insert into fetch_snapshots (
+            jurisdiction_code,
+            game_slug,
+            source_url,
+            fetched_at,
+            raw_html,
+            parsed_json
+        )
+        values (?, ?, ?, ?, ?, ?)
         """,
-        (game_slug, source_url, fetched_at, raw_html, parsed_json),
+        (jurisdiction_code, game_slug, source_url, fetched_at, raw_html, parsed_json),
     )
 
 
@@ -205,11 +216,12 @@ def _dedupe_draws(draws: tuple[ParsedDraw, ...]) -> tuple[ParsedDraw, ...]:
 
 def _filter_newer_draws(
     conn: sqlite3.Connection,
+    jurisdiction_code: str,
     game_slug: str,
     draws: tuple[ParsedDraw, ...],
 ) -> tuple[ParsedDraw, ...]:
-    latest_draw_date = _latest_stored_draw_date(conn, game_slug)
-    existing_keys = _existing_draw_keys(conn, game_slug)
+    latest_draw_date = _latest_stored_draw_date(conn, jurisdiction_code, game_slug)
+    existing_keys = _existing_draw_keys(conn, jurisdiction_code, game_slug)
 
     newer_draws: list[ParsedDraw] = []
     seen_keys: set[tuple[str, str]] = set()
@@ -227,14 +239,19 @@ def _filter_newer_draws(
     return tuple(newer_draws)
 
 
-def _latest_stored_draw_date(conn: sqlite3.Connection, game_slug: str) -> date | None:
+def _latest_stored_draw_date(
+    conn: sqlite3.Connection,
+    jurisdiction_code: str,
+    game_slug: str,
+) -> date | None:
     rows = conn.execute(
         """
         select distinct draw_date
         from draw_results
-        where game_slug = ?
+        where jurisdiction_code = ?
+            and game_slug = ?
         """,
-        (game_slug,),
+        (jurisdiction_code, game_slug),
     ).fetchall()
     parsed_dates = [
         parsed_date
@@ -246,15 +263,17 @@ def _latest_stored_draw_date(conn: sqlite3.Connection, game_slug: str) -> date |
 
 def _existing_draw_keys(
     conn: sqlite3.Connection,
+    jurisdiction_code: str,
     game_slug: str,
 ) -> set[tuple[str, str]]:
     rows = conn.execute(
         """
         select distinct draw_date, winning_number
         from draw_results
-        where game_slug = ?
+        where jurisdiction_code = ?
+            and game_slug = ?
         """,
-        (game_slug,),
+        (jurisdiction_code, game_slug),
     ).fetchall()
     return {(row["draw_date"], row["winning_number"]) for row in rows}
 
@@ -268,15 +287,20 @@ def _parse_draw_date(draw_date: str) -> date | None:
 
 def _replace_draw_results(
     conn: sqlite3.Connection,
+    jurisdiction_code: str,
     game_slug: str,
     draws: tuple[ParsedDraw, ...],
 ) -> None:
-    conn.execute("delete from draw_results where game_slug = ?", (game_slug,))
-    _insert_draw_results(conn, game_slug, draws)
+    conn.execute(
+        "delete from draw_results where jurisdiction_code = ? and game_slug = ?",
+        (jurisdiction_code, game_slug),
+    )
+    _insert_draw_results(conn, jurisdiction_code, game_slug, draws)
 
 
 def _insert_draw_results(
     conn: sqlite3.Connection,
+    jurisdiction_code: str,
     game_slug: str,
     draws: tuple[ParsedDraw, ...],
 ) -> None:
@@ -286,6 +310,7 @@ def _insert_draw_results(
             conn.execute(
                 """
                 insert into draw_results (
+                    jurisdiction_code,
                     game_slug,
                     draw_date,
                     winning_number,
@@ -293,9 +318,10 @@ def _insert_draw_results(
                     wa_winners,
                     total
                 )
-                values (?, ?, ?, ?, ?, ?)
+                values (?, ?, ?, ?, ?, ?, ?)
                 """,
                 (
+                    jurisdiction_code,
                     game_slug,
                     draw.draw_date,
                     draw.winning_number,

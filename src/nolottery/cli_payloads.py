@@ -9,37 +9,46 @@ from .recommend import Recommendation, displayed_hit_rate
 from .settings import AppSettings
 
 
-def analysis_to_dict(result: AnalysisResult) -> dict[str, object]:
-    return {
-        "game_slug": result.game_slug,
-        "game": result.game_name,
-        "decision": result.decision,
-        "reason": result.reason,
-        "best_option": result.best_option.option_label,
-        "ticket_cost": result.best_option.ticket_cost,
-        "gross_ev": result.best_option.gross_ev,
-        "after_tax_ev": result.best_option.after_tax_ev,
-        "net_after_tax_ev": result.best_option.net_after_tax_ev,
-        "hit_rate": result.best_option.hit_rate,
-        "max_recommended_tickets": (
-            result.best_option.max_recommended_tickets
-            if result.decision == "PLAY"
-            else 0
-        ),
-        "options": [
-            {
-                "slug": option.option_slug,
-                "label": option.option_label,
-                "ticket_cost": option.ticket_cost,
-                "gross_ev": option.gross_ev,
-                "after_tax_ev": option.after_tax_ev,
-                "net_after_tax_ev": option.net_after_tax_ev,
-                "hit_rate": option.hit_rate,
-            }
-            for option in result.options
-        ],
-    }
-
+def analysis_to_dict(
+    result: AnalysisResult,
+    *,
+    jurisdiction_code: str | None = None,
+) -> dict[str, object]:
+    payload: dict[str, object] = {}
+    if jurisdiction_code is not None:
+        payload["jurisdiction_code"] = jurisdiction_code
+    payload.update(
+        {
+            "game_slug": result.game_slug,
+            "game": result.game_name,
+            "decision": result.decision,
+            "reason": result.reason,
+            "best_option": result.best_option.option_label,
+            "ticket_cost": result.best_option.ticket_cost,
+            "gross_ev": result.best_option.gross_ev,
+            "after_tax_ev": result.best_option.after_tax_ev,
+            "net_after_tax_ev": result.best_option.net_after_tax_ev,
+            "hit_rate": result.best_option.hit_rate,
+            "max_recommended_tickets": (
+                result.best_option.max_recommended_tickets
+                if result.decision == "PLAY"
+                else 0
+            ),
+            "options": [
+                {
+                    "slug": option.option_slug,
+                    "label": option.option_label,
+                    "ticket_cost": option.ticket_cost,
+                    "gross_ev": option.gross_ev,
+                    "after_tax_ev": option.after_tax_ev,
+                    "net_after_tax_ev": option.net_after_tax_ev,
+                    "hit_rate": option.hit_rate,
+                }
+                for option in result.options
+            ],
+        }
+    )
+    return payload
 
 def recommendation_to_dict(recommendation: Recommendation) -> dict[str, object]:
     option = recommendation.option
@@ -101,15 +110,27 @@ def draws_to_dict(
     games: tuple[GameMetadata, ...],
     draws_by_game: dict[str, tuple[db.StoredDraw, ...]],
     limit: int,
+    *,
+    jurisdiction_code: str | None = None,
 ) -> dict[str, object]:
-    return {
+    payload: dict[str, object] = {
         "limit": limit,
         "games": [
             {
+                **(
+                    {"jurisdiction_code": jurisdiction_code}
+                    if jurisdiction_code is not None
+                    else {}
+                ),
                 "game_slug": metadata.slug,
                 "game": metadata.name,
                 "draws": [
                     {
+                        **(
+                            {"jurisdiction_code": draw.jurisdiction_code}
+                            if jurisdiction_code is not None
+                            else {}
+                        ),
                         "draw_date": draw.draw_date,
                         "winning_number": draw.winning_number,
                     }
@@ -119,6 +140,9 @@ def draws_to_dict(
             for metadata in games
         ],
     }
+    if jurisdiction_code is not None:
+        payload["jurisdiction_code"] = jurisdiction_code
+    return payload
 
 
 def compact_audit(audit: dict[str, object]) -> dict[str, object]:

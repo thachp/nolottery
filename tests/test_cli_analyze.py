@@ -35,6 +35,46 @@ def test_analyze_cashpop_can_return_json(tmp_path):
     assert payload["options"]
 
 
+def test_analyze_accepts_explicit_washington_jurisdiction(tmp_path):
+    result = runner.invoke(
+        app,
+        [
+            "--data-dir",
+            str(tmp_path),
+            "analyze",
+            "cashpop",
+            "-j",
+            "wa",
+            "--output",
+            "json",
+        ],
+    )
+
+    assert result.exit_code == 0, result.output
+    payload = json.loads(result.output)
+    assert payload["jurisdiction_code"] == "wa"
+    assert payload["game_slug"] == "cashpop"
+
+
+def test_analyze_rejects_unknown_jurisdiction(tmp_path):
+    result = runner.invoke(
+        app,
+        [
+            "--data-dir",
+            str(tmp_path),
+            "analyze",
+            "cashpop",
+            "-j",
+            "ca",
+            "--output",
+            "json",
+        ],
+    )
+
+    assert result.exit_code != 0
+    assert "unknown jurisdiction: ca" in result.output
+
+
 def test_rank_compares_supported_games_by_ev_and_hit_rate(tmp_path):
     result = runner.invoke(
         app,
