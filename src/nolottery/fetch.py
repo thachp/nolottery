@@ -3,13 +3,16 @@ from __future__ import annotations
 import json
 import re
 import sqlite3
+import ssl
 from dataclasses import asdict, dataclass
 from datetime import UTC, date, datetime
+from io import BytesIO
 from math import ceil
 from pathlib import Path
 from urllib.parse import parse_qsl, urlencode, urljoin, urlparse, urlunparse
 
 import httpx
+import pdfplumber
 from bs4 import BeautifulSoup, Tag
 
 from .db import DEFAULT_JURISDICTION_CODE
@@ -36,6 +39,17 @@ _CALIFORNIA_SPECIAL_NUMBER_NAMES = {
     "mega-millions": "Mega Ball",
     "superlotto-plus": "Superball",
 }
+_FLORIDA_PICK_GAMES = {
+    "florida-pick-2": ("https://files.floridalottery.com/exptkt/p2.pdf", 2),
+    "florida-pick-3": ("https://files.floridalottery.com/exptkt/p3.pdf", 3),
+    "florida-pick-4": ("https://files.floridalottery.com/exptkt/p4.pdf", 4),
+    "florida-pick-5": ("https://files.floridalottery.com/exptkt/p5.pdf", 5),
+}
+_NEW_YORK_DAILY_NUMBERS_URL = (
+    "https://data.ny.gov/resource/hsys-3def.json?"
+    "$limit=50000&$order=draw_date%20DESC"
+)
+_NEW_YORK_DAILY_GAMES = {"numbers", "win-4"}
 
 
 @dataclass(frozen=True)
@@ -67,6 +81,48 @@ def fetch_game(
     source_file: Path | None = None,
     jurisdiction_code: str = DEFAULT_JURISDICTION_CODE,
 ) -> FetchResult:
+    if (
+        source_file is None
+        and jurisdiction_code == "fl"
+        and game.slug in _FLORIDA_PICK_GAMES
+    ):
+        raw_html, source_url, draws = _florida_pick_history_draws(
+            game.slug,
+            source_dir=None,
+        )
+        _insert_snapshot(conn, jurisdiction_code, game.slug, source_url, raw_html, draws)
+        new_draws = _filter_newer_draws(conn, jurisdiction_code, game.slug, draws)
+        _insert_draw_results(conn, jurisdiction_code, game.slug, new_draws)
+        conn.commit()
+        return FetchResult(
+            game_name=game.name,
+            source_url=source_url,
+            draw_count=len(new_draws),
+            prize_row_count=sum(len(draw.prizes) for draw in new_draws),
+        )
+    if (
+        source_file is None
+        and jurisdiction_code == "ny"
+        and game.slug in _NEW_YORK_DAILY_GAMES
+    ):
+        raw_json, source_url = _read_source(
+            _NEW_YORK_DAILY_NUMBERS_URL,
+            None,
+            f"{game.slug}-ny-backfill",
+            suffix=".json",
+        )
+        draws = parse_new_york_daily_numbers_json(raw_json, game.slug)
+        _insert_snapshot(conn, jurisdiction_code, game.slug, source_url, raw_json, draws)
+        new_draws = _filter_newer_draws(conn, jurisdiction_code, game.slug, draws)
+        _insert_draw_results(conn, jurisdiction_code, game.slug, new_draws)
+        conn.commit()
+        return FetchResult(
+            game_name=game.name,
+            source_url=source_url,
+            draw_count=len(new_draws),
+            prize_row_count=sum(len(draw.prizes) for draw in new_draws),
+        )
+
     if source_file is not None:
         raw_html = source_file.read_text(encoding="utf-8")
         source_url = source_file.as_uri()
@@ -93,6 +149,40 @@ def fetch_game_backfill(
     source_dir: Path | None = None,
     jurisdiction_code: str = DEFAULT_JURISDICTION_CODE,
 ) -> FetchResult:
+    if jurisdiction_code == "fl" and game.slug in _FLORIDA_PICK_GAMES:
+        raw_html, source_url, draws = _florida_pick_history_draws(
+            game.slug,
+            source_dir=source_dir,
+        )
+        _insert_snapshot(conn, jurisdiction_code, game.slug, source_url, raw_html, draws)
+        _replace_draw_results(conn, jurisdiction_code, game.slug, draws)
+        conn.commit()
+        return FetchResult(
+            game_name=game.name,
+            source_url=source_url,
+            draw_count=len(draws),
+            prize_row_count=sum(len(draw.prizes) for draw in draws),
+            page_count=1,
+        )
+    if jurisdiction_code == "ny" and game.slug in _NEW_YORK_DAILY_GAMES:
+        raw_json, source_url = _read_source(
+            _NEW_YORK_DAILY_NUMBERS_URL,
+            source_dir,
+            f"{game.slug}-ny-backfill",
+            suffix=".json",
+        )
+        draws = parse_new_york_daily_numbers_json(raw_json, game.slug)
+        _insert_snapshot(conn, jurisdiction_code, game.slug, source_url, raw_json, draws)
+        _replace_draw_results(conn, jurisdiction_code, game.slug, draws)
+        conn.commit()
+        return FetchResult(
+            game_name=game.name,
+            source_url=source_url,
+            draw_count=len(draws),
+            prize_row_count=sum(len(draw.prizes) for draw in draws),
+            page_count=1,
+        )
+
     discovery_html, discovery_url = _read_source(game.source_url, source_dir, game.slug)
     if jurisdiction_code == "ca":
         return _fetch_california_backfill(
@@ -238,6 +328,15 @@ def _fetch_california_hot_spot_backfill(
     )
 
 
+def _florida_pick_history_draws(
+    game_slug: str,
+    *,
+    source_dir: Path | None,
+) -> tuple[str, str, tuple[ParsedDraw, ...]]:
+    raw_text, source_url = _read_florida_pick_history_source(game_slug, source_dir)
+    return raw_text, source_url, parse_florida_pick_history_text(raw_text, game_slug)
+
+
 def parse_past_drawings(raw_html: str) -> tuple[ParsedDraw, ...]:
     soup = BeautifulSoup(raw_html, "html.parser")
     draws: list[ParsedDraw] = []
@@ -347,6 +446,66 @@ def parse_california_hot_spot_backfill_json(raw_json: str) -> tuple[ParsedDraw, 
                 )
             )
     return tuple(draws)
+
+
+def parse_florida_pick_history_text(
+    raw_text: str,
+    game_slug: str,
+) -> tuple[ParsedDraw, ...]:
+    _, digit_count = _FLORIDA_PICK_GAMES[game_slug]
+    number_pattern = r"\d" + (r"\s*-\s*\d" * (digit_count - 1))
+    entry_re = re.compile(
+        rf"(?P<date>\d{{2}}/\d{{2}}/\d{{2}})\s+"
+        rf"(?P<session>[EM])\s+"
+        rf"(?P<numbers>{number_pattern})\s+FB\s+\d"
+    )
+    draws: list[ParsedDraw] = []
+    for match in entry_re.finditer(raw_text):
+        parsed_date = datetime.strptime(match.group("date"), "%m/%d/%y")
+        session = "Evening" if match.group("session") == "E" else "Midday"
+        numbers = re.findall(r"\d", match.group("numbers"))
+        draws.append(
+            ParsedDraw(
+                draw_date=f"{parsed_date.strftime(_DRAW_DATE_FORMAT)} {session}",
+                winning_number=", ".join(numbers),
+                prizes=(),
+            )
+        )
+    return tuple(draws)
+
+
+def parse_new_york_daily_numbers_json(
+    raw_json: str,
+    game_slug: str,
+) -> tuple[ParsedDraw, ...]:
+    payload = json.loads(raw_json)
+    field_names = (
+        ("midday_daily", "evening_daily")
+        if game_slug == "numbers"
+        else ("midday_win_4", "evening_win_4")
+    )
+    draws: list[ParsedDraw] = []
+    for item in payload:
+        draw_date = _new_york_draw_date(item.get("draw_date"))
+        if draw_date is None:
+            continue
+        for field_name, session in zip(field_names, ("Midday", "Evening"), strict=True):
+            number = item.get(field_name)
+            if isinstance(number, str) and number.strip():
+                draws.append(
+                    ParsedDraw(
+                        draw_date=f"{draw_date} {session}",
+                        winning_number=number.strip(),
+                        prizes=(),
+                    )
+                )
+    return tuple(draws)
+
+
+def _new_york_draw_date(raw_value: object) -> str | None:
+    if not isinstance(raw_value, str) or not raw_value:
+        return None
+    return datetime.fromisoformat(raw_value).strftime(_DRAW_DATE_FORMAT)
 
 
 def _page_lines(soup: BeautifulSoup) -> list[str]:
@@ -654,6 +813,39 @@ def _read_source(
 
     source_file = source_dir / f"{source_name}{suffix}"
     return source_file.read_text(encoding="utf-8"), source_file.as_uri()
+
+
+def _read_florida_pick_history_source(
+    game_slug: str,
+    source_dir: Path | None,
+) -> tuple[str, str]:
+    history_url, _ = _FLORIDA_PICK_GAMES[game_slug]
+    source_name = f"{game_slug}-fl-backfill"
+    if source_dir is not None:
+        text_file = source_dir / f"{source_name}.txt"
+        if text_file.exists():
+            return text_file.read_text(encoding="utf-8"), text_file.as_uri()
+        pdf_file = source_dir / f"{source_name}.pdf"
+        return _extract_pdf_text(pdf_file.read_bytes()), pdf_file.as_uri()
+
+    ssl_context = ssl.create_default_context()
+    ssl_context.set_ciphers("DEFAULT@SECLEVEL=1")
+    with httpx.Client(
+        follow_redirects=True,
+        timeout=30,
+        verify=ssl_context,
+    ) as client:
+        response = client.get(history_url)
+    response.raise_for_status()
+    return _extract_pdf_text(response.content), str(response.url)
+
+
+def _extract_pdf_text(raw_pdf: bytes) -> str:
+    with pdfplumber.open(BytesIO(raw_pdf)) as pdf:
+        return "\n".join(
+            page.extract_text(layout=True, x_tolerance=1, y_tolerance=3) or ""
+            for page in pdf.pages
+        )
 
 
 def _year_url(source_url: str, year: int) -> str:

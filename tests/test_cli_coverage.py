@@ -168,6 +168,11 @@ def test_coverage_reports_florida_and_new_york_ev_supported_games(tmp_path):
                 "cataloged",
                 "rules_verified",
                 "ev_supported",
+                "fetch_supported",
                 "low_share_supported",
             ]
-            assert game["blocking_reason"] == "Fetch adapter pending"
+            assert game["blocking_reason"] == "Audit support pending"
+            assert game["results_adapter"] in {
+                "fl_pick_history_pdf",
+                "ny_daily_numbers_socrata",
+            }

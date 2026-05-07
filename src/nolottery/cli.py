@@ -186,7 +186,7 @@ def fetch(
         if source_file is not None:
             raise typer.BadParameter("--source-file cannot be used with game 'all'")
         results = []
-        for metadata in _load_games(conn, jurisdiction):
+        for metadata in _load_fetch_games(conn, jurisdiction):
             game_source_file = (
                 source_dir / f"{metadata.slug}.html" if source_dir is not None else None
             )
@@ -221,6 +221,7 @@ def fetch(
     metadata = db.get_game(conn, game, jurisdiction)
     if metadata is None:
         raise typer.BadParameter(f"unknown game: {game}")
+    _validate_fetch_supported(jurisdiction, metadata)
 
     if backfill:
         result = fetch_game_backfill(
@@ -1027,6 +1028,15 @@ def _validate_low_share_supported(metadata: GameMetadata) -> None:
         )
 
 
+def _validate_fetch_supported(jurisdiction_code: str, metadata: GameMetadata) -> None:
+    if not _game_has_support_status(
+        jurisdiction_code,
+        metadata.slug,
+        "fetch_supported",
+    ):
+        raise typer.BadParameter(f"fetch support pending for game: {metadata.slug}")
+
+
 def _coverage_game(metadata: GameMetadata, jurisdiction_code: str) -> dict[str, object]:
     offering = _coverage_offering(jurisdiction_code, metadata.slug)
     statuses = offering.get("support_statuses", SUPPORTED_STATUSES)
@@ -1078,11 +1088,36 @@ def _load_ev_games(
     )
 
 
+def _load_fetch_games(
+    conn,
+    jurisdiction_code: str = db.DEFAULT_JURISDICTION_CODE,
+) -> tuple[GameMetadata, ...]:
+    return tuple(
+        metadata
+        for metadata in _load_games(conn, jurisdiction_code)
+        if _game_has_support_status(
+            jurisdiction_code,
+            metadata.slug,
+            "fetch_supported",
+        )
+    )
+
+
 def _load_low_share_games(
     conn,
     jurisdiction_code: str = db.DEFAULT_JURISDICTION_CODE,
 ) -> tuple[GameMetadata, ...]:
     return _load_ev_games(conn, jurisdiction_code)
+
+
+def _game_has_support_status(
+    jurisdiction_code: str,
+    game_slug: str,
+    status: str,
+) -> bool:
+    offering = _coverage_offering(jurisdiction_code, game_slug)
+    statuses = offering.get("support_statuses", SUPPORTED_STATUSES)
+    return status in statuses
 
 
 @ledger_app.command("add")

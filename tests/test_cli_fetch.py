@@ -456,6 +456,245 @@ def test_fetch_all_backfill_reads_yearly_pages_for_every_game(tmp_path):
     assert "8 games fetched" in result.output
 
 
+def test_fetch_florida_pick3_backfill_reads_official_history_fixture(tmp_path):
+    fixtures = tmp_path / "fixtures"
+    fixtures.mkdir()
+    (fixtures / "florida-pick-3-fl-backfill.txt").write_text(
+        """
+        FLORIDA LOTTERY Winning Numbers History
+        PICK 3
+        E: Evening and M: Midday drawing results
+        05/06/26 E 5 - 1 - 7 FB 2     05/06/26 M 3 - 7 - 2 FB 3
+        05/05/26 E 8 - 0 - 1 FB 1
+        """,
+        encoding="utf-8",
+    )
+
+    result = runner.invoke(
+        app,
+        [
+            "--data-dir",
+            str(tmp_path / "data"),
+            "fetch",
+            "florida-pick-3",
+            "-j",
+            "fl",
+            "--backfill",
+            "--source-dir",
+            str(fixtures),
+        ],
+    )
+
+    assert result.exit_code == 0, result.output
+    assert "Pick 3" in result.output
+    assert "3 draws" in result.output
+
+    draws_result = runner.invoke(
+        app,
+        [
+            "--data-dir",
+            str(tmp_path / "data"),
+            "draws",
+            "florida-pick-3",
+            "-j",
+            "fl",
+            "--limit",
+            "3",
+            "--output",
+            "json",
+        ],
+    )
+
+    assert draws_result.exit_code == 0, draws_result.output
+    payload = json.loads(draws_result.output)
+    assert payload["games"][0]["draws"] == [
+        {
+            "jurisdiction_code": "fl",
+            "draw_date": "Wed, May 06, 2026 Evening",
+            "winning_number": "5, 1, 7",
+        },
+        {
+            "jurisdiction_code": "fl",
+            "draw_date": "Wed, May 06, 2026 Midday",
+            "winning_number": "3, 7, 2",
+        },
+        {
+            "jurisdiction_code": "fl",
+            "draw_date": "Tue, May 05, 2026 Evening",
+            "winning_number": "8, 0, 1",
+        },
+    ]
+
+
+def test_fetch_new_york_numbers_backfill_reads_official_json_fixture(tmp_path):
+    fixtures = tmp_path / "fixtures"
+    fixtures.mkdir()
+    (fixtures / "numbers-ny-backfill.json").write_text(
+        json.dumps(
+            [
+                {
+                    "draw_date": "2026-05-06T00:00:00.000",
+                    "midday_daily": "319",
+                    "evening_daily": "402",
+                    "midday_win_4": "5954",
+                    "evening_win_4": "2653",
+                },
+                {
+                    "draw_date": "2026-05-05T00:00:00.000",
+                    "midday_daily": "531",
+                    "evening_daily": "745",
+                    "midday_win_4": "4734",
+                    "evening_win_4": "7556",
+                },
+            ]
+        ),
+        encoding="utf-8",
+    )
+
+    result = runner.invoke(
+        app,
+        [
+            "--data-dir",
+            str(tmp_path / "data"),
+            "fetch",
+            "numbers",
+            "-j",
+            "ny",
+            "--backfill",
+            "--source-dir",
+            str(fixtures),
+        ],
+    )
+
+    assert result.exit_code == 0, result.output
+    assert "Numbers" in result.output
+    assert "4 draws" in result.output
+
+    draws_result = runner.invoke(
+        app,
+        [
+            "--data-dir",
+            str(tmp_path / "data"),
+            "draws",
+            "numbers",
+            "-j",
+            "ny",
+            "--limit",
+            "2",
+            "--output",
+            "json",
+        ],
+    )
+
+    assert draws_result.exit_code == 0, draws_result.output
+    payload = json.loads(draws_result.output)
+    assert payload["games"][0]["draws"] == [
+        {
+            "jurisdiction_code": "ny",
+            "draw_date": "Wed, May 06, 2026 Evening",
+            "winning_number": "402",
+        },
+        {
+            "jurisdiction_code": "ny",
+            "draw_date": "Wed, May 06, 2026 Midday",
+            "winning_number": "319",
+        },
+    ]
+
+
+def test_fetch_reports_cataloged_game_without_fetch_support(tmp_path):
+    result = runner.invoke(
+        app,
+        [
+            "--data-dir",
+            str(tmp_path),
+            "fetch",
+            "new-york-lotto",
+            "-j",
+            "ny",
+            "--backfill",
+        ],
+    )
+
+    assert result.exit_code != 0
+    assert "fetch support pending for game: new-york-lotto" in result.output
+
+
+def test_fetch_all_backfill_uses_supported_subset_for_florida(tmp_path):
+    fixtures = tmp_path / "fixtures"
+    fixtures.mkdir()
+    for game_slug, digits in {
+        "florida-pick-2": "5 - 7",
+        "florida-pick-3": "5 - 1 - 7",
+        "florida-pick-4": "9 - 3 - 3 - 6",
+        "florida-pick-5": "2 - 5 - 6 - 0 - 1",
+    }.items():
+        (fixtures / f"{game_slug}-fl-backfill.txt").write_text(
+            f"05/06/26 E {digits} FB 2",
+            encoding="utf-8",
+        )
+
+    result = runner.invoke(
+        app,
+        [
+            "--data-dir",
+            str(tmp_path / "data"),
+            "fetch",
+            "all",
+            "-j",
+            "fl",
+            "--backfill",
+            "--source-dir",
+            str(fixtures),
+        ],
+    )
+
+    assert result.exit_code == 0, result.output
+    assert "4 games fetched" in result.output
+    assert "Fantasy 5" not in result.output
+
+
+def test_fetch_all_backfill_uses_supported_subset_for_new_york(tmp_path):
+    fixtures = tmp_path / "fixtures"
+    fixtures.mkdir()
+    for game_slug in ("numbers", "win-4"):
+        (fixtures / f"{game_slug}-ny-backfill.json").write_text(
+            json.dumps(
+                [
+                    {
+                        "draw_date": "2026-05-06T00:00:00.000",
+                        "midday_daily": "319",
+                        "evening_daily": "402",
+                        "midday_win_4": "5954",
+                        "evening_win_4": "2653",
+                    }
+                ]
+            ),
+            encoding="utf-8",
+        )
+
+    result = runner.invoke(
+        app,
+        [
+            "--data-dir",
+            str(tmp_path / "data"),
+            "fetch",
+            "all",
+            "-j",
+            "ny",
+            "--backfill",
+            "--source-dir",
+            str(fixtures),
+        ],
+    )
+
+    assert result.exit_code == 0, result.output
+    assert "2 games fetched" in result.output
+    assert "Numbers" in result.output
+    assert "Win 4" in result.output
+    assert "LOTTO" not in result.output
+
+
 def test_draws_lists_recent_numbers_newest_first_and_deduped(tmp_path):
     data_dir = tmp_path / "data"
     fixture = tmp_path / "cashpop.html"

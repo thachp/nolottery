@@ -9,7 +9,7 @@ reviewed_on = '2026-05-07'
 [[games]]
 slug = 'florida-pick-2'
 name = 'Pick 2'
-source_url = 'https://floridalottery.com/games/draw-games/pick2'
+source_url = 'https://floridalottery.com/games/draw-games/pick-2'
 reviewed_on = '2026-05-07'
 
 [[games.wager_options]]
@@ -25,7 +25,7 @@ prize = 50
 [[games]]
 slug = 'florida-pick-3'
 name = 'Pick 3'
-source_url = 'https://floridalottery.com/games/draw-games/pick3'
+source_url = 'https://floridalottery.com/games/draw-games/pick-3'
 reviewed_on = '2026-05-07'
 
 [[games.wager_options]]
@@ -41,7 +41,7 @@ prize = 500
 [[games]]
 slug = 'florida-pick-4'
 name = 'Pick 4'
-source_url = 'https://floridalottery.com/games/draw-games/pick4'
+source_url = 'https://floridalottery.com/games/draw-games/pick-4'
 reviewed_on = '2026-05-07'
 
 [[games.wager_options]]
@@ -57,7 +57,7 @@ prize = 5000
 [[games]]
 slug = 'florida-pick-5'
 name = 'Pick 5'
-source_url = 'https://floridalottery.com/games/draw-games/pick5'
+source_url = 'https://floridalottery.com/games/draw-games/pick-5'
 reviewed_on = '2026-05-07'
 
 [[games.wager_options]]
