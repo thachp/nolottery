@@ -1,0 +1,31 @@
+# Massachusetts active draw-game catalog entries.
+
+[[games]]
+slug = 'massachusetts-numbers-game'
+name = 'The Numbers Game'
+source_url = 'https://www.masslottery.com/games/lottery/numbers-game'
+reviewed_on = '2026-05-07'
+
+[[games]]
+slug = 'massachusetts-mass-cash'
+name = 'Mass Cash'
+source_url = 'https://www.masslottery.com/games/lottery/mass-cash'
+reviewed_on = '2026-05-07'
+
+[[games]]
+slug = 'massachusetts-megabucks'
+name = 'Megabucks Doubler'
+source_url = 'https://www.masslottery.com/games/lottery/megabucks-doubler'
+reviewed_on = '2026-05-07'
+
+[[games]]
+slug = 'massachusetts-keno'
+name = 'Keno'
+source_url = 'https://www.masslottery.com/games/keno'
+reviewed_on = '2026-05-07'
+
+[[games]]
+slug = 'massachusetts-wheel-of-luck'
+name = 'Wheel of Luck'
+source_url = 'https://www.masslottery.com/games/wheel-of-luck'
+reviewed_on = '2026-05-07'

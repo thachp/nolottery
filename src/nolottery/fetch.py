@@ -112,6 +112,10 @@ _MARYLAND_WINNING_NUMBERS_GAMES = {
     "mega-millions": ("Mega Millions", "Mega Ball"),
     "powerball": ("Powerball", "Powerball"),
 }
+_MASSACHUSETTS_DRAW_RESULTS_GAMES = {
+    "mega-millions": ("mega_millions", "megaball", "Mega Ball"),
+    "powerball": ("powerball", "powerball", "Powerball"),
+}
 
 
 @dataclass(frozen=True)
@@ -155,6 +159,26 @@ def fetch_game(
         )
         draws = parse_maryland_winning_numbers_page(raw_html, game.slug)
         _insert_snapshot(conn, jurisdiction_code, game.slug, source_url, raw_html, draws)
+        new_draws = _filter_newer_draws(conn, jurisdiction_code, game.slug, draws)
+        _insert_draw_results(conn, jurisdiction_code, game.slug, new_draws)
+        conn.commit()
+        return FetchResult(
+            game_name=game.name,
+            source_url=source_url,
+            draw_count=len(new_draws),
+            prize_row_count=sum(len(draw.prizes) for draw in new_draws),
+        )
+    if (
+        source_file is None
+        and jurisdiction_code == "ma"
+        and game.slug in _MASSACHUSETTS_DRAW_RESULTS_GAMES
+    ):
+        raw_json, source_url = _massachusetts_draw_results_source(
+            game,
+            source_dir=None,
+        )
+        draws = parse_massachusetts_draw_results_json(raw_json, game.slug)
+        _insert_snapshot(conn, jurisdiction_code, game.slug, source_url, raw_json, draws)
         new_draws = _filter_newer_draws(conn, jurisdiction_code, game.slug, draws)
         _insert_draw_results(conn, jurisdiction_code, game.slug, new_draws)
         conn.commit()
@@ -768,6 +792,22 @@ def fetch_game_backfill(
         )
         draws = parse_maryland_winning_numbers_page(raw_html, game.slug)
         _insert_snapshot(conn, jurisdiction_code, game.slug, source_url, raw_html, draws)
+        _replace_draw_results(conn, jurisdiction_code, game.slug, draws)
+        conn.commit()
+        return FetchResult(
+            game_name=game.name,
+            source_url=source_url,
+            draw_count=len(draws),
+            prize_row_count=sum(len(draw.prizes) for draw in draws),
+            page_count=1,
+        )
+    if jurisdiction_code == "ma" and game.slug in _MASSACHUSETTS_DRAW_RESULTS_GAMES:
+        raw_json, source_url = _massachusetts_draw_results_source(
+            game,
+            source_dir=source_dir,
+        )
+        draws = parse_massachusetts_draw_results_json(raw_json, game.slug)
+        _insert_snapshot(conn, jurisdiction_code, game.slug, source_url, raw_json, draws)
         _replace_draw_results(conn, jurisdiction_code, game.slug, draws)
         conn.commit()
         return FetchResult(
@@ -1829,6 +1869,66 @@ def _maryland_draw_date(raw_value: str) -> str | None:
         return None
 
 
+def parse_massachusetts_draw_results_json(
+    raw_json: str,
+    game_slug: str,
+) -> tuple[ParsedDraw, ...]:
+    game_identifier, special_key, special_number_name = (
+        _MASSACHUSETTS_DRAW_RESULTS_GAMES[game_slug]
+    )
+    payload = json.loads(raw_json)
+    raw_draws = payload.get("winningNumbers") if isinstance(payload, dict) else None
+    if not isinstance(raw_draws, list):
+        return ()
+
+    draws: list[ParsedDraw] = []
+    for item in raw_draws:
+        if not isinstance(item, dict):
+            continue
+        if item.get("gameIdentifier") != game_identifier:
+            continue
+        if item.get("status") != "COMPLETE":
+            continue
+
+        draw_date = _massachusetts_draw_date(item.get("drawDate"))
+        raw_numbers = item.get("winningNumbers")
+        extras = item.get("extras")
+        if not isinstance(raw_numbers, list) or not isinstance(extras, dict):
+            continue
+
+        primary_numbers = [
+            str(number)
+            for raw_number in raw_numbers[:5]
+            if (number := _int_value(raw_number)) is not None
+        ]
+        special_number = _int_value(extras.get(special_key))
+        if draw_date is None or len(primary_numbers) != 5 or special_number is None:
+            continue
+
+        draws.append(
+            ParsedDraw(
+                draw_date=draw_date,
+                winning_number=", ".join(
+                    [
+                        *primary_numbers,
+                        f"{special_number} {special_number_name}",
+                    ]
+                ),
+                prizes=(),
+            )
+        )
+    return tuple(draws)
+
+
+def _massachusetts_draw_date(raw_value: object) -> str | None:
+    if not isinstance(raw_value, str) or not raw_value:
+        return None
+    try:
+        return datetime.strptime(raw_value, "%Y-%m-%d").strftime(_DRAW_DATE_FORMAT)
+    except ValueError:
+        return None
+
+
 def _new_york_draw_date(raw_value: object) -> str | None:
     if not isinstance(raw_value, str) or not raw_value:
         return None
@@ -2108,6 +2208,8 @@ def _parse_draws(
         return parse_maine_home_page(raw_html, game_slug)
     if jurisdiction_code == "md" and game_slug in _MARYLAND_WINNING_NUMBERS_GAMES:
         return parse_maryland_winning_numbers_page(raw_html, game_slug)
+    if jurisdiction_code == "ma" and game_slug in _MASSACHUSETTS_DRAW_RESULTS_GAMES:
+        return parse_massachusetts_draw_results_json(raw_html, game_slug)
     return parse_past_drawings(raw_html)
 
 
@@ -2311,6 +2413,19 @@ def _kentucky_winning_numbers_source(
     )
     response.raise_for_status()
     return response.text, str(response.url)
+
+
+def _massachusetts_draw_results_source(
+    game: GameMetadata,
+    source_dir: Path | None,
+) -> tuple[str, str]:
+    source_name = f"{game.slug}-ma-backfill"
+    if source_dir is not None:
+        source_file = source_dir / f"{source_name}.json"
+        return source_file.read_text(encoding="utf-8"), source_file.as_uri()
+
+    source_url = "https://www.masslottery.com/api/v1/draw-results"
+    return _read_source(source_url, None, source_name, suffix=".json")
 
 
 def _extract_pdf_text(raw_pdf: bytes) -> str:
