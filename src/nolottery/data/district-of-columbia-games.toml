@@ -1,0 +1,19 @@
+# District of Columbia representative draw-game catalog entries.
+
+[[games]]
+slug = 'dc-3'
+name = 'DC-3'
+source_url = 'https://lottery.dc.gov/page/our-games'
+reviewed_on = '2026-05-07'
+
+[[games]]
+slug = 'dc-4'
+name = 'DC-4'
+source_url = 'https://lottery.dc.gov/page/our-games'
+reviewed_on = '2026-05-07'
+
+[[games]]
+slug = 'dc-5'
+name = 'DC-5'
+source_url = 'https://lottery.dc.gov/page/our-games'
+reviewed_on = '2026-05-07'

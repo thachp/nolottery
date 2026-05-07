@@ -1,0 +1,19 @@
+# Florida representative draw-game catalog entries.
+
+[[games]]
+slug = 'florida-fantasy-5'
+name = 'Fantasy 5'
+source_url = 'https://floridalottery.com/games/draw-games/fantasy5'
+reviewed_on = '2026-05-07'
+
+[[games]]
+slug = 'florida-lotto'
+name = 'Florida Lotto'
+source_url = 'https://floridalottery.com/games/draw-games'
+reviewed_on = '2026-05-07'
+
+[[games]]
+slug = 'florida-pick-5'
+name = 'Pick 5'
+source_url = 'https://floridalottery.com/help/faqs/draw-games-faq'
+reviewed_on = '2026-05-07'

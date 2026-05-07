@@ -1,0 +1,25 @@
+# New York representative draw-game catalog entries.
+
+[[games]]
+slug = 'numbers'
+name = 'Numbers'
+source_url = 'https://nodeprod.nylottery.ny.gov/draw-games/'
+reviewed_on = '2026-05-07'
+
+[[games]]
+slug = 'win-4'
+name = 'Win 4'
+source_url = 'https://nodeprod.nylottery.ny.gov/draw-games/'
+reviewed_on = '2026-05-07'
+
+[[games]]
+slug = 'take-5'
+name = 'Take 5'
+source_url = 'https://nodeprod.nylottery.ny.gov/draw-game/?game=take5'
+reviewed_on = '2026-05-07'
+
+[[games]]
+slug = 'pick-10'
+name = 'Pick 10'
+source_url = 'https://nodeprod.nylottery.ny.gov/draw-games/'
+reviewed_on = '2026-05-07'

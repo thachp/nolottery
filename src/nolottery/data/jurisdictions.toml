@@ -37,3 +37,65 @@ game_slug = 'daily-3'
 support_statuses = ['cataloged', 'rules_verified', 'fetch_supported']
 results_adapter = 'ca_daily3_page'
 blocking_reason = 'EV pending variable pari-mutuel prize estimates'
+
+[[jurisdictions]]
+code = 'ny'
+name = 'New York'
+
+[[jurisdictions.offerings]]
+game_slug = 'numbers'
+support_statuses = ['cataloged']
+blocking_reason = 'Rules and fetch adapter pending'
+
+[[jurisdictions.offerings]]
+game_slug = 'win-4'
+support_statuses = ['cataloged']
+blocking_reason = 'Rules and fetch adapter pending'
+
+[[jurisdictions.offerings]]
+game_slug = 'take-5'
+support_statuses = ['cataloged']
+blocking_reason = 'Rules and fetch adapter pending'
+
+[[jurisdictions.offerings]]
+game_slug = 'pick-10'
+support_statuses = ['cataloged']
+blocking_reason = 'Rules and fetch adapter pending'
+
+[[jurisdictions]]
+code = 'fl'
+name = 'Florida'
+
+[[jurisdictions.offerings]]
+game_slug = 'florida-fantasy-5'
+support_statuses = ['cataloged']
+blocking_reason = 'Rules and fetch adapter pending'
+
+[[jurisdictions.offerings]]
+game_slug = 'florida-lotto'
+support_statuses = ['cataloged']
+blocking_reason = 'Rules and fetch adapter pending'
+
+[[jurisdictions.offerings]]
+game_slug = 'florida-pick-5'
+support_statuses = ['cataloged']
+blocking_reason = 'Rules and fetch adapter pending'
+
+[[jurisdictions]]
+code = 'dc'
+name = 'District of Columbia'
+
+[[jurisdictions.offerings]]
+game_slug = 'dc-3'
+support_statuses = ['cataloged']
+blocking_reason = 'Rules and fetch adapter pending'
+
+[[jurisdictions.offerings]]
+game_slug = 'dc-4'
+support_statuses = ['cataloged']
+blocking_reason = 'Rules and fetch adapter pending'
+
+[[jurisdictions.offerings]]
+game_slug = 'dc-5'
+support_statuses = ['cataloged']
+blocking_reason = 'Rules and fetch adapter pending'
