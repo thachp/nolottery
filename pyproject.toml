@@ -5,7 +5,7 @@ build-backend = "hatchling.build"
 [project]
 name = "nolottery"
 version = "0.1.0"
-description = "Washington Lottery expected-value analysis console app."
+description = "U.S. lottery draw-game analysis console app."
 readme = "README.md"
 license = "MIT"
 requires-python = ">=3.11"

@@ -1,6 +1,6 @@
 # Nolottery
 
-Legal Washington Lottery expected-value analysis console app.
+U.S. lottery draw-game expected-value, draw-result, coverage, and ledger console app.
 
 `nolottery` helps answer two core questions:
 
@@ -13,7 +13,7 @@ It does not predict lucky numbers with an edge. For fair lottery drawings, one v
 
 Beyond the two core questions above, `nolottery` can also help answer:
 
-- "Which Washington Lottery games are least bad by expected value?"
+- "Which supported draw games are least bad by expected value in my selected lottery jurisdiction?"
 - "How much does ticket cost and estimated tax change the economics of a game?"
 - "Which affordable play style gives me the best hit rate for a specific budget?"
 - "If I am going to play for entertainment, which valid numbers are less likely to overlap with common human-picked patterns?"
@@ -23,9 +23,26 @@ Beyond the two core questions above, `nolottery` can also help answer:
 
 These answers are for EV analysis, budgeting, recordkeeping, and audit-style review. They do not create a way to predict future winning numbers or improve fair drawing odds.
 
-## Supported Games
+## Jurisdiction Support
 
-Washington draw games currently supported:
+Commands default to Washington (`wa`). Use `--jurisdiction` or `-j` to select another lottery jurisdiction where the command supports it:
+
+```bash
+uv run lottery analyze cashpop -j wa
+uv run lottery fetch daily-3 -j ca
+uv run lottery coverage -j ny
+```
+
+Coverage uses support statuses rather than a single supported/unsupported flag:
+
+- `cataloged`: the draw game is known for the jurisdiction.
+- `rules_verified`: rules metadata has been reviewed.
+- `ev_supported`: expected-value commands can use the game.
+- `fetch_supported`: official draw results can be fetched or imported.
+- `audit_supported`: stored draws can be audited.
+- `low_share_supported`: low-share picks can be generated.
+
+Washington draw games currently have EV, fetch, audit, and low-share support:
 
 - Powerball
 - Mega Millions
@@ -36,16 +53,35 @@ Washington draw games currently supported:
 - Cash Pop
 - Daily Keno
 
+California currently has a first local-game slice:
+
+- Daily 3: cataloged, rules reviewed, and fetch supported. EV is intentionally blocked until variable pari-mutuel prize estimates are modeled.
+
+Representative catalog-only jurisdictions are also tracked so coverage gaps are explicit:
+
+- New York: Numbers, Win 4, Take 5, Pick 10
+- Florida: Fantasy 5, Florida Lotto, Pick 5
+- District of Columbia: DC-3, DC-4, DC-5
+
+Run coverage to see current status and blocking reasons:
+
+```bash
+uv run lottery coverage -j wa
+uv run lottery coverage -j ca --output json
+uv run lottery coverage -j ny
+```
+
 ## Features
 
 | Feature                   | Command                                | What it is for                                                                                                                                                                      |
 | ------------------------- | -------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Expected-value analysis   | `analyze`                              | Calculates gross EV, after-tax EV, net EV after ticket cost, hit rate, and a conservative `PLAY` or `SKIP` decision for one game or every supported game.                           |
-| Game ranking              | `rank`                                 | Compares supported games by their best wager option so you can see which games are least bad by EV and which have higher hit rates.                                                 |
+| Expected-value analysis   | `analyze`                              | Calculates gross EV, after-tax EV, net EV after ticket cost, hit rate, and a conservative `PLAY` or `SKIP` decision for EV-supported games in a jurisdiction.                       |
+| Game ranking              | `rank`                                 | Compares EV-supported games by their best wager option in the selected jurisdiction.                                                                                                |
 | Budget recommendation     | `recommend`                            | Finds the affordable play style with the highest chance of winning any prize for a single ticket budget. It also includes a random valid Quick Pick example with no odds advantage. |
-| Low-share pick generation | `low-share`                            | Generates valid number selections that avoid common human picking patterns. This is for reducing likely jackpot/prize sharing if a ticket wins, not for improving draw odds.        |
-| Official draw fetching    | `fetch`                                | Downloads or imports Washington Lottery past-drawing HTML, stores source snapshots, and persists parsed draw results in SQLite for local review and audits.                         |
-| Recent draw browser       | `draws`                                | Shows the most recent stored winning numbers, either for one game or all games, with table or JSON output.                                                                          |
+| Low-share pick generation | `low-share`                            | Generates valid number selections that avoid common human picking patterns for low-share-supported games. This is for reducing likely prize sharing, not improving draw odds.        |
+| Coverage reporting        | `coverage`                             | Shows known draw games, support statuses, source presence, adapters, reviewed dates, and blocking reasons by jurisdiction.                                                          |
+| Official draw fetching    | `fetch`                                | Downloads or imports official draw-result data for fetch-supported game offerings, stores source snapshots, and persists parsed draw results in SQLite.                             |
+| Recent draw browser       | `draws`                                | Shows the most recent stored winning numbers, either for one game or all games in the selected jurisdiction, with table or JSON output.                                             |
 | Randomness audits         | `audit`                                | Runs screening tests over stored draw history: frequency, chi-square, pair, triple, and gap audits. These are diagnostics, not prediction tools.                                    |
 | OpenAI review             | `--evaluate openai`                    | Optional second-pass explanation or decision review for recommendations, audits, and low-share picks using a reduced facts-only payload. Requires `OPENAI_API_KEY`.                 |
 | Ticket ledger             | `ledger`                               | Records real tickets, cost, winnings, numbers, multiplier/use details, and summarizes spend, profit, and ROI over time.                                                             |
@@ -54,7 +90,9 @@ Washington draw games currently supported:
 
 ## How It Works
 
-The app has built-in Washington Lottery prize and odds metadata for each supported game. It uses that metadata to calculate:
+The app has bundled, reviewed metadata for known draw games by lottery jurisdiction. Washington currently has full EV metadata for its supported draw games. California Daily 3 and the representative New York, Florida, and DC entries are present in the coverage catalog with their current support statuses.
+
+For EV-supported games, the app uses reviewed prize and odds metadata to calculate:
 
 - gross expected value
 - after-tax expected value
@@ -64,7 +102,7 @@ The app has built-in Washington Lottery prize and odds metadata for each support
 
 The default decision is conservative: if the best option is still negative expected value, the app says `SKIP`.
 
-The app can also fetch official Washington Lottery past drawing pages and persist local snapshots in SQLite. Fetching is useful for keeping source HTML and parsed draw results locally, powering recent-draw views, avoiding exact recent winning combinations in low-share generation, and running randomness audits. The EV calculations still come from the configured odds and prize tables, not from historical draw frequency.
+The app can also fetch official draw-result pages for fetch-supported game offerings and persist local snapshots in SQLite. Fetching is useful for keeping source HTML and parsed draw results locally, powering recent-draw views, avoiding exact recent winning combinations in low-share generation, and running randomness audits. The EV calculations still come from configured odds and prize metadata or future variable prize estimates, not from historical draw frequency.
 
 Important limits:
 
@@ -85,9 +123,10 @@ Analyze one game:
 
 ```bash
 uv run lottery analyze cashpop
+uv run lottery analyze cashpop -j wa
 ```
 
-Analyze every supported game:
+Analyze every EV-supported game in the default jurisdiction:
 
 ```bash
 uv run lottery analyze all
@@ -97,6 +136,7 @@ Rank games by best after-tax expected value:
 
 ```bash
 uv run lottery rank
+uv run lottery rank -j wa
 ```
 
 Analyze one game or all games as JSON:
@@ -104,6 +144,7 @@ Analyze one game or all games as JSON:
 ```bash
 uv run lottery analyze cashpop --output json
 uv run lottery analyze all --output json
+uv run lottery coverage -j ca --output json
 ```
 
 Find the highest hit-rate play within a small budget:
@@ -170,10 +211,11 @@ combination more likely to be drawn.
 
 ## Expected-Value Commands
 
-Use `analyze` when you want the detailed economics for one game or every supported game:
+Use `analyze` when you want the detailed economics for one game or every EV-supported game in a jurisdiction:
 
 ```bash
 uv run lottery analyze powerball
+uv run lottery analyze powerball -j wa
 uv run lottery analyze all --output json
 ```
 
@@ -181,6 +223,7 @@ Use `rank` when you want a quick cross-game comparison:
 
 ```bash
 uv run lottery rank
+uv run lottery rank -j wa
 ```
 
 Use `recommend` when you have a single-ticket budget and care about the highest hit rate rather than best EV:
@@ -188,40 +231,64 @@ Use `recommend` when you have a single-ticket budget and care about the highest 
 ```bash
 uv run lottery recommend --budget 0.50
 uv run lottery recommend --budget 75 --output json
+uv run lottery recommend -j wa --budget 75 --output json
 ```
 
 Recommendation JSON includes a top-level `generated_at` timestamp in full ISO 8601 local time with offset, captured once for the whole response.
 
+## Coverage
+
+Use `coverage` to inspect known draw games and the current support level for a lottery jurisdiction:
+
+```bash
+uv run lottery coverage -j wa
+uv run lottery coverage -j ca --output json
+uv run lottery coverage -j ny
+```
+
+Catalog-only games are visible in coverage but excluded from EV commands until rules metadata is verified. Games with fetch support but no EV support, such as California Daily 3, can fetch and display draw results while reporting the EV blocker.
+
 ## Fetching Draw Data
 
-Fetch one game's official past drawing page. By default this uses the Washington Lottery `Past 180 Days` view:
+Fetch one game's official draw-result source. Washington uses the Washington Lottery `Past 180 Days` view:
 
 ```bash
 uv run lottery fetch cashpop
+uv run lottery fetch cashpop -j wa
 ```
 
-Fetch every supported game:
+California Daily 3 uses a California-specific parser:
+
+```bash
+uv run lottery fetch daily-3 -j ca
+uv run lottery draws daily-3 -j ca --output json
+```
+
+Fetch every fetch-supported game in the selected jurisdiction:
 
 ```bash
 uv run lottery fetch all
+uv run lottery fetch all -j wa
 ```
 
 Regular fetches keep prior draw rows and persist only draw results newer than the
 latest stored draw date for that game.
 
-The parser handles current Washington Lottery table variants, including draw tables with no prize rows and tables that contain extra `game-balls` cells in prize rows. In those cases it still stores the draw date and first winning-number cell, while reporting zero prize rows when prize data is absent.
+The Washington parser handles current Washington Lottery table variants, including draw tables with no prize rows and tables that contain extra `game-balls` cells in prize rows. In those cases it still stores the draw date and first winning-number cell, while reporting zero prize rows when prize data is absent.
 
 Show recent stored winning numbers:
 
 ```bash
 uv run lottery draws all
 uv run lottery draws cashpop --limit 10
+uv run lottery draws daily-3 -j ca --limit 10
 ```
 
 Use JSON output for scripting:
 
 ```bash
 uv run lottery draws all --output json
+uv run lottery draws all -j wa --output json
 ```
 
 Backfill all available yearly pages for one game:
@@ -230,18 +297,19 @@ Backfill all available yearly pages for one game:
 uv run lottery fetch cashpop --backfill
 ```
 
-Backfill all available yearly pages for every supported game:
+Backfill all available yearly pages for every fetch-supported game in the selected jurisdiction:
 
 ```bash
 uv run lottery fetch all --backfill
 ```
 
-Backfill mode first reads the normal past-drawings page, discovers the year options published by Washington Lottery, then fetches each yearly page. Stored draw rows for that game are replaced by the combined parsed yearly results.
+Backfill mode first reads the normal past-drawings page for a fetch-supported adapter, discovers the year options when the adapter supports them, then fetches each yearly page. Stored draw rows for that game offering are replaced by the combined parsed yearly results.
 
 For tests or offline analysis, fetch commands can read local HTML files from a single file or a directory:
 
 ```bash
 uv run lottery fetch cashpop --source-file ./fixtures/cashpop.html
+uv run lottery fetch daily-3 -j ca --source-file ./fixtures/daily-3.html
 uv run lottery fetch all --source-dir ./fixtures
 ```
 
@@ -297,11 +365,11 @@ What each audit is for:
 - `pairs`: checks within-draw pair distributions, useful for spotting unusual pair concentration in games where the sample size is large enough.
 - `triples`: checks within-draw triple distributions. This is often sparse for large games and may be marked `INSUFFICIENT_DATA`.
 - `gaps`: reviews draw intervals between appearances for each number and uses a pooled geometric chi-square screen over completed gaps.
-- `all`: runs the full audit matrix across one game or every supported game.
+- `all`: runs the full audit matrix across one game or every audit-supported game in the selected jurisdiction.
 
 Every focused audit command accepts a game slug or `all`, plus `--output table|json` and `--last N`. `--last N` uses the most recent N valid parsed draws after malformed rows are skipped.
 
-`audit all` runs frequency, chi-square, pair distribution, triple distribution, and draw-gap audits across every supported game by default. You can scope it to one game:
+`audit all` runs frequency, chi-square, pair distribution, triple distribution, and draw-gap audits across every audit-supported game in the selected jurisdiction by default. You can scope it to one game:
 
 ```bash
 uv run lottery audit all cashpop
@@ -354,6 +422,7 @@ Use JSON output for scripting or downstream analysis:
 ```bash
 uv run lottery analyze cashpop --output json
 uv run lottery analyze all --output json
+uv run lottery coverage -j ca --output json
 uv run lottery recommend --budget 1 --output json
 uv run lottery recommend --budget 50 --evaluate openai --output json
 uv run lottery draws all --output json
@@ -362,6 +431,8 @@ uv run lottery audit all cashpop --evaluate openai --output json
 uv run lottery low-share powerball --output json
 uv run lottery low-share powerball --evaluate openai --output json
 ```
+
+Jurisdiction-aware JSON outputs include `jurisdiction_code` where the result is scoped to one jurisdiction.
 
 ## Ticket Ledger
 
