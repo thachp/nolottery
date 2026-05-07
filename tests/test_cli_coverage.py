@@ -222,7 +222,7 @@ def test_coverage_reports_pending_state_catalog_as_supported_jurisdiction(tmp_pa
             str(tmp_path),
             "coverage",
             "-j",
-            "ok",
+            "or",
             "--output",
             "json",
         ],
@@ -230,8 +230,8 @@ def test_coverage_reports_pending_state_catalog_as_supported_jurisdiction(tmp_pa
 
     assert result.exit_code == 0, result.output
     payload = json.loads(result.output)
-    assert payload["jurisdiction_code"] == "ok"
-    assert payload["jurisdiction"] == "Oklahoma"
+    assert payload["jurisdiction_code"] == "or"
+    assert payload["jurisdiction"] == "Oregon"
     assert payload["jurisdiction_support_statuses"] == ["catalog_pending"]
     assert payload["blocking_reason"] == "Lottery jurisdiction offering catalog pending"
     assert payload["games"] == []
@@ -452,6 +452,40 @@ def test_coverage_reports_ohio_full_draw_game_catalog(tmp_path):
         "Retired after February 2026; historical adapter pending"
     )
     assert games["ohio-keno"]["support_statuses"] == ["cataloged"]
+
+
+def test_coverage_reports_oklahoma_full_draw_game_catalog(tmp_path):
+    result = runner.invoke(
+        app,
+        [
+            "--data-dir",
+            str(tmp_path),
+            "coverage",
+            "-j",
+            "ok",
+            "--output",
+            "json",
+        ],
+    )
+
+    assert result.exit_code == 0, result.output
+    payload = json.loads(result.output)
+    assert payload["jurisdiction_code"] == "ok"
+    assert payload["jurisdiction"] == "Oklahoma"
+    games = {game["game_slug"]: game for game in payload["games"]}
+    assert set(games) == {
+        "lotto-america",
+        "lucky-for-life",
+        "mega-millions",
+        "millionaire-for-life",
+        "oklahoma-cash-5",
+        "oklahoma-pick-3",
+        "powerball",
+    }
+    assert games["lucky-for-life"]["blocking_reason"] == (
+        "Retired after February 2026; historical adapter pending"
+    )
+    assert games["oklahoma-cash-5"]["support_statuses"] == ["cataloged"]
 
 
 def test_coverage_reports_connecticut_catalog_and_supported_national_games(tmp_path):

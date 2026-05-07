@@ -1,0 +1,13 @@
+# Oklahoma active draw-game catalog entries.
+
+[[games]]
+slug = 'oklahoma-pick-3'
+name = 'Pick 3'
+source_url = 'https://www.lottery.ok.gov/draw-games/pick-3'
+reviewed_on = '2026-05-07'
+
+[[games]]
+slug = 'oklahoma-cash-5'
+name = 'Cash 5'
+source_url = 'https://www.lottery.ok.gov/draw-games/cash-5'
+reviewed_on = '2026-05-07'
