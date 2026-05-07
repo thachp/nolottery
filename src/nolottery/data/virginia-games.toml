@@ -1,0 +1,43 @@
+# Virginia active draw-game catalog entries.
+
+[[games]]
+slug = 'virginia-bank-a-million'
+name = 'Bank a Million'
+source_url = 'https://www.valottery.com/Data/Draw-Games/BankAMillion'
+reviewed_on = '2026-05-07'
+
+[[games]]
+slug = 'virginia-cash-5'
+name = 'Cash 5'
+source_url = 'https://www.valottery.com/Data/Draw-Games/Cash5'
+reviewed_on = '2026-05-07'
+
+[[games]]
+slug = 'virginia-pick-3'
+name = 'Pick 3'
+source_url = 'https://www.valottery.com/Data/Draw-Games/Pick3'
+reviewed_on = '2026-05-07'
+
+[[games]]
+slug = 'virginia-pick-4'
+name = 'Pick 4'
+source_url = 'https://www.valottery.com/Data/Draw-Games/Pick4'
+reviewed_on = '2026-05-07'
+
+[[games]]
+slug = 'virginia-pick-5'
+name = 'Pick 5'
+source_url = 'https://www.valottery.com/Data/Draw-Games/Pick5'
+reviewed_on = '2026-05-07'
+
+[[games]]
+slug = 'virginia-cash-pop'
+name = 'Cash Pop'
+source_url = 'https://www.valottery.com/Data/Draw-Games/CashPop'
+reviewed_on = '2026-05-07'
+
+[[games]]
+slug = 'virginia-keno'
+name = 'Keno'
+source_url = 'https://www.valottery.com/Data/Draw-Games/Keno'
+reviewed_on = '2026-05-07'

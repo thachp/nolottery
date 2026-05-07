@@ -223,6 +223,29 @@ def test_coverage_reports_pending_state_catalog_as_supported_jurisdiction(tmp_pa
             str(tmp_path),
             "coverage",
             "-j",
+            "wv",
+            "--output",
+            "json",
+        ],
+    )
+
+    assert result.exit_code == 0, result.output
+    payload = json.loads(result.output)
+    assert payload["jurisdiction_code"] == "wv"
+    assert payload["jurisdiction"] == "West Virginia"
+    assert payload["jurisdiction_support_statuses"] == ["catalog_pending"]
+    assert payload["blocking_reason"] == "Lottery jurisdiction offering catalog pending"
+    assert payload["games"] == []
+
+
+def test_coverage_reports_virginia_full_draw_game_catalog(tmp_path):
+    result = runner.invoke(
+        app,
+        [
+            "--data-dir",
+            str(tmp_path),
+            "coverage",
+            "-j",
             "va",
             "--output",
             "json",
@@ -233,9 +256,27 @@ def test_coverage_reports_pending_state_catalog_as_supported_jurisdiction(tmp_pa
     payload = json.loads(result.output)
     assert payload["jurisdiction_code"] == "va"
     assert payload["jurisdiction"] == "Virginia"
-    assert payload["jurisdiction_support_statuses"] == ["catalog_pending"]
-    assert payload["blocking_reason"] == "Lottery jurisdiction offering catalog pending"
-    assert payload["games"] == []
+    games = {game["game_slug"]: game for game in payload["games"]}
+    assert set(games) == {
+        "cash4life",
+        "mega-millions",
+        "millionaire-for-life",
+        "powerball",
+        "virginia-bank-a-million",
+        "virginia-cash-5",
+        "virginia-cash-pop",
+        "virginia-keno",
+        "virginia-pick-3",
+        "virginia-pick-4",
+        "virginia-pick-5",
+    }
+    assert games["cash4life"]["blocking_reason"] == (
+        "Retired after February 2026; historical adapter pending"
+    )
+    assert games["virginia-bank-a-million"]["support_statuses"] == ["cataloged"]
+    assert games["virginia-bank-a-million"]["blocking_reason"] == (
+        "Rules and fetch adapter pending"
+    )
 
 
 def test_coverage_reports_vermont_full_draw_game_catalog(tmp_path):
