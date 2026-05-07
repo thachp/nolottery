@@ -1,0 +1,19 @@
+# Wyoming active draw-game catalog entries.
+
+[[games]]
+slug = 'wyoming-cowboy-draw'
+name = 'Cowboy Draw'
+source_url = 'https://wyolotto.com/games/cowboy-draw/'
+reviewed_on = '2026-05-07'
+
+[[games]]
+slug = 'wyoming-2by2'
+name = '2by2'
+source_url = 'https://wyolotto.com/games/2-by-2/'
+reviewed_on = '2026-05-07'
+
+[[games]]
+slug = 'wyoming-keno'
+name = 'KENO'
+source_url = 'https://wyolotto.com/games/keno/'
+reviewed_on = '2026-05-07'

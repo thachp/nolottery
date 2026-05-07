@@ -215,7 +215,70 @@ def test_coverage_reports_state_without_lottery_as_supported_jurisdiction(
     assert payload["games"] == []
 
 
-def test_coverage_reports_pending_state_catalog_as_supported_jurisdiction(tmp_path):
+def test_coverage_has_no_remaining_state_catalog_pending_jurisdictions(tmp_path):
+    for jurisdiction in (
+        "az",
+        "ar",
+        "co",
+        "ct",
+        "de",
+        "ga",
+        "id",
+        "il",
+        "in",
+        "ia",
+        "ks",
+        "ky",
+        "la",
+        "me",
+        "md",
+        "ma",
+        "mi",
+        "mn",
+        "ms",
+        "mo",
+        "mt",
+        "ne",
+        "nh",
+        "nj",
+        "nm",
+        "nc",
+        "nd",
+        "oh",
+        "ok",
+        "or",
+        "pa",
+        "ri",
+        "sc",
+        "sd",
+        "tn",
+        "tx",
+        "vt",
+        "va",
+        "wv",
+        "wi",
+        "wy",
+    ):
+        result = runner.invoke(
+            app,
+            [
+                "--data-dir",
+                str(tmp_path / jurisdiction),
+                "coverage",
+                "-j",
+                jurisdiction,
+                "--output",
+                "json",
+            ],
+        )
+
+        assert result.exit_code == 0, result.output
+        payload = json.loads(result.output)
+        assert payload["jurisdiction_support_statuses"] != ["catalog_pending"]
+        assert payload["games"]
+
+
+def test_coverage_reports_wyoming_full_draw_game_catalog(tmp_path):
     result = runner.invoke(
         app,
         [
@@ -233,9 +296,23 @@ def test_coverage_reports_pending_state_catalog_as_supported_jurisdiction(tmp_pa
     payload = json.loads(result.output)
     assert payload["jurisdiction_code"] == "wy"
     assert payload["jurisdiction"] == "Wyoming"
-    assert payload["jurisdiction_support_statuses"] == ["catalog_pending"]
-    assert payload["blocking_reason"] == "Lottery jurisdiction offering catalog pending"
-    assert payload["games"] == []
+    games = {game["game_slug"]: game for game in payload["games"]}
+    assert set(games) == {
+        "lucky-for-life",
+        "mega-millions",
+        "millionaire-for-life",
+        "powerball",
+        "wyoming-2by2",
+        "wyoming-cowboy-draw",
+        "wyoming-keno",
+    }
+    assert games["lucky-for-life"]["blocking_reason"] == (
+        "Retired after February 2026; historical adapter pending"
+    )
+    assert games["wyoming-cowboy-draw"]["support_statuses"] == ["cataloged"]
+    assert games["wyoming-cowboy-draw"]["blocking_reason"] == (
+        "Rules and fetch adapter pending"
+    )
 
 
 def test_coverage_reports_wisconsin_full_draw_game_catalog(tmp_path):

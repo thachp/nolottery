@@ -112,7 +112,7 @@ def test_load_default_jurisdictions_reads_bundled_catalog():
     }
 
 
-def test_remaining_state_catalog_marks_jurisdiction_level_blockers():
+def test_no_lottery_and_remaining_state_catalog_blockers_are_explicit():
     jurisdictions = load_default_jurisdictions()
 
     assert jurisdictions["al"]["support_statuses"] == ("no_state_lottery",)
@@ -128,11 +128,11 @@ def test_remaining_state_catalog_marks_jurisdiction_level_blockers():
     assert jurisdictions["ut"]["blocking_reason"] == "No state lottery established"
     assert jurisdictions["ut"]["offerings"] == ()
 
-    assert jurisdictions["wy"]["support_statuses"] == ("catalog_pending",)
-    assert jurisdictions["wy"]["blocking_reason"] == (
-        "Lottery jurisdiction offering catalog pending"
+    assert all(
+        jurisdiction["support_statuses"] != ("catalog_pending",)
+        for code, jurisdiction in jurisdictions.items()
+        if code in US_STATE_CODES
     )
-    assert jurisdictions["wy"]["offerings"] == ()
 
 
 def test_jurisdiction_offering_can_override_shared_game_results_source(tmp_path):

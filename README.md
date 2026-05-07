@@ -61,7 +61,7 @@ Washington draw games currently have EV, fetch, audit, and low-share support:
 
 California currently has EV, fetch, audit, and low-share support for its cataloged draw games. New York, Florida, and District of Columbia have representative catalog entries, with New York Numbers/Win 4 and Florida Pick 2/Pick 3/Pick 4/Pick 5 also supporting EV, fetch, and low-share. Arizona, Arkansas, Colorado, Connecticut, Delaware, Georgia, Idaho, Illinois, Indiana, Iowa, Kentucky, Louisiana, Maine, Maryland, Massachusetts, Michigan, Minnesota, Mississippi, Missouri, Montana, Nebraska, and Texas Powerball and Mega Millions support EV, fetch, audit, low-share, and one-page historical backfill from official past winning-number pages.
 
-Every U.S. state code is recognized by coverage. States whose game catalogs have not been verified yet report `catalog_pending`. Alabama, Alaska, Hawaii, Nevada, and Utah report `no_state_lottery`; game capabilities such as EV, recommendations, fetch, backfill, audit, and low-share are intentionally unavailable there until a state lottery exists.
+Every U.S. state code is recognized by coverage. Alabama, Alaska, Hawaii, Nevada, and Utah report `no_state_lottery`; every U.S. state lottery jurisdiction has at least one cataloged draw-game offering. Game capabilities such as EV, recommendations, fetch, backfill, audit, and low-share remain unavailable for catalog-only games until rules metadata and result adapters are verified.
 
 Run coverage to see current status and blocking reasons:
 
@@ -246,7 +246,7 @@ uv run lottery coverage -j ca --output json
 uv run lottery coverage -j tx
 ```
 
-Catalog-only games are visible in coverage but excluded from EV commands until rules metadata is verified. Catalog-pending jurisdictions are accepted by coverage and excluded from game commands until their official game offerings, result sources, and backfill adapters are added.
+Catalog-only games are visible in coverage but excluded from EV commands until rules metadata is verified. Jurisdiction-level `catalog_pending` remains a supported status for future expansion, but no current U.S. state milestone uses it after the full state catalog backfill.
 
 ## Fetching Draw Data
 
