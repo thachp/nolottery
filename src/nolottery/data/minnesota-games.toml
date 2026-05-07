@@ -1,0 +1,19 @@
+# Minnesota active draw-game catalog entries.
+
+[[games]]
+slug = 'minnesota-gopher-5'
+name = 'Gopher 5'
+source_url = 'https://www.mnlottery.com/games/lotto/gopher-5'
+reviewed_on = '2026-05-07'
+
+[[games]]
+slug = 'minnesota-north-5'
+name = 'North 5'
+source_url = 'https://www.mnlottery.com/games/lotto/north-5'
+reviewed_on = '2026-05-07'
+
+[[games]]
+slug = 'minnesota-pick-3'
+name = 'Pick 3'
+source_url = 'https://www.mnlottery.com/games/lotto/pick-3'
+reviewed_on = '2026-05-07'
