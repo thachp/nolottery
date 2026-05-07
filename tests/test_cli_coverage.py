@@ -725,10 +725,16 @@ def test_coverage_reports_north_dakota_full_draw_game_catalog(tmp_path):
     assert games["lucky-for-life"]["blocking_reason"] == (
         "Retired after February 2026; historical adapter pending"
     )
+    _assert_supported_national_games(games)
+    assert all(
+        game["support_statuses"] == ["cataloged"]
+        for slug, game in games.items()
+        if slug not in NATIONAL_GAME_SLUGS
+    )
     supported_blockers = {
         game["blocking_reason"]
         for slug, game in games.items()
-        if slug != "lucky-for-life"
+        if slug not in {"lucky-for-life", *NATIONAL_GAME_SLUGS}
     }
     assert supported_blockers == {"Rules and fetch adapter pending"}
 

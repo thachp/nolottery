@@ -1625,15 +1625,15 @@ blocking_reason = 'North Dakota draw-game rules and adapters pending'
 
 [[jurisdictions.offerings]]
 game_slug = 'powerball'
-source_url = 'https://www.lottery.nd.gov/games/powerball'
-support_statuses = ['cataloged']
-blocking_reason = 'Rules and fetch adapter pending'
+source_url = 'https://www.powerball.com/previous-results'
+support_statuses = ['cataloged', 'rules_verified', 'ev_supported', 'fetch_supported', 'audit_supported', 'low_share_supported']
+results_adapter = 'official_national_results_page'
 
 [[jurisdictions.offerings]]
 game_slug = 'mega-millions'
-source_url = 'https://www.lottery.nd.gov/games/mega-millions'
-support_statuses = ['cataloged']
-blocking_reason = 'Rules and fetch adapter pending'
+source_url = 'https://www.megamillions.com/Winning-Numbers/Previous-Drawings.aspx'
+support_statuses = ['cataloged', 'rules_verified', 'ev_supported', 'fetch_supported', 'audit_supported', 'low_share_supported']
+results_adapter = 'official_national_results_page'
 
 [[jurisdictions.offerings]]
 game_slug = 'millionaire-for-life'
