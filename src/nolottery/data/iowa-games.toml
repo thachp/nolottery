@@ -1,0 +1,13 @@
+# Iowa active draw-game catalog entries.
+
+[[games]]
+slug = 'iowa-pick-3'
+name = 'Pick 3'
+source_url = 'https://www.ialottery.com/Pages/Games/Pick3.aspx'
+reviewed_on = '2026-05-07'
+
+[[games]]
+slug = 'iowa-pick-4'
+name = 'Pick 4'
+source_url = 'https://www.ialottery.com/Pages/Games/Pick4.aspx'
+reviewed_on = '2026-05-07'

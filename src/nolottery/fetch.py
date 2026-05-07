@@ -92,6 +92,10 @@ _INDIANA_DRAW_PAGE_GAMES = {
     "mega-millions": "Mega Ball",
     "powerball": "Powerball",
 }
+_IOWA_WINNING_NUMBERS_GAMES = {
+    "mega-millions": (1, "Mega Ball"),
+    "powerball": (0, "Powerball"),
+}
 
 
 @dataclass(frozen=True)
@@ -123,6 +127,27 @@ def fetch_game(
     source_file: Path | None = None,
     jurisdiction_code: str = DEFAULT_JURISDICTION_CODE,
 ) -> FetchResult:
+    if (
+        source_file is None
+        and jurisdiction_code == "ia"
+        and game.slug in _IOWA_WINNING_NUMBERS_GAMES
+    ):
+        raw_html, source_url = _read_source(
+            game.source_url,
+            None,
+            f"{game.slug}-ia-backfill",
+        )
+        draws = parse_iowa_winning_numbers_page(raw_html, game.slug)
+        _insert_snapshot(conn, jurisdiction_code, game.slug, source_url, raw_html, draws)
+        new_draws = _filter_newer_draws(conn, jurisdiction_code, game.slug, draws)
+        _insert_draw_results(conn, jurisdiction_code, game.slug, new_draws)
+        conn.commit()
+        return FetchResult(
+            game_name=game.name,
+            source_url=source_url,
+            draw_count=len(new_draws),
+            prize_row_count=sum(len(draw.prizes) for draw in new_draws),
+        )
     if (
         source_file is None
         and jurisdiction_code == "in"
@@ -559,6 +584,23 @@ def fetch_game_backfill(
             f"{game.slug}-in-backfill",
         )
         draws = parse_indiana_draw_page(raw_html, game.slug)
+        _insert_snapshot(conn, jurisdiction_code, game.slug, source_url, raw_html, draws)
+        _replace_draw_results(conn, jurisdiction_code, game.slug, draws)
+        conn.commit()
+        return FetchResult(
+            game_name=game.name,
+            source_url=source_url,
+            draw_count=len(draws),
+            prize_row_count=sum(len(draw.prizes) for draw in draws),
+            page_count=1,
+        )
+    if jurisdiction_code == "ia" and game.slug in _IOWA_WINNING_NUMBERS_GAMES:
+        raw_html, source_url = _read_source(
+            game.source_url,
+            source_dir,
+            f"{game.slug}-ia-backfill",
+        )
+        draws = parse_iowa_winning_numbers_page(raw_html, game.slug)
         _insert_snapshot(conn, jurisdiction_code, game.slug, source_url, raw_html, draws)
         _replace_draw_results(conn, jurisdiction_code, game.slug, draws)
         conn.commit()
@@ -1365,6 +1407,56 @@ def _indiana_draw_date(raw_value: str) -> str | None:
     return parsed_date.strftime(_DRAW_DATE_FORMAT)
 
 
+def parse_iowa_winning_numbers_page(
+    raw_html: str,
+    game_slug: str,
+) -> tuple[ParsedDraw, ...]:
+    draw_index, special_number_name = _IOWA_WINNING_NUMBERS_GAMES[game_slug]
+    soup = BeautifulSoup(raw_html, "html.parser")
+    text = soup.get_text(" ", strip=True)
+    matches = tuple(
+        re.finditer(
+            r"Drawing Date:\s*(\d{1,2})/(\d{1,2}):\s*"
+            r"(\d{1,2})\s*-\s*(\d{1,2})\s*-\s*(\d{1,2})\s*-\s*"
+            r"(\d{1,2})\s*-\s*(\d{1,2})\s+(\d{1,2})",
+            text,
+        )
+    )
+    if draw_index >= len(matches):
+        return ()
+    match = matches[draw_index]
+    draw_date = _iowa_draw_date(match.group(1), match.group(2))
+    if draw_date is None:
+        return ()
+    return (
+        ParsedDraw(
+            draw_date=draw_date,
+            winning_number=", ".join(
+                [
+                    match.group(3),
+                    match.group(4),
+                    match.group(5),
+                    match.group(6),
+                    match.group(7),
+                    f"{match.group(8)} {special_number_name}",
+                ]
+            ),
+            prizes=(),
+        ),
+    )
+
+
+def _iowa_draw_date(raw_month: str, raw_day: str) -> str | None:
+    try:
+        return datetime(
+            date.today().year,
+            int(raw_month),
+            int(raw_day),
+        ).strftime(_DRAW_DATE_FORMAT)
+    except ValueError:
+        return None
+
+
 def _new_york_draw_date(raw_value: object) -> str | None:
     if not isinstance(raw_value, str) or not raw_value:
         return None
@@ -1634,6 +1726,8 @@ def _parse_draws(
         return parse_illinois_results_page(raw_html, game_slug)
     if jurisdiction_code == "in" and game_slug in _INDIANA_DRAW_PAGE_GAMES:
         return parse_indiana_draw_page(raw_html, game_slug)
+    if jurisdiction_code == "ia" and game_slug in _IOWA_WINNING_NUMBERS_GAMES:
+        return parse_iowa_winning_numbers_page(raw_html, game_slug)
     return parse_past_drawings(raw_html)
 
 

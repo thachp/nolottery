@@ -627,6 +627,22 @@ def _indiana_mega_millions_draw_page_html() -> str:
     """
 
 
+def _iowa_winning_numbers_html() -> str:
+    return """
+    <html>
+      <body>
+        <h2>Latest Winning Numbers</h2>
+        <h4><a>Powerball</a></h4>
+        <p>Drawing Date: 5/6: 18 - 27 - 51 - 65 - 68&nbsp;&nbsp; 5 Power Play: 3</p>
+        <p>DOUBLE PLAY</p>
+        <p>4 - 21 - 36 - 48 - 69&nbsp;&nbsp; 5</p>
+        <h4><a>Mega Millions</a></h4>
+        <p>Drawing Date: 5/5: 12 - 22 - 50 - 51 - 55&nbsp; 10</p>
+      </body>
+    </html>
+    """
+
+
 def test_fetch_cashpop_persists_official_page_snapshot_and_draws(tmp_path):
     fixture = tmp_path / "cashpop.html"
     fixture.write_text(DRAWING_HTML, encoding="utf-8")
@@ -2117,6 +2133,116 @@ def test_fetch_indiana_mega_millions_backfill_reads_official_draw_page_fixture(
     assert payload["games"][0]["draws"] == [
         {
             "jurisdiction_code": "in",
+            "draw_date": "Tue, May 05, 2026",
+            "winning_number": "12, 22, 50, 51, 55, 10 Mega Ball",
+        }
+    ]
+
+
+def test_fetch_iowa_powerball_backfill_reads_official_winning_numbers_fixture(
+    tmp_path,
+):
+    fixtures = tmp_path / "fixtures"
+    fixtures.mkdir()
+    (fixtures / "powerball-ia-backfill.html").write_text(
+        _iowa_winning_numbers_html(),
+        encoding="utf-8",
+    )
+
+    result = runner.invoke(
+        app,
+        [
+            "--data-dir",
+            str(tmp_path / "data"),
+            "fetch",
+            "powerball",
+            "-j",
+            "ia",
+            "--backfill",
+            "--source-dir",
+            str(fixtures),
+        ],
+    )
+
+    assert result.exit_code == 0, result.output
+    assert "Powerball" in result.output
+    assert "1 draw" in result.output
+    assert "1 page" in result.output
+
+    draws_result = runner.invoke(
+        app,
+        [
+            "--data-dir",
+            str(tmp_path / "data"),
+            "draws",
+            "powerball",
+            "-j",
+            "ia",
+            "--output",
+            "json",
+        ],
+    )
+
+    assert draws_result.exit_code == 0, draws_result.output
+    payload = json.loads(draws_result.output)
+    assert payload["games"][0]["draws"] == [
+        {
+            "jurisdiction_code": "ia",
+            "draw_date": "Wed, May 06, 2026",
+            "winning_number": "18, 27, 51, 65, 68, 5 Powerball",
+        }
+    ]
+
+
+def test_fetch_iowa_mega_millions_backfill_reads_official_winning_numbers_fixture(
+    tmp_path,
+):
+    fixtures = tmp_path / "fixtures"
+    fixtures.mkdir()
+    (fixtures / "mega-millions-ia-backfill.html").write_text(
+        _iowa_winning_numbers_html(),
+        encoding="utf-8",
+    )
+
+    result = runner.invoke(
+        app,
+        [
+            "--data-dir",
+            str(tmp_path / "data"),
+            "fetch",
+            "mega-millions",
+            "-j",
+            "ia",
+            "--backfill",
+            "--source-dir",
+            str(fixtures),
+        ],
+    )
+
+    assert result.exit_code == 0, result.output
+    assert "Mega Millions" in result.output
+    assert "1 draw" in result.output
+    assert "1 page" in result.output
+
+    draws_result = runner.invoke(
+        app,
+        [
+            "--data-dir",
+            str(tmp_path / "data"),
+            "draws",
+            "mega-millions",
+            "-j",
+            "ia",
+            "--output",
+            "json",
+        ],
+    )
+
+    assert draws_result.exit_code == 0, draws_result.output
+    payload = json.loads(draws_result.output)
+    assert payload["games"][0]["draws"] == [
+        {
+            "jurisdiction_code": "ia",
             "draw_date": "Tue, May 05, 2026",
             "winning_number": "12, 22, 50, 51, 55, 10 Mega Ball",
         }
