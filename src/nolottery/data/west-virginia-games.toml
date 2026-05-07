@@ -1,0 +1,31 @@
+# West Virginia active draw-game catalog entries.
+
+[[games]]
+slug = 'west-virginia-cash-25'
+name = 'Cash 25'
+source_url = 'https://wvlottery.com/games/draw-games/'
+reviewed_on = '2026-05-07'
+
+[[games]]
+slug = 'west-virginia-daily-3'
+name = 'Daily 3'
+source_url = 'https://wvlottery.com/games/draw-games/'
+reviewed_on = '2026-05-07'
+
+[[games]]
+slug = 'west-virginia-daily-4'
+name = 'Daily 4'
+source_url = 'https://wvlottery.com/games/draw-games/'
+reviewed_on = '2026-05-07'
+
+[[games]]
+slug = 'west-virginia-cash-pop'
+name = 'Cash Pop'
+source_url = 'https://wvlottery.com/games/draw-games/'
+reviewed_on = '2026-05-07'
+
+[[games]]
+slug = 'west-virginia-keno'
+name = 'Keno'
+source_url = 'https://wvlottery.com/games/draw-games/'
+reviewed_on = '2026-05-07'
