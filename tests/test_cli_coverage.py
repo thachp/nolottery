@@ -659,11 +659,8 @@ def test_coverage_reports_new_mexico_full_draw_game_catalog(tmp_path):
         "new-mexico-roadrunner-cash",
         "powerball",
     }
-    assert all(game["support_statuses"] == ["cataloged"] for game in games.values())
-    assert all(
-        game["blocking_reason"] == "Rules and fetch adapter pending"
-        for game in games.values()
-    )
+    _assert_supported_national_games(games)
+    _assert_cataloged_local_blockers(games)
 
 
 def test_coverage_reports_north_carolina_full_draw_game_catalog(tmp_path):
