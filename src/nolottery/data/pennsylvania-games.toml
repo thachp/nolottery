@@ -1,0 +1,61 @@
+# Pennsylvania active and recently retired draw-game catalog entries.
+
+[[games]]
+slug = 'pennsylvania-match-6'
+name = 'Match 6 Lotto'
+source_url = 'https://www.palottery.pa.gov/Draw-Games.aspx'
+reviewed_on = '2026-05-07'
+
+[[games]]
+slug = 'pennsylvania-cash-5'
+name = 'Cash 5 with Quick Cash'
+source_url = 'https://www.palottery.pa.gov/Draw-Games.aspx'
+reviewed_on = '2026-05-07'
+
+[[games]]
+slug = 'pennsylvania-treasure-hunt'
+name = 'Treasure Hunt'
+source_url = 'https://www.palottery.pa.gov/Custom/uploadedfiles/game-demos/treasurehunt/index.html'
+reviewed_on = '2026-05-07'
+
+[[games]]
+slug = 'pennsylvania-pick-2'
+name = 'Pick 2'
+source_url = 'https://www.palottery.pa.gov/Draw-Games.aspx'
+reviewed_on = '2026-05-07'
+
+[[games]]
+slug = 'pennsylvania-pick-3'
+name = 'Pick 3'
+source_url = 'https://www.palottery.pa.gov/Draw-Games.aspx'
+reviewed_on = '2026-05-07'
+
+[[games]]
+slug = 'pennsylvania-pick-4'
+name = 'Pick 4'
+source_url = 'https://www.palottery.pa.gov/Draw-Games.aspx'
+reviewed_on = '2026-05-07'
+
+[[games]]
+slug = 'pennsylvania-pick-5'
+name = 'Pick 5'
+source_url = 'https://www.palottery.pa.gov/Draw-Games.aspx'
+reviewed_on = '2026-05-07'
+
+[[games]]
+slug = 'pennsylvania-cash-pop'
+name = 'Cash Pop'
+source_url = 'https://www.palottery.pa.gov/Custom/uploadedfiles/game-demos/cashpop/index.html'
+reviewed_on = '2026-05-07'
+
+[[games]]
+slug = 'pennsylvania-keno'
+name = 'Keno'
+source_url = 'https://www.palottery.pa.gov/Keno.aspx?Keno=1'
+reviewed_on = '2026-05-07'
+
+[[games]]
+slug = 'pennsylvania-derby-cash'
+name = 'Derby Cash'
+source_url = 'https://www.palottery.pa.gov/Xpress/Derby-Cash.aspx'
+reviewed_on = '2026-05-07'

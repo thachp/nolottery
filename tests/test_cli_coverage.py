@@ -222,7 +222,7 @@ def test_coverage_reports_pending_state_catalog_as_supported_jurisdiction(tmp_pa
             str(tmp_path),
             "coverage",
             "-j",
-            "pa",
+            "ri",
             "--output",
             "json",
         ],
@@ -230,8 +230,8 @@ def test_coverage_reports_pending_state_catalog_as_supported_jurisdiction(tmp_pa
 
     assert result.exit_code == 0, result.output
     payload = json.loads(result.output)
-    assert payload["jurisdiction_code"] == "pa"
-    assert payload["jurisdiction"] == "Pennsylvania"
+    assert payload["jurisdiction_code"] == "ri"
+    assert payload["jurisdiction"] == "Rhode Island"
     assert payload["jurisdiction_support_statuses"] == ["catalog_pending"]
     assert payload["blocking_reason"] == "Lottery jurisdiction offering catalog pending"
     assert payload["games"] == []
@@ -519,6 +519,47 @@ def test_coverage_reports_oregon_full_draw_game_catalog(tmp_path):
         "Retired after January 2025; historical adapter pending"
     )
     assert games["oregon-megabucks"]["support_statuses"] == ["cataloged"]
+
+
+def test_coverage_reports_pennsylvania_full_draw_game_catalog(tmp_path):
+    result = runner.invoke(
+        app,
+        [
+            "--data-dir",
+            str(tmp_path),
+            "coverage",
+            "-j",
+            "pa",
+            "--output",
+            "json",
+        ],
+    )
+
+    assert result.exit_code == 0, result.output
+    payload = json.loads(result.output)
+    assert payload["jurisdiction_code"] == "pa"
+    assert payload["jurisdiction"] == "Pennsylvania"
+    games = {game["game_slug"]: game for game in payload["games"]}
+    assert set(games) == {
+        "cash4life",
+        "mega-millions",
+        "millionaire-for-life",
+        "pennsylvania-cash-5",
+        "pennsylvania-cash-pop",
+        "pennsylvania-derby-cash",
+        "pennsylvania-keno",
+        "pennsylvania-match-6",
+        "pennsylvania-pick-2",
+        "pennsylvania-pick-3",
+        "pennsylvania-pick-4",
+        "pennsylvania-pick-5",
+        "pennsylvania-treasure-hunt",
+        "powerball",
+    }
+    assert games["cash4life"]["blocking_reason"] == (
+        "Retired after February 2026; historical adapter pending"
+    )
+    assert games["pennsylvania-match-6"]["support_statuses"] == ["cataloged"]
 
 
 def test_coverage_reports_connecticut_catalog_and_supported_national_games(tmp_path):
