@@ -125,11 +125,11 @@ def test_remaining_state_catalog_marks_jurisdiction_level_blockers():
     assert jurisdictions["nv"]["blocking_reason"] == "No state lottery established"
     assert jurisdictions["nv"]["offerings"] == ()
 
-    assert jurisdictions["sd"]["support_statuses"] == ("catalog_pending",)
-    assert jurisdictions["sd"]["blocking_reason"] == (
+    assert jurisdictions["tn"]["support_statuses"] == ("catalog_pending",)
+    assert jurisdictions["tn"]["blocking_reason"] == (
         "Lottery jurisdiction offering catalog pending"
     )
-    assert jurisdictions["sd"]["offerings"] == ()
+    assert jurisdictions["tn"]["offerings"] == ()
 
 
 def test_jurisdiction_offering_can_override_shared_game_results_source(tmp_path):

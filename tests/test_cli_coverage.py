@@ -222,7 +222,7 @@ def test_coverage_reports_pending_state_catalog_as_supported_jurisdiction(tmp_pa
             str(tmp_path),
             "coverage",
             "-j",
-            "sd",
+            "tn",
             "--output",
             "json",
         ],
@@ -230,8 +230,8 @@ def test_coverage_reports_pending_state_catalog_as_supported_jurisdiction(tmp_pa
 
     assert result.exit_code == 0, result.output
     payload = json.loads(result.output)
-    assert payload["jurisdiction_code"] == "sd"
-    assert payload["jurisdiction"] == "South Dakota"
+    assert payload["jurisdiction_code"] == "tn"
+    assert payload["jurisdiction"] == "Tennessee"
     assert payload["jurisdiction_support_statuses"] == ["catalog_pending"]
     assert payload["blocking_reason"] == "Lottery jurisdiction offering catalog pending"
     assert payload["games"] == []
@@ -623,6 +623,39 @@ def test_coverage_reports_south_carolina_full_draw_game_catalog(tmp_path):
         "south-carolina-palmetto-cash-5",
         "south-carolina-pick-3",
         "south-carolina-pick-4",
+    }
+    assert all(game["support_statuses"] == ["cataloged"] for game in games.values())
+    assert all(
+        game["blocking_reason"] == "Rules and fetch adapter pending"
+        for game in games.values()
+    )
+
+
+def test_coverage_reports_south_dakota_full_draw_game_catalog(tmp_path):
+    result = runner.invoke(
+        app,
+        [
+            "--data-dir",
+            str(tmp_path),
+            "coverage",
+            "-j",
+            "sd",
+            "--output",
+            "json",
+        ],
+    )
+
+    assert result.exit_code == 0, result.output
+    payload = json.loads(result.output)
+    assert payload["jurisdiction_code"] == "sd"
+    assert payload["jurisdiction"] == "South Dakota"
+    games = {game["game_slug"]: game for game in payload["games"]}
+    assert set(games) == {
+        "lotto-america",
+        "mega-millions",
+        "millionaire-for-life",
+        "powerball",
+        "south-dakota-dakota-cash",
     }
     assert all(game["support_statuses"] == ["cataloged"] for game in games.values())
     assert all(
