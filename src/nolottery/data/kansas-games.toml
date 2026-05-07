@@ -1,0 +1,31 @@
+# Kansas active draw-game catalog entries.
+
+[[games]]
+slug = 'kansas-super-kansas-cash'
+name = 'Super Kansas Cash'
+source_url = 'https://playonkansas.com/games/draw-games/super-kansas-cash'
+reviewed_on = '2026-05-07'
+
+[[games]]
+slug = 'kansas-pick-3'
+name = 'Pick 3'
+source_url = 'https://playonkansas.com/games/draw-games/pick-3'
+reviewed_on = '2026-05-07'
+
+[[games]]
+slug = 'kansas-2by2'
+name = '2by2'
+source_url = 'https://playonkansas.com/games/draw-games/2by2'
+reviewed_on = '2026-05-07'
+
+[[games]]
+slug = 'kansas-keno'
+name = 'Keno'
+source_url = 'https://playonkansas.com/games/draw-games/keno'
+reviewed_on = '2026-05-07'
+
+[[games]]
+slug = 'kansas-racetrax'
+name = 'Racetrax'
+source_url = 'https://playonkansas.com/games/draw-games/racetrax'
+reviewed_on = '2026-05-07'

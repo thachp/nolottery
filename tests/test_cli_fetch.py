@@ -1137,6 +1137,24 @@ def test_fetch_reports_cataloged_game_without_fetch_support(tmp_path):
     assert "fetch support pending for game: new-york-lotto" in result.output
 
 
+def test_fetch_reports_kansas_powerball_result_history_blocker(tmp_path):
+    result = runner.invoke(
+        app,
+        [
+            "--data-dir",
+            str(tmp_path),
+            "fetch",
+            "powerball",
+            "-j",
+            "ks",
+            "--backfill",
+        ],
+    )
+
+    assert result.exit_code != 0
+    assert "fetch support pending for game: powerball" in result.output
+
+
 def test_fetch_texas_powerball_backfill_reads_official_history_fixture(tmp_path):
     fixtures = tmp_path / "fixtures"
     fixtures.mkdir()

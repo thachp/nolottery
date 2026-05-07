@@ -122,11 +122,11 @@ def test_remaining_state_catalog_marks_jurisdiction_level_blockers():
     assert jurisdictions["hi"]["blocking_reason"] == "No state lottery established"
     assert jurisdictions["hi"]["offerings"] == ()
 
-    assert jurisdictions["ks"]["support_statuses"] == ("catalog_pending",)
-    assert jurisdictions["ks"]["blocking_reason"] == (
+    assert jurisdictions["ky"]["support_statuses"] == ("catalog_pending",)
+    assert jurisdictions["ky"]["blocking_reason"] == (
         "Lottery jurisdiction offering catalog pending"
     )
-    assert jurisdictions["ks"]["offerings"] == ()
+    assert jurisdictions["ky"]["offerings"] == ()
 
 
 def test_jurisdiction_offering_can_override_shared_game_results_source(tmp_path):

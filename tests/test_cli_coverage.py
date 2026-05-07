@@ -221,7 +221,7 @@ def test_coverage_reports_pending_state_catalog_as_supported_jurisdiction(tmp_pa
             str(tmp_path),
             "coverage",
             "-j",
-            "ks",
+            "ky",
             "--output",
             "json",
         ],
@@ -229,8 +229,8 @@ def test_coverage_reports_pending_state_catalog_as_supported_jurisdiction(tmp_pa
 
     assert result.exit_code == 0, result.output
     payload = json.loads(result.output)
-    assert payload["jurisdiction_code"] == "ks"
-    assert payload["jurisdiction"] == "Kansas"
+    assert payload["jurisdiction_code"] == "ky"
+    assert payload["jurisdiction"] == "Kentucky"
     assert payload["jurisdiction_support_statuses"] == ["catalog_pending"]
     assert payload["blocking_reason"] == "Lottery jurisdiction offering catalog pending"
     assert payload["games"] == []
@@ -547,6 +547,43 @@ def test_coverage_reports_iowa_catalog_and_supported_national_games(tmp_path):
     assert games["iowa-pick-3"]["blocking_reason"] == (
         "Rules and fetch adapter pending"
     )
+
+
+def test_coverage_reports_kansas_catalog_with_result_source_blockers(tmp_path):
+    result = runner.invoke(
+        app,
+        [
+            "--data-dir",
+            str(tmp_path),
+            "coverage",
+            "-j",
+            "ks",
+            "--output",
+            "json",
+        ],
+    )
+
+    assert result.exit_code == 0, result.output
+    payload = json.loads(result.output)
+    assert payload["jurisdiction_code"] == "ks"
+    assert payload["jurisdiction"] == "Kansas"
+    games = {game["game_slug"]: game for game in payload["games"]}
+    assert set(games) == {
+        "kansas-2by2",
+        "kansas-keno",
+        "kansas-pick-3",
+        "kansas-racetrax",
+        "kansas-super-kansas-cash",
+        "lotto-america",
+        "mega-millions",
+        "millionaire-for-life",
+        "powerball",
+    }
+    assert games["powerball"]["support_statuses"] == ["cataloged"]
+    assert games["powerball"]["blocking_reason"] == (
+        "Official public result history source pending"
+    )
+    assert games["kansas-super-kansas-cash"]["support_statuses"] == ["cataloged"]
 
 
 def test_coverage_reports_colorado_catalog_and_supported_national_games(tmp_path):
