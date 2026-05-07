@@ -223,6 +223,29 @@ def test_coverage_reports_pending_state_catalog_as_supported_jurisdiction(tmp_pa
             str(tmp_path),
             "coverage",
             "-j",
+            "wy",
+            "--output",
+            "json",
+        ],
+    )
+
+    assert result.exit_code == 0, result.output
+    payload = json.loads(result.output)
+    assert payload["jurisdiction_code"] == "wy"
+    assert payload["jurisdiction"] == "Wyoming"
+    assert payload["jurisdiction_support_statuses"] == ["catalog_pending"]
+    assert payload["blocking_reason"] == "Lottery jurisdiction offering catalog pending"
+    assert payload["games"] == []
+
+
+def test_coverage_reports_wisconsin_full_draw_game_catalog(tmp_path):
+    result = runner.invoke(
+        app,
+        [
+            "--data-dir",
+            str(tmp_path),
+            "coverage",
+            "-j",
             "wi",
             "--output",
             "json",
@@ -233,9 +256,21 @@ def test_coverage_reports_pending_state_catalog_as_supported_jurisdiction(tmp_pa
     payload = json.loads(result.output)
     assert payload["jurisdiction_code"] == "wi"
     assert payload["jurisdiction"] == "Wisconsin"
-    assert payload["jurisdiction_support_statuses"] == ["catalog_pending"]
-    assert payload["blocking_reason"] == "Lottery jurisdiction offering catalog pending"
-    assert payload["games"] == []
+    games = {game["game_slug"]: game for game in payload["games"]}
+    assert set(games) == {
+        "mega-millions",
+        "powerball",
+        "wisconsin-all-or-nothing",
+        "wisconsin-badger-5",
+        "wisconsin-megabucks",
+        "wisconsin-pick-3",
+        "wisconsin-pick-4",
+        "wisconsin-supercash",
+    }
+    assert games["wisconsin-megabucks"]["support_statuses"] == ["cataloged"]
+    assert games["wisconsin-megabucks"]["blocking_reason"] == (
+        "Rules and fetch adapter pending"
+    )
 
 
 def test_coverage_reports_west_virginia_full_draw_game_catalog(tmp_path):
