@@ -1,0 +1,25 @@
+# Mississippi active draw-game catalog entries.
+
+[[games]]
+slug = 'mississippi-match-5'
+name = 'Mississippi Match 5'
+source_url = 'https://www.mslottery.com/games/mm5/'
+reviewed_on = '2026-05-07'
+
+[[games]]
+slug = 'mississippi-cash-4'
+name = 'Cash 4'
+source_url = 'https://www.mslottery.com/games/cash-4/'
+reviewed_on = '2026-05-07'
+
+[[games]]
+slug = 'mississippi-cash-3'
+name = 'Cash 3'
+source_url = 'https://www.mslottery.com/games/cash-3/'
+reviewed_on = '2026-05-07'
+
+[[games]]
+slug = 'mississippi-cash-pop'
+name = 'Cash Pop'
+source_url = 'https://www.mslottery.com/games/cash-pop/'
+reviewed_on = '2026-05-07'
