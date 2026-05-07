@@ -1665,15 +1665,15 @@ blocking_reason = 'Ohio draw-game rules and adapters pending'
 
 [[jurisdictions.offerings]]
 game_slug = 'powerball'
-source_url = 'https://www.ohiolottery.com/games/draw-games/powerball'
-support_statuses = ['cataloged']
-blocking_reason = 'Rules and fetch adapter pending'
+source_url = 'https://www.powerball.com/previous-results'
+support_statuses = ['cataloged', 'rules_verified', 'ev_supported', 'fetch_supported', 'audit_supported', 'low_share_supported']
+results_adapter = 'official_national_results_page'
 
 [[jurisdictions.offerings]]
 game_slug = 'mega-millions'
-source_url = 'https://www.ohiolottery.com/games/draw-games/mega-millions'
-support_statuses = ['cataloged']
-blocking_reason = 'Rules and fetch adapter pending'
+source_url = 'https://www.megamillions.com/Winning-Numbers/Previous-Drawings.aspx'
+support_statuses = ['cataloged', 'rules_verified', 'ev_supported', 'fetch_supported', 'audit_supported', 'low_share_supported']
+results_adapter = 'official_national_results_page'
 
 [[jurisdictions.offerings]]
 game_slug = 'millionaire-for-life'
@@ -1724,15 +1724,15 @@ blocking_reason = 'Oklahoma draw-game rules and adapters pending'
 
 [[jurisdictions.offerings]]
 game_slug = 'powerball'
-source_url = 'https://www.lottery.ok.gov/draw-games/powerball'
-support_statuses = ['cataloged']
-blocking_reason = 'Rules and fetch adapter pending'
+source_url = 'https://www.powerball.com/previous-results'
+support_statuses = ['cataloged', 'rules_verified', 'ev_supported', 'fetch_supported', 'audit_supported', 'low_share_supported']
+results_adapter = 'official_national_results_page'
 
 [[jurisdictions.offerings]]
 game_slug = 'mega-millions'
-source_url = 'https://www.lottery.ok.gov/draw-games/mega-millions'
-support_statuses = ['cataloged']
-blocking_reason = 'Rules and fetch adapter pending'
+source_url = 'https://www.megamillions.com/Winning-Numbers/Previous-Drawings.aspx'
+support_statuses = ['cataloged', 'rules_verified', 'ev_supported', 'fetch_supported', 'audit_supported', 'low_share_supported']
+results_adapter = 'official_national_results_page'
 
 [[jurisdictions.offerings]]
 game_slug = 'lotto-america'
@@ -1769,15 +1769,15 @@ blocking_reason = 'Oregon draw-game rules and adapters pending'
 
 [[jurisdictions.offerings]]
 game_slug = 'powerball'
-source_url = 'https://www.oregonlottery.org/jackpot/powerball/'
-support_statuses = ['cataloged']
-blocking_reason = 'Rules and fetch adapter pending'
+source_url = 'https://www.powerball.com/previous-results'
+support_statuses = ['cataloged', 'rules_verified', 'ev_supported', 'fetch_supported', 'audit_supported', 'low_share_supported']
+results_adapter = 'official_national_results_page'
 
 [[jurisdictions.offerings]]
 game_slug = 'mega-millions'
-source_url = 'https://www.oregonlottery.org/jackpot/mega-millions/'
-support_statuses = ['cataloged']
-blocking_reason = 'Rules and fetch adapter pending'
+source_url = 'https://www.megamillions.com/Winning-Numbers/Previous-Drawings.aspx'
+support_statuses = ['cataloged', 'rules_verified', 'ev_supported', 'fetch_supported', 'audit_supported', 'low_share_supported']
+results_adapter = 'official_national_results_page'
 
 [[jurisdictions.offerings]]
 game_slug = 'oregon-megabucks'
@@ -1806,15 +1806,15 @@ blocking_reason = 'Pennsylvania draw-game rules and adapters pending'
 
 [[jurisdictions.offerings]]
 game_slug = 'powerball'
-source_url = 'https://www.palottery.pa.gov/Custom/uploadedfiles/ha/powerball/index.html'
-support_statuses = ['cataloged']
-blocking_reason = 'Rules and fetch adapter pending'
+source_url = 'https://www.powerball.com/previous-results'
+support_statuses = ['cataloged', 'rules_verified', 'ev_supported', 'fetch_supported', 'audit_supported', 'low_share_supported']
+results_adapter = 'official_national_results_page'
 
 [[jurisdictions.offerings]]
 game_slug = 'mega-millions'
-source_url = 'https://www.palottery.pa.gov/custom/uploadedfiles/game-demos/megamillions/index.html'
-support_statuses = ['cataloged']
-blocking_reason = 'Rules and fetch adapter pending'
+source_url = 'https://www.megamillions.com/Winning-Numbers/Previous-Drawings.aspx'
+support_statuses = ['cataloged', 'rules_verified', 'ev_supported', 'fetch_supported', 'audit_supported', 'low_share_supported']
+results_adapter = 'official_national_results_page'
 
 [[jurisdictions.offerings]]
 game_slug = 'millionaire-for-life'
@@ -1885,15 +1885,15 @@ blocking_reason = 'Rhode Island draw-game rules and adapters pending'
 
 [[jurisdictions.offerings]]
 game_slug = 'powerball'
-source_url = 'https://www.rilot.com/content/interactive/ilottery/en/powerball.html'
-support_statuses = ['cataloged']
-blocking_reason = 'Rules and fetch adapter pending'
+source_url = 'https://www.powerball.com/previous-results'
+support_statuses = ['cataloged', 'rules_verified', 'ev_supported', 'fetch_supported', 'audit_supported', 'low_share_supported']
+results_adapter = 'official_national_results_page'
 
 [[jurisdictions.offerings]]
 game_slug = 'mega-millions'
-source_url = 'https://www.rilot.com/content/interactive/ilottery/en/megamillions.html'
-support_statuses = ['cataloged']
-blocking_reason = 'Rules and fetch adapter pending'
+source_url = 'https://www.megamillions.com/Winning-Numbers/Previous-Drawings.aspx'
+support_statuses = ['cataloged', 'rules_verified', 'ev_supported', 'fetch_supported', 'audit_supported', 'low_share_supported']
+results_adapter = 'official_national_results_page'
 
 [[jurisdictions.offerings]]
 game_slug = 'millionaire-for-life'
@@ -1934,15 +1934,15 @@ blocking_reason = 'South Carolina draw-game rules and adapters pending'
 
 [[jurisdictions.offerings]]
 game_slug = 'powerball'
-source_url = 'https://www.sceducationlottery.com/Games/Powerball'
-support_statuses = ['cataloged']
-blocking_reason = 'Rules and fetch adapter pending'
+source_url = 'https://www.powerball.com/previous-results'
+support_statuses = ['cataloged', 'rules_verified', 'ev_supported', 'fetch_supported', 'audit_supported', 'low_share_supported']
+results_adapter = 'official_national_results_page'
 
 [[jurisdictions.offerings]]
 game_slug = 'mega-millions'
-source_url = 'https://www.sceducationlottery.com/Games/MegaMillions'
-support_statuses = ['cataloged']
-blocking_reason = 'Rules and fetch adapter pending'
+source_url = 'https://www.megamillions.com/Winning-Numbers/Previous-Drawings.aspx'
+support_statuses = ['cataloged', 'rules_verified', 'ev_supported', 'fetch_supported', 'audit_supported', 'low_share_supported']
+results_adapter = 'official_national_results_page'
 
 [[jurisdictions.offerings]]
 game_slug = 'south-carolina-palmetto-cash-5'
@@ -1971,15 +1971,15 @@ blocking_reason = 'South Dakota draw-game rules and adapters pending'
 
 [[jurisdictions.offerings]]
 game_slug = 'powerball'
-source_url = 'https://lottery.sd.gov/games/powerball/'
-support_statuses = ['cataloged']
-blocking_reason = 'Rules and fetch adapter pending'
+source_url = 'https://www.powerball.com/previous-results'
+support_statuses = ['cataloged', 'rules_verified', 'ev_supported', 'fetch_supported', 'audit_supported', 'low_share_supported']
+results_adapter = 'official_national_results_page'
 
 [[jurisdictions.offerings]]
 game_slug = 'mega-millions'
-source_url = 'https://lottery.sd.gov/games/mega-millions/'
-support_statuses = ['cataloged']
-blocking_reason = 'Rules and fetch adapter pending'
+source_url = 'https://www.megamillions.com/Winning-Numbers/Previous-Drawings.aspx'
+support_statuses = ['cataloged', 'rules_verified', 'ev_supported', 'fetch_supported', 'audit_supported', 'low_share_supported']
+results_adapter = 'official_national_results_page'
 
 [[jurisdictions.offerings]]
 game_slug = 'millionaire-for-life'
@@ -2005,15 +2005,15 @@ blocking_reason = 'Tennessee local draw-game rules and adapters pending'
 
 [[jurisdictions.offerings]]
 game_slug = 'powerball'
-source_url = 'https://tnlottery.com/games/drawing-style-games/'
-support_statuses = ['cataloged']
-blocking_reason = 'Rules and fetch adapter pending'
+source_url = 'https://www.powerball.com/previous-results'
+support_statuses = ['cataloged', 'rules_verified', 'ev_supported', 'fetch_supported', 'audit_supported', 'low_share_supported']
+results_adapter = 'official_national_results_page'
 
 [[jurisdictions.offerings]]
 game_slug = 'mega-millions'
-source_url = 'https://tnlottery.com/games/drawing-style-games/'
-support_statuses = ['cataloged']
-blocking_reason = 'Rules and fetch adapter pending'
+source_url = 'https://www.megamillions.com/Winning-Numbers/Previous-Drawings.aspx'
+support_statuses = ['cataloged', 'rules_verified', 'ev_supported', 'fetch_supported', 'audit_supported', 'low_share_supported']
+results_adapter = 'official_national_results_page'
 
 [[jurisdictions.offerings]]
 game_slug = 'millionaire-for-life'
@@ -2120,15 +2120,15 @@ blocking_reason = 'Vermont local draw-game rules and adapters pending'
 
 [[jurisdictions.offerings]]
 game_slug = 'powerball'
-source_url = 'https://vtlottery.com/games/powerball'
-support_statuses = ['cataloged']
-blocking_reason = 'Rules and fetch adapter pending'
+source_url = 'https://www.powerball.com/previous-results'
+support_statuses = ['cataloged', 'rules_verified', 'ev_supported', 'fetch_supported', 'audit_supported', 'low_share_supported']
+results_adapter = 'official_national_results_page'
 
 [[jurisdictions.offerings]]
 game_slug = 'mega-millions'
-source_url = 'https://vtlottery.com/games/mega-millions'
-support_statuses = ['cataloged']
-blocking_reason = 'Rules and fetch adapter pending'
+source_url = 'https://www.megamillions.com/Winning-Numbers/Previous-Drawings.aspx'
+support_statuses = ['cataloged', 'rules_verified', 'ev_supported', 'fetch_supported', 'audit_supported', 'low_share_supported']
+results_adapter = 'official_national_results_page'
 
 [[jurisdictions.offerings]]
 game_slug = 'millionaire-for-life'
@@ -2169,15 +2169,15 @@ blocking_reason = 'Virginia local draw-game rules and adapters pending'
 
 [[jurisdictions.offerings]]
 game_slug = 'powerball'
-source_url = 'https://www.valottery.com/Data/Draw-Games/powerball'
-support_statuses = ['cataloged']
-blocking_reason = 'Rules and fetch adapter pending'
+source_url = 'https://www.powerball.com/previous-results'
+support_statuses = ['cataloged', 'rules_verified', 'ev_supported', 'fetch_supported', 'audit_supported', 'low_share_supported']
+results_adapter = 'official_national_results_page'
 
 [[jurisdictions.offerings]]
 game_slug = 'mega-millions'
-source_url = 'https://www.valottery.com/Data/Draw-Games/MegaMillions'
-support_statuses = ['cataloged']
-blocking_reason = 'Rules and fetch adapter pending'
+source_url = 'https://www.megamillions.com/Winning-Numbers/Previous-Drawings.aspx'
+support_statuses = ['cataloged', 'rules_verified', 'ev_supported', 'fetch_supported', 'audit_supported', 'low_share_supported']
+results_adapter = 'official_national_results_page'
 
 [[jurisdictions.offerings]]
 game_slug = 'millionaire-for-life'
@@ -2233,15 +2233,15 @@ blocking_reason = 'West Virginia local draw-game rules and adapters pending'
 
 [[jurisdictions.offerings]]
 game_slug = 'powerball'
-source_url = 'https://wvlottery.com/games/draw-games/'
-support_statuses = ['cataloged']
-blocking_reason = 'Rules and fetch adapter pending'
+source_url = 'https://www.powerball.com/previous-results'
+support_statuses = ['cataloged', 'rules_verified', 'ev_supported', 'fetch_supported', 'audit_supported', 'low_share_supported']
+results_adapter = 'official_national_results_page'
 
 [[jurisdictions.offerings]]
 game_slug = 'mega-millions'
-source_url = 'https://wvlottery.com/games/draw-games/'
-support_statuses = ['cataloged']
-blocking_reason = 'Rules and fetch adapter pending'
+source_url = 'https://www.megamillions.com/Winning-Numbers/Previous-Drawings.aspx'
+support_statuses = ['cataloged', 'rules_verified', 'ev_supported', 'fetch_supported', 'audit_supported', 'low_share_supported']
+results_adapter = 'official_national_results_page'
 
 [[jurisdictions.offerings]]
 game_slug = 'lotto-america'
@@ -2287,15 +2287,15 @@ blocking_reason = 'Wisconsin local draw-game rules and adapters pending'
 
 [[jurisdictions.offerings]]
 game_slug = 'powerball'
-source_url = 'https://wilottery.com/games/powerball'
-support_statuses = ['cataloged']
-blocking_reason = 'Rules and fetch adapter pending'
+source_url = 'https://www.powerball.com/previous-results'
+support_statuses = ['cataloged', 'rules_verified', 'ev_supported', 'fetch_supported', 'audit_supported', 'low_share_supported']
+results_adapter = 'official_national_results_page'
 
 [[jurisdictions.offerings]]
 game_slug = 'mega-millions'
-source_url = 'https://wilottery.com/games/mega-millions'
-support_statuses = ['cataloged']
-blocking_reason = 'Rules and fetch adapter pending'
+source_url = 'https://www.megamillions.com/Winning-Numbers/Previous-Drawings.aspx'
+support_statuses = ['cataloged', 'rules_verified', 'ev_supported', 'fetch_supported', 'audit_supported', 'low_share_supported']
+results_adapter = 'official_national_results_page'
 
 [[jurisdictions.offerings]]
 game_slug = 'wisconsin-megabucks'
@@ -2334,15 +2334,15 @@ blocking_reason = 'Wyoming local draw-game rules and adapters pending'
 
 [[jurisdictions.offerings]]
 game_slug = 'powerball'
-source_url = 'https://wyolotto.com/games/powerball/'
-support_statuses = ['cataloged']
-blocking_reason = 'Rules and fetch adapter pending'
+source_url = 'https://www.powerball.com/previous-results'
+support_statuses = ['cataloged', 'rules_verified', 'ev_supported', 'fetch_supported', 'audit_supported', 'low_share_supported']
+results_adapter = 'official_national_results_page'
 
 [[jurisdictions.offerings]]
 game_slug = 'mega-millions'
-source_url = 'https://wyolotto.com/games/mega-millions/'
-support_statuses = ['cataloged']
-blocking_reason = 'Rules and fetch adapter pending'
+source_url = 'https://www.megamillions.com/Winning-Numbers/Previous-Drawings.aspx'
+support_statuses = ['cataloged', 'rules_verified', 'ev_supported', 'fetch_supported', 'audit_supported', 'low_share_supported']
+results_adapter = 'official_national_results_page'
 
 [[jurisdictions.offerings]]
 game_slug = 'millionaire-for-life'

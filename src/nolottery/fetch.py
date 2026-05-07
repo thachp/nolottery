@@ -144,7 +144,28 @@ _OFFICIAL_NATIONAL_RESULTS_GAMES = {
     "mega-millions": "Mega Ball",
     "powerball": "Powerball",
 }
-_OFFICIAL_NATIONAL_RESULTS_JURISDICTIONS = {"dc", "ks", "nc", "nd", "nh", "nj", "nm"}
+_OFFICIAL_NATIONAL_RESULTS_JURISDICTIONS = {
+    "dc",
+    "ks",
+    "nc",
+    "nd",
+    "nh",
+    "nj",
+    "nm",
+    "oh",
+    "ok",
+    "or",
+    "pa",
+    "ri",
+    "sc",
+    "sd",
+    "tn",
+    "vt",
+    "va",
+    "wv",
+    "wi",
+    "wy",
+}
 _NATIONAL_DRAW_DATE_RE = re.compile(
     r"^(Sun|Mon|Tue|Wed|Thu|Fri|Sat),\s+"
     r"([A-Z][a-z]+)\s+(\d{1,2}),\s+(\d{4})"

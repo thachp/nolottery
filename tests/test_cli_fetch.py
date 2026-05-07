@@ -1604,7 +1604,31 @@ def test_fetch_reports_cataloged_game_without_fetch_support(tmp_path):
     assert "fetch support pending for game: new-york-lotto" in result.output
 
 
-@pytest.mark.parametrize("jurisdiction", ["dc", "ks", "nc", "nd", "nh", "nj", "nm"])
+@pytest.mark.parametrize(
+    "jurisdiction",
+    [
+        "dc",
+        "ks",
+        "nc",
+        "nd",
+        "nh",
+        "nj",
+        "nm",
+        "oh",
+        "ok",
+        "or",
+        "pa",
+        "ri",
+        "sc",
+        "sd",
+        "tn",
+        "vt",
+        "va",
+        "wv",
+        "wi",
+        "wy",
+    ],
+)
 def test_fetch_all_uses_supported_national_games(tmp_path, jurisdiction):
     fixtures = tmp_path / "fixtures"
     fixtures.mkdir()

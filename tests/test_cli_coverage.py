@@ -37,6 +37,33 @@ def _assert_cataloged_local_blockers(games):
     )
 
 
+@pytest.mark.parametrize(
+    "jurisdiction",
+    ["oh", "ok", "or", "pa", "ri", "sc", "sd", "tn", "vt", "va", "wv", "wi", "wy"],
+)
+def test_coverage_reports_supported_national_games_for_remaining_states(
+    tmp_path,
+    jurisdiction,
+):
+    result = runner.invoke(
+        app,
+        [
+            "--data-dir",
+            str(tmp_path / jurisdiction),
+            "coverage",
+            "-j",
+            jurisdiction,
+            "--output",
+            "json",
+        ],
+    )
+
+    assert result.exit_code == 0, result.output
+    payload = json.loads(result.output)
+    games = {game["game_slug"]: game for game in payload["games"]}
+    _assert_supported_national_games(games)
+
+
 def test_coverage_reports_washington_game_support_statuses(tmp_path):
     result = runner.invoke(
         app,
@@ -946,11 +973,8 @@ def test_coverage_reports_south_carolina_full_draw_game_catalog(tmp_path):
         "south-carolina-pick-3",
         "south-carolina-pick-4",
     }
-    assert all(game["support_statuses"] == ["cataloged"] for game in games.values())
-    assert all(
-        game["blocking_reason"] == "Rules and fetch adapter pending"
-        for game in games.values()
-    )
+    _assert_supported_national_games(games)
+    _assert_cataloged_local_blockers(games)
 
 
 def test_coverage_reports_south_dakota_full_draw_game_catalog(tmp_path):
@@ -979,11 +1003,8 @@ def test_coverage_reports_south_dakota_full_draw_game_catalog(tmp_path):
         "powerball",
         "south-dakota-dakota-cash",
     }
-    assert all(game["support_statuses"] == ["cataloged"] for game in games.values())
-    assert all(
-        game["blocking_reason"] == "Rules and fetch adapter pending"
-        for game in games.values()
-    )
+    _assert_supported_national_games(games)
+    _assert_cataloged_local_blockers(games)
 
 
 def test_coverage_reports_connecticut_catalog_and_supported_national_games(tmp_path):
