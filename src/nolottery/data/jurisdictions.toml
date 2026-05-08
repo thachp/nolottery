@@ -217,50 +217,66 @@ name = 'District of Columbia'
 
 [[jurisdictions.offerings]]
 game_slug = 'dc-3'
-support_statuses = ['cataloged']
-blocking_reason = 'Rules and fetch adapter pending'
+source_url = 'https://dclottery.com/winning-numbers/past-draw-numbers?game=10'
+support_statuses = ['cataloged', 'fetch_supported', 'audit_supported']
+results_adapter = 'dc_past_draw_numbers'
+blocking_reason = 'Rules verification pending'
 
 [[jurisdictions.offerings]]
 game_slug = 'dc-4'
-support_statuses = ['cataloged']
-blocking_reason = 'Rules and fetch adapter pending'
+source_url = 'https://dclottery.com/winning-numbers/past-draw-numbers?game=11'
+support_statuses = ['cataloged', 'fetch_supported', 'audit_supported']
+results_adapter = 'dc_past_draw_numbers'
+blocking_reason = 'Rules verification pending'
 
 [[jurisdictions.offerings]]
 game_slug = 'dc-5'
-support_statuses = ['cataloged']
-blocking_reason = 'Rules and fetch adapter pending'
+source_url = 'https://dclottery.com/winning-numbers/past-draw-numbers?game=12'
+support_statuses = ['cataloged', 'fetch_supported', 'audit_supported']
+results_adapter = 'dc_past_draw_numbers'
+blocking_reason = 'Rules verification pending'
 
 [[jurisdictions.offerings]]
 game_slug = 'powerball'
-source_url = 'https://www.powerball.com/previous-results'
+source_url = 'https://dclottery.com/winning-numbers/past-draw-numbers?game=2'
 support_statuses = ['cataloged', 'rules_verified', 'ev_supported', 'fetch_supported', 'audit_supported', 'low_share_supported']
-results_adapter = 'official_national_results_page'
+results_adapter = 'dc_past_draw_numbers'
+blocking_reason = ''
 
 [[jurisdictions.offerings]]
 game_slug = 'mega-millions'
-source_url = 'https://www.megamillions.com/Winning-Numbers/Previous-Drawings.aspx'
+source_url = 'https://dclottery.com/winning-numbers/past-draw-numbers?game=4'
 support_statuses = ['cataloged', 'rules_verified', 'ev_supported', 'fetch_supported', 'audit_supported', 'low_share_supported']
-results_adapter = 'official_national_results_page'
+results_adapter = 'dc_past_draw_numbers'
+blocking_reason = ''
 
 [[jurisdictions.offerings]]
 game_slug = 'lotto-america'
-support_statuses = ['cataloged']
-blocking_reason = 'Rules and fetch adapter pending'
+source_url = 'https://dclottery.com/winning-numbers/past-draw-numbers?game=363'
+support_statuses = ['cataloged', 'rules_verified', 'ev_supported', 'fetch_supported', 'audit_supported', 'low_share_supported']
+results_adapter = 'dc_past_draw_numbers'
+blocking_reason = ''
 
 [[jurisdictions.offerings]]
 game_slug = 'millionaire-for-life'
-support_statuses = ['cataloged']
-blocking_reason = 'Rules and fetch adapter pending'
+source_url = 'https://dclottery.com/winning-numbers/past-draw-numbers?game=376'
+support_statuses = ['cataloged', 'fetch_supported', 'audit_supported']
+results_adapter = 'dc_past_draw_numbers'
+blocking_reason = 'Rules verification pending'
 
 [[jurisdictions.offerings]]
 game_slug = 'dc-keno'
-support_statuses = ['cataloged']
-blocking_reason = 'Rules and fetch adapter pending'
+source_url = 'https://dclottery.com/winning-numbers/past-draw-numbers?game=1'
+support_statuses = ['cataloged', 'fetch_supported', 'audit_supported']
+results_adapter = 'dc_past_draw_numbers'
+blocking_reason = 'Rules verification pending'
 
 [[jurisdictions.offerings]]
 game_slug = 'race2riches'
-support_statuses = ['cataloged']
-blocking_reason = 'Rules and fetch adapter pending'
+source_url = 'https://dclottery.com/winning-numbers/past-draw-numbers?game=7'
+support_statuses = ['cataloged', 'fetch_supported', 'audit_supported']
+results_adapter = 'dc_past_draw_numbers'
+blocking_reason = 'Rules verification pending'
 
 [[jurisdictions]]
 code = 'al'

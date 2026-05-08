@@ -17,6 +17,7 @@ from nolottery.result_adapters import (
     colorado,
     connecticut,
     delaware,
+    district_of_columbia,
     florida,
     georgia,
     idaho,
@@ -70,6 +71,15 @@ def fetch_current_result(
         )
     if jurisdiction_code == "de" and game.slug in delaware._DELAWARE_SEARCH_WINNERS_GAMES:
         return _delaware_fetch(game, source_dir, read_source)
+    if (
+        jurisdiction_code == "dc"
+        and game.slug in district_of_columbia._DC_PAST_DRAW_NUMBERS_GAMES
+    ):
+        return district_of_columbia.fetch_dc_past_draw_numbers_result(
+            game,
+            source_dir,
+            read_source,
+        )
     if jurisdiction_code == "ga" and game.slug in georgia._GEORGIA_DRAW_GAMES:
         return _georgia_fetch(game, source_dir, read_source)
     if jurisdiction_code == "ky" and game.slug in kentucky._KENTUCKY_WINNING_NUMBERS_GAMES:
@@ -111,6 +121,16 @@ def fetch_backfill_result(
     source_dir: Path | None,
     read_source: SourceReader,
 ) -> AdapterFetch | None:
+    if (
+        jurisdiction_code == "dc"
+        and game.slug in district_of_columbia._DC_PAST_DRAW_NUMBERS_GAMES
+    ):
+        return district_of_columbia.fetch_dc_past_draw_numbers_result(
+            game,
+            source_dir,
+            read_source,
+            backfill=True,
+        )
     if (
         jurisdiction_code in national._OFFICIAL_NATIONAL_RESULTS_JURISDICTIONS
         and game.slug in national._OFFICIAL_NATIONAL_RESULTS_GAMES
@@ -222,6 +242,14 @@ def parse_draws(
     game_slug: str,
 ) -> tuple[ParsedDraw, ...]:
     if (
+        jurisdiction_code == "dc"
+        and game_slug in district_of_columbia._DC_PAST_DRAW_NUMBERS_GAMES
+    ):
+        return district_of_columbia.parse_dc_past_draw_numbers_page(
+            raw_content,
+            game_slug,
+        )
+    if (
         jurisdiction_code in national._OFFICIAL_NATIONAL_RESULTS_JURISDICTIONS
         and game_slug in national._OFFICIAL_NATIONAL_RESULTS_GAMES
     ):
@@ -232,7 +260,6 @@ def parse_draws(
         return california.parse_california_draw_game(raw_content)
     if jurisdiction_code == "or" and game_slug in oregon._OREGON_API_GAMES:
         return oregon.parse_oregon_api_results_json(raw_content, game_slug)
-
     spec = _parse_specs().get(jurisdiction_code)
     if spec is not None and game_slug in spec.game_slugs:
         return spec.parser(raw_content, game_slug)

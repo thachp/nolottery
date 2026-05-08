@@ -123,7 +123,7 @@ def test_coverage_reports_representative_catalog_jurisdictions(tmp_path):
             "mega-millions",
             "powerball",
         },
-        "dc": {"powerball", "mega-millions"},
+        "dc": {"powerball", "mega-millions", "lotto-america"},
     }
     expected = {
         "ny": (
@@ -190,20 +190,21 @@ def test_coverage_reports_representative_catalog_jurisdictions(tmp_path):
         payload = json.loads(result.output)
         assert payload["jurisdiction"] == name
         assert {game["game_slug"] for game in payload["games"]} == game_slugs
-        catalog_only_games = (
-            game
-            for game in payload["games"]
-            if game["game_slug"] not in ev_supported[jurisdiction]
-        )
-        assert all(
-            game["support_statuses"] == ["cataloged"]
-            for game in catalog_only_games
-        )
-        assert all(
-            game["blocking_reason"] == "Rules and fetch adapter pending"
-            for game in payload["games"]
-            if game["game_slug"] not in ev_supported[jurisdiction]
-        )
+        if jurisdiction != "dc":
+            catalog_only_games = (
+                game
+                for game in payload["games"]
+                if game["game_slug"] not in ev_supported[jurisdiction]
+            )
+            assert all(
+                game["support_statuses"] == ["cataloged"]
+                for game in catalog_only_games
+            )
+            assert all(
+                game["blocking_reason"] == "Rules and fetch adapter pending"
+                for game in payload["games"]
+                if game["game_slug"] not in ev_supported[jurisdiction]
+            )
         if jurisdiction == "dc":
             for game_slug in ev_supported[jurisdiction]:
                 game = next(
@@ -217,7 +218,42 @@ def test_coverage_reports_representative_catalog_jurisdictions(tmp_path):
                     "audit_supported",
                     "low_share_supported",
                 ]
-                assert game["results_adapter"] == "official_national_results_page"
+                assert game["results_adapter"] == "dc_past_draw_numbers"
+
+
+def test_coverage_reports_dc_past_drawing_capabilities(tmp_path):
+    result = runner.invoke(
+        app,
+        [
+            "--data-dir",
+            str(tmp_path),
+            "coverage",
+            "-j",
+            "dc",
+            "--output",
+            "json",
+        ],
+    )
+
+    assert result.exit_code == 0, result.output
+    payload = json.loads(result.output)
+    games = {game["game_slug"]: game for game in payload["games"]}
+
+    assert set(games) == {
+        "dc-3",
+        "dc-4",
+        "dc-5",
+        "powerball",
+        "mega-millions",
+        "lotto-america",
+        "millionaire-for-life",
+        "dc-keno",
+        "race2riches",
+    }
+    for game in games.values():
+        assert "fetch_supported" in game["support_statuses"]
+        assert "audit_supported" in game["support_statuses"]
+        assert game["results_adapter"] == "dc_past_draw_numbers"
 
 
 def test_coverage_reports_florida_and_new_york_ev_supported_games(tmp_path):

@@ -295,6 +295,80 @@ def _official_national_mega_millions_results_html() -> str:
     """
 
 
+def _dc_past_draw_numbers_html(
+    *rows: tuple[str, str, tuple[str, ...]],
+    next_page: int | None = None,
+) -> str:
+    row_html = "\n".join(
+        f"""
+          <tr>
+            <td headers="view-date-table-column" class="views-field views-field-date">
+              <time datetime="{iso_date}T00:00:00+00:00" class="datetime">{label}</time>
+            </td>
+            <td headers="view-nothing-table-column" class="views-field views-field-nothing">{draw}</td>
+            <td headers="view-data-table-column" class="views-field views-field-data">
+              {" ".join(f'<span class="ball ball_{index}">{number}</span>' for index, number in enumerate(numbers, start=1))}
+            </td>
+          </tr>
+        """
+        for iso_date, draw, numbers in rows
+        for label in (iso_date,)
+    )
+    next_html = (
+        f"""
+        <ul class="js-pager__items pager__items pager-show-more">
+          <li class="pager__item">
+            <a href="?game=10&amp;drawing_date=custom_range&amp;page={next_page}">
+              Show more
+            </a>
+          </li>
+        </ul>
+        """
+        if next_page is not None
+        else ""
+    )
+    return f"""
+    <html>
+      <body>
+        <table class="views-table views-view-table cols-3">
+          <thead>
+            <tr><th>Date</th><th>Draw</th><th>Winning Numbers</th></tr>
+          </thead>
+          <tbody>{row_html}</tbody>
+        </table>
+        {next_html}
+      </body>
+    </html>
+    """
+
+
+def _dc_past_draw_numbers_custom_html(
+    *rows: tuple[str, str, str],
+) -> str:
+    row_html = "\n".join(
+        f"""
+          <tr>
+            <td headers="view-date-table-column" class="views-field views-field-date">
+              <time datetime="{iso_date}T00:00:00+00:00" class="datetime">{label}</time>
+            </td>
+            <td headers="view-nothing-table-column" class="views-field views-field-nothing">{draw}</td>
+            <td headers="view-data-table-column" class="views-field views-field-data">{number_html}</td>
+          </tr>
+        """
+        for iso_date, draw, number_html in rows
+        for label in (iso_date,)
+    )
+    return f"""
+    <html>
+      <body>
+        <table class="views-table views-view-table cols-3">
+          <tbody>{row_html}</tbody>
+        </table>
+      </body>
+    </html>
+    """
+
+
 def _colorado_powerball_history_html() -> str:
     return """
     <html>
@@ -1874,21 +1948,186 @@ def test_fetch_reports_cataloged_game_without_fetch_support(tmp_path):
             "--data-dir",
             str(tmp_path),
             "fetch",
-            "dc-3",
+            "arizona-pick-3",
             "-j",
-            "dc",
+            "az",
             "--backfill",
         ],
     )
 
     assert result.exit_code != 0
-    assert "fetch support pending for game: dc-3" in result.output
+    assert "fetch support pending for game: arizona-pick-3" in result.output
+
+
+def test_fetch_dc_3_backfill_reads_paginated_official_past_drawings(tmp_path):
+    fixtures = tmp_path / "fixtures"
+    fixtures.mkdir()
+    (fixtures / "dc-3-dc-backfill-1.html").write_text(
+        _dc_past_draw_numbers_html(
+            ("2026-05-07", "11:30pm", ("7", "3", "2")),
+            ("2026-05-07", "7:50pm", ("5", "8", "1")),
+            next_page=1,
+        ),
+        encoding="utf-8",
+    )
+    (fixtures / "dc-3-dc-backfill-2.html").write_text(
+        _dc_past_draw_numbers_html(
+            ("2026-05-07", "1:50pm", ("2", "1", "0")),
+        ),
+        encoding="utf-8",
+    )
+
+    result = runner.invoke(
+        app,
+        [
+            "--data-dir",
+            str(tmp_path / "data"),
+            "fetch",
+            "dc-3",
+            "-j",
+            "dc",
+            "--backfill",
+            "--source-dir",
+            str(fixtures),
+        ],
+    )
+
+    assert result.exit_code == 0, result.output
+    assert "DC-3: fetched 3 draws and 0 prize rows from 2 pages" in result.output
+
+    conn = sqlite3.connect(tmp_path / "data" / "lottery.sqlite3")
+    rows = conn.execute(
+        """
+        select draw_date, winning_number
+        from draw_results
+        where jurisdiction_code = 'dc' and game_slug = 'dc-3'
+        order by id
+        """
+    ).fetchall()
+    assert rows == [
+        ("Thu, May 07, 2026 Night", "7 3 2"),
+        ("Thu, May 07, 2026 Evening", "5 8 1"),
+        ("Thu, May 07, 2026 Day", "2 1 0"),
+    ]
+
+
+@pytest.mark.parametrize(
+    ("game_slug", "number_html", "expected_winning_number"),
+    [
+        (
+            "lotto-america",
+            """
+            <div class="lotto-america-draw-wrapper">
+              <span class="ball redball_1">3</span>
+              <span class="ball redball_2">6</span>
+              <span class="ball redball_3">7</span>
+              <span class="ball redball_4">18</span>
+              <span class="ball redball_5">49</span>
+              <span class="ball starball">10</span>
+              <div class="allstarbonus">All-Star Bonus: 5x</div>
+            </div>
+            """,
+            "3 6 7 18 49 10 Star Ball All-Star Bonus: 5x",
+        ),
+        (
+            "dc-keno",
+            """
+            <span class="ball white">39</span>
+            <span class="ball white">17</span>
+            <span class="ball white">14</span>
+            <span class="ball white">60</span>
+            <span class="ball white">07</span>
+            <span class="ball white">27</span>
+            <span class="ball white">34</span>
+            <span class="ball white">29</span>
+            <span class="ball white">46</span>
+            <span class="ball white">42</span>
+            <span class="ball white">63</span>
+            <span class="ball white">26</span>
+            <span class="ball white">67</span>
+            <span class="ball white">79</span>
+            <span class="ball white">71</span>
+            <span class="ball white">74</span>
+            <span class="ball white">22</span>
+            <span class="ball white">50</span>
+            <span class="ball white">49</span>
+            <span class="ball white">18</span>
+            <span class="ball highlight">02</span>
+            """,
+            "39 17 14 60 07 27 34 29 46 42 63 26 67 79 71 74 22 50 49 18 02 Bonus",
+        ),
+        (
+            "race2riches",
+            """
+            <div class="race-2-riches-table">
+              <div class="race-2-riches-table-column">
+                <div class="race-2-riches-table-header">1st</div>
+                <div class="race-2-riches-table-row">01</div>
+              </div>
+              <div class="race-2-riches-table-column">
+                <div class="race-2-riches-table-header">2nd</div>
+                <div class="race-2-riches-table-row">08</div>
+              </div>
+              <div class="race-2-riches-table-column">
+                <div class="race-2-riches-table-header">3rd</div>
+                <div class="race-2-riches-table-row">04</div>
+              </div>
+              <div class="race-2-riches-table-column">
+                <div class="race-2-riches-table-header">4th</div>
+                <div class="race-2-riches-table-row">05</div>
+              </div>
+              <div class="race-2-riches-table-column bonus">
+                <div class="race-2-riches-table-header">Bonus</div>
+                <div class="race-2-riches-table-row">01</div>
+              </div>
+            </div>
+            """,
+            "1st 01, 2nd 08, 3rd 04, 4th 05, Bonus 01",
+        ),
+    ],
+)
+def test_fetch_dc_past_drawings_preserves_special_result_shapes(
+    tmp_path,
+    game_slug,
+    number_html,
+    expected_winning_number,
+):
+    source_file = tmp_path / f"{game_slug}.html"
+    source_file.write_text(
+        _dc_past_draw_numbers_custom_html(("2026-05-08", "2502497", number_html)),
+        encoding="utf-8",
+    )
+
+    result = runner.invoke(
+        app,
+        [
+            "--data-dir",
+            str(tmp_path / "data"),
+            "fetch",
+            game_slug,
+            "-j",
+            "dc",
+            "--source-file",
+            str(source_file),
+        ],
+    )
+
+    assert result.exit_code == 0, result.output
+    conn = sqlite3.connect(tmp_path / "data" / "lottery.sqlite3")
+    row = conn.execute(
+        """
+        select draw_date, winning_number
+        from draw_results
+        where jurisdiction_code = 'dc' and game_slug = ?
+        """,
+        (game_slug,),
+    ).fetchone()
+    assert row == ("Fri, May 08, 2026 Draw 2502497", expected_winning_number)
 
 
 @pytest.mark.parametrize(
     "jurisdiction",
     [
-        "dc",
         "ks",
         "nc",
         "nd",
@@ -1969,6 +2208,66 @@ def test_fetch_all_uses_supported_national_games(tmp_path, jurisdiction):
             "winning_number": "30, 36, 42, 60, 63, 13 Powerball",
         },
     ]
+
+
+def test_fetch_all_dc_backfill_uses_active_past_drawing_catalog(tmp_path):
+    fixtures = tmp_path / "fixtures"
+    fixtures.mkdir()
+    for game_slug in (
+        "dc-3",
+        "dc-4",
+        "dc-5",
+        "powerball",
+        "mega-millions",
+        "lotto-america",
+        "millionaire-for-life",
+        "dc-keno",
+        "race2riches",
+    ):
+        (fixtures / f"{game_slug}-dc-backfill-1.html").write_text(
+            _dc_past_draw_numbers_html(("2026-05-07", "", ("1", "2", "3"))),
+            encoding="utf-8",
+        )
+
+    result = runner.invoke(
+        app,
+        [
+            "--data-dir",
+            str(tmp_path / "data"),
+            "fetch",
+            "all",
+            "-j",
+            "dc",
+            "--backfill",
+            "--source-dir",
+            str(fixtures),
+        ],
+    )
+
+    assert result.exit_code == 0, result.output
+    assert "9 games fetched" in result.output
+    conn = sqlite3.connect(tmp_path / "data" / "lottery.sqlite3")
+    fetched_games = {
+        row[0]
+        for row in conn.execute(
+            """
+            select distinct game_slug
+            from draw_results
+            where jurisdiction_code = 'dc'
+            """
+        )
+    }
+    assert fetched_games == {
+        "dc-3",
+        "dc-4",
+        "dc-5",
+        "powerball",
+        "mega-millions",
+        "lotto-america",
+        "millionaire-for-life",
+        "dc-keno",
+        "race2riches",
+    }
 
 
 def test_fetch_all_oregon_backfill_uses_supported_national_and_local_games(tmp_path):
