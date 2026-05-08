@@ -1822,6 +1822,51 @@ def test_fetch_new_york_numbers_backfill_reads_official_json_fixture(tmp_path):
     ]
 
 
+def test_fetch_new_york_pick10_backfill_reads_paginated_official_json_fixtures(tmp_path):
+    fixtures = tmp_path / "fixtures"
+    fixtures.mkdir()
+    (fixtures / "pick-10-ny-backfill-1.json").write_text(
+        json.dumps(
+            [
+                {
+                    "draw_date": "2026-05-06T00:00:00.000",
+                    "winning_numbers": "01 04 07 11 16 17 19 25 34 35 37 41 46 47 58 65 67 71 73 75",
+                }
+            ]
+        ),
+        encoding="utf-8",
+    )
+    (fixtures / "pick-10-ny-backfill-2.json").write_text(
+        json.dumps(
+            [
+                {
+                    "draw_date": "2025-12-31T00:00:00.000",
+                    "winning_numbers": "02 05 08 12 18 21 24 28 31 36 39 43 45 50 54 59 61 66 70 80",
+                }
+            ]
+        ),
+        encoding="utf-8",
+    )
+
+    result = runner.invoke(
+        app,
+        [
+            "--data-dir",
+            str(tmp_path / "data"),
+            "fetch",
+            "pick-10",
+            "-j",
+            "ny",
+            "--backfill",
+            "--source-dir",
+            str(fixtures),
+        ],
+    )
+
+    assert result.exit_code == 0, result.output
+    assert "Pick 10: fetched 2 draws and 0 prize rows from 2 pages" in result.output
+
+
 def test_fetch_reports_cataloged_game_without_fetch_support(tmp_path):
     result = runner.invoke(
         app,
@@ -1829,15 +1874,15 @@ def test_fetch_reports_cataloged_game_without_fetch_support(tmp_path):
             "--data-dir",
             str(tmp_path),
             "fetch",
-            "new-york-lotto",
+            "dc-3",
             "-j",
-            "ny",
+            "dc",
             "--backfill",
         ],
     )
 
     assert result.exit_code != 0
-    assert "fetch support pending for game: new-york-lotto" in result.output
+    assert "fetch support pending for game: dc-3" in result.output
 
 
 @pytest.mark.parametrize(
@@ -5123,19 +5168,82 @@ def test_fetch_all_florida_backfill_reads_official_history_fixtures(tmp_path):
 def test_fetch_all_backfill_uses_supported_subset_for_new_york(tmp_path):
     fixtures = tmp_path / "fixtures"
     fixtures.mkdir()
-    for game_slug in ("numbers", "win-4"):
+    new_york_fixtures = {
+        "powerball": [
+            {
+                "draw_date": "2026-05-06T00:00:00.000",
+                "winning_numbers": "18 27 51 65 68 05",
+                "multiplier": "3",
+            }
+        ],
+        "new-york-lotto": [
+            {
+                "draw_date": "2026-05-06T00:00:00.000",
+                "winning_numbers": "11 13 32 34 39 49",
+                "bonus": "9",
+            }
+        ],
+        "mega-millions": [
+            {
+                "draw_date": "2026-05-05T00:00:00.000",
+                "winning_numbers": "12 22 50 51 55",
+                "mega_ball": "10",
+            }
+        ],
+        "millionaire-for-life": [
+            {
+                "draw_date": "2026-05-06T00:00:00.000",
+                "winning_numbers": "06 18 30 32 43",
+                "mill_ball": "1",
+            }
+        ],
+        "numbers": [
+            {
+                "draw_date": "2026-05-06T00:00:00.000",
+                "midday_daily": "319",
+                "evening_daily": "402",
+                "midday_win_4": "5954",
+                "evening_win_4": "2653",
+            }
+        ],
+        "win-4": [
+            {
+                "draw_date": "2026-05-06T00:00:00.000",
+                "midday_daily": "319",
+                "evening_daily": "402",
+                "midday_win_4": "5954",
+                "evening_win_4": "2653",
+            }
+        ],
+        "take-5": [
+            {
+                "draw_date": "2026-05-06T00:00:00.000",
+                "evening_winning_numbers": "13 14 17 28 30",
+                "midday_winning_numbers": "01 12 21 22 28",
+            }
+        ],
+        "quick-draw": [
+            {
+                "draw_date": "2026-05-06T00:00:00.000",
+                "draw_number": "2963352",
+                "draw_time": "04:04",
+                "winning_numbers": "02 03 04 16 19 20 23 30 35 38 42 47 56 57 62 65 67 70 73 79",
+            }
+        ],
+        "pick-10": [
+            {
+                "draw_date": "2026-05-06T00:00:00.000",
+                "winning_numbers": "01 04 07 11 16 17 19 25 34 35 37 41 46 47 58 65 67 71 73 75",
+            },
+            {
+                "draw_date": "2025-12-31T00:00:00.000",
+                "winning_numbers": "02 05 08 12 18 21 24 28 31 36 39 43 45 50 54 59 61 66 70 80",
+            },
+        ],
+    }
+    for game_slug, payload in new_york_fixtures.items():
         (fixtures / f"{game_slug}-ny-backfill.json").write_text(
-            json.dumps(
-                [
-                    {
-                        "draw_date": "2026-05-06T00:00:00.000",
-                        "midday_daily": "319",
-                        "evening_daily": "402",
-                        "midday_win_4": "5954",
-                        "evening_win_4": "2653",
-                    }
-                ]
-            ),
+            json.dumps(payload),
             encoding="utf-8",
         )
 
@@ -5155,10 +5263,53 @@ def test_fetch_all_backfill_uses_supported_subset_for_new_york(tmp_path):
     )
 
     assert result.exit_code == 0, result.output
-    assert "2 games fetched" in result.output
+    assert "9 games fetched" in result.output
+    assert "Powerball" in result.output
+    assert "LOTTO" in result.output
+    assert "Mega Millions" in result.output
+    assert "Millionaire For Life" in result.output
     assert "Numbers" in result.output
     assert "Win 4" in result.output
-    assert "LOTTO" not in result.output
+    assert "Take 5" in result.output
+    assert "Quick Draw" in result.output
+    assert "Pick 10" in result.output
+
+    draws_result = runner.invoke(
+        app,
+        [
+            "--data-dir",
+            str(tmp_path / "data"),
+            "draws",
+            "pick-10",
+            "-j",
+            "ny",
+            "--limit",
+            "2",
+            "--output",
+            "json",
+        ],
+    )
+
+    assert draws_result.exit_code == 0, draws_result.output
+    payload = json.loads(draws_result.output)
+    assert payload["games"][0]["draws"] == [
+        {
+            "jurisdiction_code": "ny",
+            "draw_date": "Wed, May 06, 2026",
+            "winning_number": (
+                "01, 04, 07, 11, 16, 17, 19, 25, 34, 35, "
+                "37, 41, 46, 47, 58, 65, 67, 71, 73, 75"
+            ),
+        },
+        {
+            "jurisdiction_code": "ny",
+            "draw_date": "Wed, Dec 31, 2025",
+            "winning_number": (
+                "02, 05, 08, 12, 18, 21, 24, 28, 31, 36, "
+                "39, 43, 45, 50, 54, 59, 61, 66, 70, 80"
+            ),
+        },
+    ]
 
 
 def test_draws_lists_recent_numbers_newest_first_and_deduped(tmp_path):

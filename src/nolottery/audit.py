@@ -121,6 +121,42 @@ AUDIT_RULES: dict[str, AuditRule] = {
             AuditPool("position_4", 0, 9, 1, ordered=True),
         ),
     ),
+    "numbers": AuditRule(
+        game_slug="numbers",
+        pools=(
+            AuditPool("position_1", 0, 9, 1, ordered=True),
+            AuditPool("position_2", 0, 9, 1, ordered=True),
+            AuditPool("position_3", 0, 9, 1, ordered=True),
+        ),
+    ),
+    "win-4": AuditRule(
+        game_slug="win-4",
+        pools=(
+            AuditPool("position_1", 0, 9, 1, ordered=True),
+            AuditPool("position_2", 0, 9, 1, ordered=True),
+            AuditPool("position_3", 0, 9, 1, ordered=True),
+            AuditPool("position_4", 0, 9, 1, ordered=True),
+        ),
+    ),
+    "new-york-lotto": AuditRule(
+        game_slug="new-york-lotto",
+        pools=(
+            AuditPool("numbers", 1, 59, 6),
+            AuditPool("bonus", 1, 59, 1),
+        ),
+    ),
+    "take-5": AuditRule(
+        game_slug="take-5",
+        pools=(AuditPool("numbers", 1, 39, 5),),
+    ),
+    "quick-draw": AuditRule(
+        game_slug="quick-draw",
+        pools=(AuditPool("numbers", 1, 80, 20),),
+    ),
+    "pick-10": AuditRule(
+        game_slug="pick-10",
+        pools=(AuditPool("numbers", 1, 80, 20),),
+    ),
     "oregon-megabucks": AuditRule(
         game_slug="oregon-megabucks",
         pools=(AuditPool("numbers", 1, 48, 6),),
@@ -319,6 +355,8 @@ def combination_audit(
         "oregon-pick-4",
         "texas-pick-3",
         "texas-daily-4",
+        "numbers",
+        "win-4",
     }:
         return _ordered_combination_audit(game_slug, size, draws, warnings)
     return [
@@ -794,6 +832,8 @@ def _parse_draw(
         "oregon-pick-4",
         "texas-pick-3",
         "texas-daily-4",
+        "numbers",
+        "win-4",
     }:
         if len(numbers) != len(rule.pools):
             return None
@@ -820,6 +860,13 @@ def _parse_draw(
         pools = {
             "white": tuple(numbers[:4]),
             "bonus_ball": (numbers[4],),
+        }
+    elif rule.game_slug == "new-york-lotto":
+        if len(numbers) != 7:
+            return None
+        pools = {
+            "numbers": tuple(numbers[:6]),
+            "bonus": (numbers[6],),
         }
     elif rule.game_slug in {"hot-spot", "oregon-keno"}:
         if len(numbers) != 20:
@@ -863,7 +910,7 @@ def _parse_numbers(game_slug: str, winning_number: str) -> tuple[int, ...]:
         return tuple(int(match) for match in matches)
     tokens = re.findall(r"\d+", winning_number)
     if (
-        game_slug in {"pick-3", "daily-3", "idaho-pick-3"}
+        game_slug in {"pick-3", "daily-3", "idaho-pick-3", "numbers"}
         and len(tokens) == 1
         and len(tokens[0]) == 3
     ):
@@ -871,7 +918,7 @@ def _parse_numbers(game_slug: str, winning_number: str) -> tuple[int, ...]:
     if game_slug == "texas-pick-3":
         return tuple(int(token) for token in tokens[:3])
     if (
-        game_slug in {"daily-4", "idaho-pick-4", "oregon-pick-4"}
+        game_slug in {"daily-4", "idaho-pick-4", "oregon-pick-4", "win-4"}
         and len(tokens) == 1
         and len(tokens[0]) == 4
     ):

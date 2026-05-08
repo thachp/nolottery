@@ -484,6 +484,86 @@ def test_audit_frequency_parses_active_texas_local_game_pools(tmp_path):
             assert all(audit["draw_count"] == 2 for audit in payload["audits"])
 
 
+def test_audit_frequency_parses_new_york_past_drawing_games(tmp_path):
+    conn = db.connect(tmp_path)
+    rows = [
+        ("ny", "powerball", "Wed, May 06, 2026", "18, 27, 51, 65, 68, 05 Powerball"),
+        ("ny", "new-york-lotto", "Wed, May 06, 2026", "11, 13, 32, 34, 39, 49, 9 Bonus"),
+        ("ny", "mega-millions", "Tue, May 05, 2026", "12, 22, 50, 51, 55, 10 Mega Ball"),
+        ("ny", "millionaire-for-life", "Wed, May 06, 2026", "06, 18, 30, 32, 43, 1 Life Ball"),
+        ("ny", "numbers", "Wed, May 06, 2026 Midday", "319"),
+        ("ny", "win-4", "Wed, May 06, 2026 Evening", "2653"),
+        ("ny", "take-5", "Wed, May 06, 2026 Midday", "01, 12, 21, 22, 28"),
+        (
+            "ny",
+            "quick-draw",
+            "Wed, May 06, 2026 04:04",
+            "02, 03, 04, 16, 19, 20, 23, 30, 35, 38, "
+            "42, 47, 56, 57, 62, 65, 67, 70, 73, 79",
+        ),
+        (
+            "ny",
+            "pick-10",
+            "Wed, May 06, 2026",
+            "01, 04, 07, 11, 16, 17, 19, 25, 34, 35, "
+            "37, 41, 46, 47, 58, 65, 67, 71, 73, 75",
+        ),
+    ]
+    conn.executemany(
+        """
+        insert into draw_results (
+            jurisdiction_code,
+            game_slug,
+            draw_date,
+            winning_number,
+            prize_amount,
+            wa_winners,
+            total
+        )
+        values (?, ?, ?, ?, 0, 0, 0)
+        """,
+        rows,
+    )
+    conn.commit()
+
+    cases = {
+        "powerball": ["white", "powerball"],
+        "new-york-lotto": ["numbers", "bonus"],
+        "mega-millions": ["white", "mega_ball"],
+        "millionaire-for-life": ["white", "life_ball"],
+        "numbers": ["position_1", "position_2", "position_3"],
+        "win-4": ["position_1", "position_2", "position_3", "position_4"],
+        "take-5": ["numbers"],
+        "quick-draw": ["numbers"],
+        "pick-10": ["numbers"],
+    }
+
+    for game_slug, expected_pools in cases.items():
+        result = runner.invoke(
+            app,
+            [
+                "--data-dir",
+                str(tmp_path),
+                "audit",
+                "frequency",
+                game_slug,
+                "-j",
+                "ny",
+                "--output",
+                "json",
+            ],
+        )
+
+        assert result.exit_code == 0, result.output
+        payload = json.loads(result.output)
+        if len(expected_pools) == 1:
+            assert payload["pool"] == expected_pools[0]
+            assert payload["draw_count"] == 1
+        else:
+            assert [audit["pool"] for audit in payload["audits"]] == expected_pools
+            assert all(audit["draw_count"] == 1 for audit in payload["audits"])
+
+
 def test_audit_pairs_includes_combination_chi_square_and_full_json_buckets(tmp_path):
     data_dir = tmp_path / "data"
     fixture = tmp_path / "hit-5.html"

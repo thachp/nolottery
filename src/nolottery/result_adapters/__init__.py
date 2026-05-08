@@ -53,8 +53,12 @@ def fetch_current_result(
 ) -> AdapterFetch | None:
     if jurisdiction_code == "fl" and game.slug in florida._FLORIDA_HISTORY_GAMES:
         return _florida_fetch(game, source_dir)
-    if jurisdiction_code == "ny" and game.slug in new_york._NEW_YORK_DAILY_GAMES:
-        return _new_york_fetch(game, source_dir, read_source)
+    if jurisdiction_code == "ny" and game.slug in new_york._NEW_YORK_OPEN_DATA_GAMES:
+        return new_york.fetch_new_york_open_data_result(
+            game,
+            source_dir,
+            read_source,
+        )
     if jurisdiction_code == "az" and game.slug in arizona._ARIZONA_PAST_180_GAMES:
         return _arizona_fetch(game, source_dir)
     if jurisdiction_code == "ct" and game.slug in connecticut._CONNECTICUT_WINNING_NUMBERS_GAMES:
@@ -143,6 +147,13 @@ def fetch_backfill_result(
         return colorado.fetch_colorado_backfill_result(game, source_dir, read_source)
     if jurisdiction_code == "or" and game.slug in oregon._OREGON_API_GAMES:
         return oregon.fetch_oregon_result(game, source_dir, read_source)
+    if jurisdiction_code == "ny" and game.slug in new_york._NEW_YORK_OPEN_DATA_GAMES:
+        return new_york.fetch_new_york_open_data_result(
+            game,
+            source_dir,
+            read_source,
+            backfill=True,
+        )
     return fetch_current_result(jurisdiction_code, game, source_dir, read_source)
 
 
@@ -273,7 +284,7 @@ def _parse_specs() -> dict[str, _ParseSpec]:
             "ky": _ParseSpec(kentucky._KENTUCKY_WINNING_NUMBERS_GAMES, kentucky.parse_kentucky_winning_numbers_json),
             "ma": _ParseSpec(massachusetts._MASSACHUSETTS_DRAW_RESULTS_GAMES, massachusetts.parse_massachusetts_draw_results_json),
             "mi": _ParseSpec(michigan._MICHIGAN_DRAW_HISTORY_GAMES, michigan.parse_michigan_draw_history_json),
-            "ny": _ParseSpec(new_york._NEW_YORK_DAILY_GAMES, new_york.parse_new_york_daily_numbers_json),
+            "ny": _ParseSpec(new_york._NEW_YORK_OPEN_DATA_GAMES, new_york.parse_new_york_open_data_json),
             "or": _ParseSpec(oregon._OREGON_API_GAMES, oregon.parse_oregon_api_results_json),
             "tx": _ParseSpec(texas._TEXAS_WINNING_NUMBER_GAMES, texas.parse_texas_winning_numbers),
         }
@@ -325,15 +336,7 @@ def _new_york_fetch(
     source_dir: Path | None,
     read_source: SourceReader,
 ) -> AdapterFetch:
-    return _read_and_parse(
-        read_source,
-        new_york._NEW_YORK_DAILY_NUMBERS_URL,
-        source_dir,
-        f"{game.slug}-ny-backfill",
-        game.slug,
-        new_york.parse_new_york_daily_numbers_json,
-        suffix=".json",
-    )
+    return new_york.fetch_new_york_open_data_result(game, source_dir, read_source)
 
 
 def _arizona_fetch(game: GameMetadata, source_dir: Path | None) -> AdapterFetch:

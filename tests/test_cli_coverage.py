@@ -99,7 +99,17 @@ def test_coverage_reports_washington_game_support_statuses(tmp_path):
 
 def test_coverage_reports_representative_catalog_jurisdictions(tmp_path):
     ev_supported = {
-        "ny": {"numbers", "win-4"},
+        "ny": {
+            "powerball",
+            "new-york-lotto",
+            "mega-millions",
+            "millionaire-for-life",
+            "numbers",
+            "win-4",
+            "take-5",
+            "quick-draw",
+            "pick-10",
+        },
         "fl": {
             "cash4life",
             "florida-cash-pop",
@@ -246,15 +256,44 @@ def test_coverage_reports_florida_and_new_york_ev_supported_games(tmp_path):
                 assert game["blocking_reason"] == ""
                 assert game["results_adapter"] == "fl_history_pdf"
             else:
-                assert game["support_statuses"] == [
-                    "cataloged",
-                    "rules_verified",
-                    "ev_supported",
-                    "fetch_supported",
-                    "low_share_supported",
-                ]
-                assert game["blocking_reason"] == "Audit support pending"
-                assert game["results_adapter"] == "ny_daily_numbers_socrata"
+                assert game["support_statuses"] == FULL_SUPPORT_STATUSES
+                assert game["blocking_reason"] == ""
+                assert game["results_adapter"] == "ny_open_data_socrata"
+
+
+def test_coverage_reports_new_york_past_drawing_capabilities(tmp_path):
+    result = runner.invoke(
+        app,
+        [
+            "--data-dir",
+            str(tmp_path),
+            "coverage",
+            "-j",
+            "ny",
+            "--output",
+            "json",
+        ],
+    )
+
+    assert result.exit_code == 0, result.output
+    payload = json.loads(result.output)
+    games = {game["game_slug"]: game for game in payload["games"]}
+
+    assert set(games) == {
+        "powerball",
+        "new-york-lotto",
+        "mega-millions",
+        "millionaire-for-life",
+        "numbers",
+        "win-4",
+        "take-5",
+        "quick-draw",
+        "pick-10",
+    }
+    for game in games.values():
+        assert "fetch_supported" in game["support_statuses"]
+        assert "audit_supported" in game["support_statuses"]
+        assert game["results_adapter"] == "ny_open_data_socrata"
 
 
 def test_coverage_reports_florida_full_history_fetch_support(tmp_path):

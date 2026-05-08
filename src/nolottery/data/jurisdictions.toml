@@ -88,51 +88,58 @@ name = 'New York'
 
 [[jurisdictions.offerings]]
 game_slug = 'powerball'
-support_statuses = ['cataloged']
-blocking_reason = 'Rules and fetch adapter pending'
+support_statuses = ['cataloged', 'rules_verified', 'ev_supported', 'fetch_supported', 'audit_supported', 'low_share_supported']
+results_adapter = 'ny_open_data_socrata'
+blocking_reason = ''
 
 [[jurisdictions.offerings]]
 game_slug = 'new-york-lotto'
-support_statuses = ['cataloged']
-blocking_reason = 'Rules and fetch adapter pending'
+support_statuses = ['cataloged', 'fetch_supported', 'audit_supported']
+results_adapter = 'ny_open_data_socrata'
+blocking_reason = 'Rules verification pending'
 
 [[jurisdictions.offerings]]
 game_slug = 'mega-millions'
-support_statuses = ['cataloged']
-blocking_reason = 'Rules and fetch adapter pending'
+support_statuses = ['cataloged', 'rules_verified', 'ev_supported', 'fetch_supported', 'audit_supported', 'low_share_supported']
+results_adapter = 'ny_open_data_socrata'
+blocking_reason = ''
 
 [[jurisdictions.offerings]]
 game_slug = 'millionaire-for-life'
-source_url = 'https://www.myarkansaslottery.com/games/millionaire-for-life'
-support_statuses = ['cataloged']
-blocking_reason = 'Rules and fetch adapter pending'
+source_url = 'https://data.ny.gov/d/a4w9-a3tp'
+support_statuses = ['cataloged', 'rules_verified', 'ev_supported', 'fetch_supported', 'audit_supported', 'low_share_supported']
+results_adapter = 'ny_open_data_socrata'
+blocking_reason = ''
 
 [[jurisdictions.offerings]]
 game_slug = 'numbers'
-support_statuses = ['cataloged', 'rules_verified', 'ev_supported', 'fetch_supported', 'low_share_supported']
-results_adapter = 'ny_daily_numbers_socrata'
-blocking_reason = 'Audit support pending'
+support_statuses = ['cataloged', 'rules_verified', 'ev_supported', 'fetch_supported', 'audit_supported', 'low_share_supported']
+results_adapter = 'ny_open_data_socrata'
+blocking_reason = ''
 
 [[jurisdictions.offerings]]
 game_slug = 'win-4'
-support_statuses = ['cataloged', 'rules_verified', 'ev_supported', 'fetch_supported', 'low_share_supported']
-results_adapter = 'ny_daily_numbers_socrata'
-blocking_reason = 'Audit support pending'
+support_statuses = ['cataloged', 'rules_verified', 'ev_supported', 'fetch_supported', 'audit_supported', 'low_share_supported']
+results_adapter = 'ny_open_data_socrata'
+blocking_reason = ''
 
 [[jurisdictions.offerings]]
 game_slug = 'take-5'
-support_statuses = ['cataloged']
-blocking_reason = 'Rules and fetch adapter pending'
+support_statuses = ['cataloged', 'fetch_supported', 'audit_supported']
+results_adapter = 'ny_open_data_socrata'
+blocking_reason = 'Rules verification pending'
 
 [[jurisdictions.offerings]]
 game_slug = 'quick-draw'
-support_statuses = ['cataloged']
-blocking_reason = 'Rules and fetch adapter pending'
+support_statuses = ['cataloged', 'fetch_supported', 'audit_supported']
+results_adapter = 'ny_open_data_socrata'
+blocking_reason = 'Rules verification pending'
 
 [[jurisdictions.offerings]]
 game_slug = 'pick-10'
-support_statuses = ['cataloged']
-blocking_reason = 'Rules and fetch adapter pending'
+support_statuses = ['cataloged', 'fetch_supported', 'audit_supported']
+results_adapter = 'ny_open_data_socrata'
+blocking_reason = 'Rules verification pending'
 
 [[jurisdictions]]
 code = 'fl'
