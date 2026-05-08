@@ -389,6 +389,8 @@ def _is_arithmetic_pattern(numbers: tuple[int, ...]) -> bool:
 def _target_spread(game_slug: str) -> int:
     return {
         "cashpop": 6,
+        "colorado-cash-5": 12,
+        "colorado-lotto-plus": 18,
         "daily-keno": 25,
         "hot-spot": 25,
         "hit-5": 16,

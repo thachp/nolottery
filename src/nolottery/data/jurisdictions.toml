@@ -351,7 +351,7 @@ blocking_reason = 'Rules and fetch adapter pending'
 [[jurisdictions]]
 code = 'co'
 name = 'Colorado'
-blocking_reason = 'Colorado local draw-game rules and adapters pending'
+blocking_reason = ''
 
 [[jurisdictions.offerings]]
 game_slug = 'powerball'
@@ -369,30 +369,31 @@ blocking_reason = ''
 
 [[jurisdictions.offerings]]
 game_slug = 'millionaire-for-life'
-source_url = 'https://www.coloradolottery.com/en/games/millionaire-for-life/'
-support_statuses = ['cataloged']
-blocking_reason = 'Rules and fetch adapter pending'
+source_url = 'https://www.coloradolottery.com/en/games/millionaireforlife/drawings/'
+support_statuses = ['cataloged', 'rules_verified', 'ev_supported', 'fetch_supported', 'audit_supported', 'low_share_supported']
+results_adapter = 'co_drawing_history'
+blocking_reason = ''
 
 [[jurisdictions.offerings]]
 game_slug = 'colorado-lotto-plus'
 source_url = 'https://www.coloradolottery.com/en/games/lotto/drawings/'
-support_statuses = ['cataloged', 'fetch_supported']
+support_statuses = ['cataloged', 'rules_verified', 'ev_supported', 'fetch_supported', 'audit_supported', 'low_share_supported']
 results_adapter = 'co_drawing_history'
-blocking_reason = 'Rules verification pending'
+blocking_reason = ''
 
 [[jurisdictions.offerings]]
 game_slug = 'colorado-cash-5'
 source_url = 'https://www.coloradolottery.com/en/games/cash5/drawings/'
-support_statuses = ['cataloged', 'fetch_supported']
+support_statuses = ['cataloged', 'rules_verified', 'ev_supported', 'fetch_supported', 'audit_supported', 'low_share_supported']
 results_adapter = 'co_drawing_history'
-blocking_reason = 'Rules verification pending'
+blocking_reason = ''
 
 [[jurisdictions.offerings]]
 game_slug = 'colorado-pick-3'
 source_url = 'https://www.coloradolottery.com/en/games/pick3/drawings/'
-support_statuses = ['cataloged', 'fetch_supported']
+support_statuses = ['cataloged', 'rules_verified', 'ev_supported', 'fetch_supported', 'audit_supported', 'low_share_supported']
 results_adapter = 'co_drawing_history'
-blocking_reason = 'Rules verification pending'
+blocking_reason = ''
 
 [[jurisdictions]]
 code = 'ct'

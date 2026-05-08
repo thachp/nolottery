@@ -352,6 +352,64 @@ def _colorado_local_history_html(
     """
 
 
+def _colorado_special_history_html(
+    *,
+    label: str,
+    rows: tuple[tuple[str, str, str], ...],
+) -> str:
+    draw_html = "\n".join(
+        f"<a>{draw_date}</a><p>{label}</p><p>{numbers}</p><p>{special}</p>"
+        for draw_date, numbers, special in rows
+    )
+    return f"""
+    <html>
+      <body>
+        <h1>{label}</h1>
+        {draw_html}
+      </body>
+    </html>
+    """
+
+
+def _colorado_structured_history_html(
+    *,
+    label: str,
+    rows: tuple[tuple[str, tuple[str, ...], str | None], ...],
+    month_links: tuple[str, ...] = (),
+) -> str:
+    option_html = "\n".join(
+        f'<option value="{month_link}">{month_link}</option>'
+        for month_link in month_links
+    )
+    draw_html = "\n".join(
+        f"""
+        <div class="drawing">
+          <div class="date"><a>{draw_date}</a></div>
+          <div class="draws">
+            <div class="draw">
+              <p class="title">{label}</p>
+              <div class="numbers-and-jackpot">
+                <p class="draw">{''.join(f'<span>{number}</span>' for number in numbers)}</p>
+                {f'<p class="extra"><span>{special}</span></p>' if special else ''}
+              </div>
+            </div>
+          </div>
+        </div>
+        """
+        for draw_date, numbers, special in rows
+    )
+    return f"""
+    <html>
+      <body>
+        <div class="recent-drawings">
+          {draw_html}
+        </div>
+        <select>{option_html}</select>
+      </body>
+    </html>
+    """
+
+
 def _connecticut_powerball_history_html() -> str:
     return """
     <form>
@@ -2430,6 +2488,74 @@ def test_fetch_colorado_powerball_backfill_reads_official_history_fixture(tmp_pa
     ]
 
 
+def test_fetch_colorado_backfill_reads_structured_month_history_pages(tmp_path):
+    fixtures = tmp_path / "fixtures"
+    fixtures.mkdir()
+    (fixtures / "colorado-lotto-plus-co-backfill.html").write_text(
+        _colorado_structured_history_html(
+            label="Colorado Lotto+ Numbers",
+            rows=(
+                ("Wednesday, 5/6/26", ("2", "25", "27", "28", "33", "37"), None),
+            ),
+            month_links=(
+                "/en/games/lotto/drawings/2026-05/",
+                "/en/games/lotto/drawings/2026-04/",
+            ),
+        ),
+        encoding="utf-8",
+    )
+    (fixtures / "colorado-lotto-plus-co-backfill-2026-04.html").write_text(
+        _colorado_structured_history_html(
+            label="Colorado Lotto+ Numbers",
+            rows=(
+                ("Wednesday, 4/29/26", ("1", "9", "12", "20", "30", "36"), None),
+            ),
+        ),
+        encoding="utf-8",
+    )
+
+    result = runner.invoke(
+        app,
+        [
+            "--data-dir",
+            str(tmp_path / "data"),
+            "fetch",
+            "colorado-lotto-plus",
+            "-j",
+            "co",
+            "--backfill",
+            "--source-dir",
+            str(fixtures),
+        ],
+    )
+
+    assert result.exit_code == 0, result.output
+    assert "Colorado Lotto+: fetched 2 draws" in result.output
+    assert "from 2 pages" in result.output
+    draws_result = runner.invoke(
+        app,
+        [
+            "--data-dir",
+            str(tmp_path / "data"),
+            "draws",
+            "colorado-lotto-plus",
+            "-j",
+            "co",
+            "--limit",
+            "10",
+            "--output",
+            "json",
+        ],
+    )
+
+    assert draws_result.exit_code == 0, draws_result.output
+    payload = json.loads(draws_result.output)
+    assert [draw["winning_number"] for draw in payload["games"][0]["draws"]] == [
+        "2, 25, 27, 28, 33, 37",
+        "1, 9, 12, 20, 30, 36",
+    ]
+
+
 def test_fetch_all_colorado_backfill_uses_supported_national_and_local_games(tmp_path):
     fixtures = tmp_path / "fixtures"
     fixtures.mkdir()
@@ -2439,6 +2565,16 @@ def test_fetch_all_colorado_backfill_uses_supported_national_and_local_games(tmp
     )
     (fixtures / "mega-millions-co-backfill.html").write_text(
         _colorado_mega_millions_history_html(),
+        encoding="utf-8",
+    )
+    (fixtures / "millionaire-for-life-co-backfill.html").write_text(
+        _colorado_special_history_html(
+            label="Millionaire for Life Numbers",
+            rows=(
+                ("Wednesday, 5/6/26", "6 18 30 32 43", "1"),
+                ("Monday, 5/4/26", "14 20 23 30 55", "2"),
+            ),
+        ),
         encoding="utf-8",
     )
     (fixtures / "colorado-lotto-plus-co-backfill.html").write_text(
@@ -2490,8 +2626,10 @@ def test_fetch_all_colorado_backfill_uses_supported_national_and_local_games(tmp
     assert result.exit_code == 0, result.output
     assert "Powerball" in result.output
     assert "Mega Millions" in result.output
-    assert "5 games fetched" in result.output
+    assert "Millionaire For Life" in result.output
+    assert "6 games fetched" in result.output
     expected = {
+        "millionaire-for-life": "6, 18, 30, 32, 43, 1 Life Ball",
         "colorado-lotto-plus": "1, 9, 12, 20, 30, 36",
         "colorado-cash-5": "2, 10, 16, 25, 31",
         "colorado-pick-3": "3, 7, 1",

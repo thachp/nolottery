@@ -138,6 +138,18 @@ NUMBER_FORMATS: dict[str, NumberFormat] = {
         game_slug="match-4",
         pools=(NumberPool("white", 1, 24, 4),),
     ),
+    "colorado-lotto-plus": NumberFormat(
+        game_slug="colorado-lotto-plus",
+        pools=(NumberPool("numbers", 1, 40, 6),),
+    ),
+    "colorado-cash-5": NumberFormat(
+        game_slug="colorado-cash-5",
+        pools=(NumberPool("numbers", 1, 32, 5),),
+    ),
+    "colorado-pick-3": NumberFormat(
+        game_slug="colorado-pick-3",
+        pools=(NumberPool("digits", 0, 9, 3, ordered=True, allow_repeats=True),),
+    ),
     "texas-lotto": NumberFormat(
         game_slug="texas-lotto",
         pools=(NumberPool("numbers", 1, 54, 6),),

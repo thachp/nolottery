@@ -6,14 +6,74 @@ name = 'Colorado Lotto+'
 source_url = 'https://www.coloradolottery.com/en/games/colorado-lotto-plus/'
 reviewed_on = '2026-05-07'
 
+[[games.wager_options]]
+slug = 'standard'
+label = 'Standard $2'
+ticket_cost = 2.0
+
+[[games.wager_options.prize_tiers]]
+label = '6 of 6 Jackpot Estimate'
+probability = 2.6052657631605e-07
+prize = 2700000
+
+[[games.wager_options.prize_tiers]]
+label = '5 of 6 Average Multiplier'
+probability = 5.31474215684742e-05
+prize = 700
+
+[[games.wager_options.prize_tiers]]
+label = '4 of 6 Average Multiplier'
+probability = 0.0021923311396995606
+prize = 70
+
+[[games.wager_options.prize_tiers]]
+label = '3 of 6 Average Multiplier'
+probability = 0.031179820653504865
+prize = 8.4
+
 [[games]]
 slug = 'colorado-cash-5'
 name = 'Cash 5'
 source_url = 'https://www.coloradolottery.com/en/games/cash-5/'
 reviewed_on = '2026-05-07'
 
+[[games.wager_options]]
+slug = 'standard'
+label = 'Standard $1'
+ticket_cost = 1.0
+
+[[games.wager_options.prize_tiers]]
+label = '5 of 5'
+probability = 4.965835054822819e-06
+prize = 20000
+
+[[games.wager_options.prize_tiers]]
+label = '4 of 5'
+probability = 0.0006703877324010806
+prize = 200
+
+[[games.wager_options.prize_tiers]]
+label = '3 of 5'
+probability = 0.017430081042428096
+prize = 10
+
+[[games.wager_options.prize_tiers]]
+label = '2 of 5'
+probability = 0.14525067535356745
+prize = 1
+
 [[games]]
 slug = 'colorado-pick-3'
 name = 'Pick 3'
 source_url = 'https://www.coloradolottery.com/en/games/pick-3/'
 reviewed_on = '2026-05-07'
+
+[[games.wager_options]]
+slug = 'exact-order-1'
+label = 'Exact Order $1'
+ticket_cost = 1.0
+
+[[games.wager_options.prize_tiers]]
+label = 'Exact Order'
+probability = 0.001
+prize = 500

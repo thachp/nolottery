@@ -164,6 +164,22 @@ AUDIT_RULES: dict[str, AuditRule] = {
         game_slug="match-4",
         pools=(AuditPool("numbers", 1, 24, 4),),
     ),
+    "colorado-lotto-plus": AuditRule(
+        game_slug="colorado-lotto-plus",
+        pools=(AuditPool("numbers", 1, 40, 6),),
+    ),
+    "colorado-cash-5": AuditRule(
+        game_slug="colorado-cash-5",
+        pools=(AuditPool("numbers", 1, 32, 5),),
+    ),
+    "colorado-pick-3": AuditRule(
+        game_slug="colorado-pick-3",
+        pools=(
+            AuditPool("position_1", 0, 9, 1, ordered=True),
+            AuditPool("position_2", 0, 9, 1, ordered=True),
+            AuditPool("position_3", 0, 9, 1, ordered=True),
+        ),
+    ),
     "mega-millions": AuditRule(
         game_slug="mega-millions",
         pools=(
@@ -297,6 +313,7 @@ def combination_audit(
         "daily-3",
         "daily-4",
         "daily-derby",
+        "colorado-pick-3",
         "idaho-pick-3",
         "idaho-pick-4",
         "oregon-pick-4",
@@ -574,7 +591,14 @@ def _ordered_combination_audit(
     warnings: tuple[str, ...],
 ) -> list[dict[str, object]]:
     if (
-        game_slug in {"pick-3", "daily-3", "idaho-pick-3", "texas-pick-3"}
+        game_slug
+        in {
+            "pick-3",
+            "daily-3",
+            "colorado-pick-3",
+            "idaho-pick-3",
+            "texas-pick-3",
+        }
         and size == 2
     ):
         return [
@@ -764,6 +788,7 @@ def _parse_draw(
         "pick-3",
         "daily-3",
         "daily-4",
+        "colorado-pick-3",
         "idaho-pick-3",
         "idaho-pick-4",
         "oregon-pick-4",

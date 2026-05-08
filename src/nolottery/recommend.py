@@ -117,6 +117,7 @@ def suggest_numbers(game_slug: str, option_slug: str) -> tuple[int, ...]:
         "florida-pick-3": 3,
         "florida-pick-4": 4,
         "florida-pick-5": 5,
+        "colorado-pick-3": 3,
         "idaho-pick-3": 3,
         "idaho-pick-4": 4,
         "oregon-pick-4": 4,
@@ -166,6 +167,10 @@ def suggest_numbers(game_slug: str, option_slug: str) -> tuple[int, ...]:
         return (1, 2, 3, 4, 5)
     if game_slug == "match-4":
         return (1, 2, 3, 4)
+    if game_slug == "colorado-lotto-plus":
+        return (1, 2, 3, 4, 5, 6)
+    if game_slug == "colorado-cash-5":
+        return (1, 2, 3, 4, 5)
     if game_slug == "texas-lotto":
         return (1, 2, 3, 4, 5, 6)
     if game_slug == "texas-two-step":

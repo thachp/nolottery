@@ -204,6 +204,40 @@ def test_low_share_supports_active_oregon_draw_games(tmp_path):
         assert all(len(pick["numbers"]) == first_option_count for pick in picks)
 
 
+def test_low_share_supports_active_colorado_draw_games(tmp_path):
+    for game_slug, first_option_count in [
+        ("colorado-lotto-plus", 6),
+        ("colorado-cash-5", 5),
+        ("colorado-pick-3", 3),
+        ("millionaire-for-life", 6),
+    ]:
+        result = runner.invoke(
+            app,
+            [
+                "--data-dir",
+                str(tmp_path / game_slug),
+                "low-share",
+                game_slug,
+                "-j",
+                "co",
+                "--count",
+                "2",
+                "--candidates",
+                "50",
+                "--seed",
+                "4",
+                "--output",
+                "json",
+            ],
+        )
+
+        assert result.exit_code == 0, result.output
+        payload = json.loads(result.output)
+        picks = payload["games"][0]["options"][0]["picks"]
+        assert len(picks) == 2
+        assert all(len(pick["numbers"]) == first_option_count for pick in picks)
+
+
 def test_low_share_supports_active_texas_local_draw_games(tmp_path):
     for game_slug, first_option_count in [
         ("texas-lotto", 6),

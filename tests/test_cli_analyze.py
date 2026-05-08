@@ -203,6 +203,37 @@ def test_analyze_supports_active_oregon_draw_games(tmp_path):
         assert payload["options"]
 
 
+def test_analyze_supports_active_colorado_draw_games(tmp_path):
+    expected_best_options = {
+        "colorado-lotto-plus": "Standard $2",
+        "colorado-cash-5": "Standard $1",
+        "colorado-pick-3": "Exact Order $1",
+        "millionaire-for-life": "Standard $5",
+    }
+
+    for game_slug, best_option in expected_best_options.items():
+        result = runner.invoke(
+            app,
+            [
+                "--data-dir",
+                str(tmp_path / game_slug),
+                "analyze",
+                game_slug,
+                "-j",
+                "co",
+                "--output",
+                "json",
+            ],
+        )
+
+        assert result.exit_code == 0, result.output
+        payload = json.loads(result.output)
+        assert payload["jurisdiction_code"] == "co"
+        assert payload["game_slug"] == game_slug
+        assert payload["best_option"] == best_option
+        assert payload["options"]
+
+
 def test_analyze_supports_active_texas_local_draw_games(tmp_path):
     expected_best_options = {
         "texas-lotto": "Standard $1",

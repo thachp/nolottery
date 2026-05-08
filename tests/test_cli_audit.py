@@ -304,6 +304,78 @@ def test_audit_frequency_parses_active_oregon_game_pools(tmp_path):
             assert all(audit["draw_count"] == 2 for audit in payload["audits"])
 
 
+def test_audit_frequency_parses_active_colorado_game_pools(tmp_path):
+    conn = db.connect(tmp_path)
+    rows = [
+        ("co", "colorado-lotto-plus", "Wed, May 06, 2026", "01, 09, 12, 20, 30, 36"),
+        ("co", "colorado-lotto-plus", "Sat, May 02, 2026", "04, 07, 17, 26, 33, 40"),
+        ("co", "colorado-cash-5", "Wed, May 06, 2026", "02, 10, 16, 25, 31"),
+        ("co", "colorado-cash-5", "Tue, May 05, 2026", "04, 08, 15, 21, 29"),
+        ("co", "colorado-pick-3", "Tue, Jan 13, 2026 Midday", "03, 07, 01"),
+        ("co", "colorado-pick-3", "Mon, Jan 12, 2026 Evening", "09, 00, 04"),
+        (
+            "co",
+            "millionaire-for-life",
+            "Wed, May 06, 2026",
+            "06, 18, 30, 32, 43, 01 Life Ball",
+        ),
+        (
+            "co",
+            "millionaire-for-life",
+            "Mon, May 04, 2026",
+            "14, 20, 23, 30, 55, 02 Life Ball",
+        ),
+    ]
+    conn.executemany(
+        """
+        insert into draw_results (
+            jurisdiction_code,
+            game_slug,
+            draw_date,
+            winning_number,
+            prize_amount,
+            wa_winners,
+            total
+        )
+        values (?, ?, ?, ?, 0, 0, 0)
+        """,
+        rows,
+    )
+    conn.commit()
+
+    cases = {
+        "colorado-lotto-plus": ["numbers"],
+        "colorado-cash-5": ["numbers"],
+        "colorado-pick-3": ["position_1", "position_2", "position_3"],
+        "millionaire-for-life": ["white", "life_ball"],
+    }
+
+    for game_slug, expected_pools in cases.items():
+        result = runner.invoke(
+            app,
+            [
+                "--data-dir",
+                str(tmp_path),
+                "audit",
+                "frequency",
+                game_slug,
+                "-j",
+                "co",
+                "--output",
+                "json",
+            ],
+        )
+
+        assert result.exit_code == 0, result.output
+        payload = json.loads(result.output)
+        if len(expected_pools) == 1:
+            assert payload["pool"] == expected_pools[0]
+            assert payload["draw_count"] == 2
+        else:
+            assert [audit["pool"] for audit in payload["audits"]] == expected_pools
+            assert all(audit["draw_count"] == 2 for audit in payload["audits"])
+
+
 def test_audit_frequency_parses_active_texas_local_game_pools(tmp_path):
     conn = db.connect(tmp_path)
     rows = [

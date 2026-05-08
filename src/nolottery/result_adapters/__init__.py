@@ -139,6 +139,8 @@ def fetch_backfill_result(
             game.slug,
             idaho.parse_idaho_draw_page,
         )
+    if jurisdiction_code == "co" and game.slug in colorado._COLORADO_DRAWING_HISTORY_GAMES:
+        return colorado.fetch_colorado_backfill_result(game, source_dir, read_source)
     if jurisdiction_code == "or" and game.slug in oregon._OREGON_API_GAMES:
         return oregon.fetch_oregon_result(game, source_dir, read_source)
     return fetch_current_result(jurisdiction_code, game, source_dir, read_source)

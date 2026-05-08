@@ -1907,7 +1907,7 @@ def test_coverage_reports_nebraska_catalog_and_supported_national_games(tmp_path
     )
 
 
-def test_coverage_reports_colorado_catalog_and_supported_national_games(tmp_path):
+def test_coverage_reports_colorado_full_draw_game_catalog(tmp_path):
     result = runner.invoke(
         app,
         [
@@ -1943,12 +1943,21 @@ def test_coverage_reports_colorado_catalog_and_supported_national_games(tmp_path
         "low_share_supported",
     ]
     assert games["mega-millions"]["results_adapter"] == "co_drawing_history"
+    full_support_statuses = [
+        "cataloged",
+        "rules_verified",
+        "ev_supported",
+        "fetch_supported",
+        "audit_supported",
+        "low_share_supported",
+    ]
     assert all(
-        games[game_slug]["support_statuses"] == ["cataloged", "fetch_supported"]
+        games[game_slug]["support_statuses"] == full_support_statuses
         for game_slug in {
             "colorado-cash-5",
             "colorado-lotto-plus",
             "colorado-pick-3",
+            "millionaire-for-life",
         }
     )
     assert all(
@@ -1957,19 +1966,17 @@ def test_coverage_reports_colorado_catalog_and_supported_national_games(tmp_path
             "colorado-cash-5",
             "colorado-lotto-plus",
             "colorado-pick-3",
+            "millionaire-for-life",
         }
     )
     assert all(
-        games[game_slug]["blocking_reason"] == "Rules verification pending"
+        games[game_slug]["blocking_reason"] == ""
         for game_slug in {
             "colorado-cash-5",
             "colorado-lotto-plus",
             "colorado-pick-3",
+            "millionaire-for-life",
         }
-    )
-    assert games["millionaire-for-life"]["support_statuses"] == ["cataloged"]
-    assert games["millionaire-for-life"]["blocking_reason"] == (
-        "Rules and fetch adapter pending"
     )
 
 
