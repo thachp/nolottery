@@ -590,6 +590,9 @@ def _idaho_local_history_html(*numbers_by_date: tuple[str, tuple[str, ...]]) -> 
 def _oregon_api_config_html() -> str:
     return """
     <html>
+      <script type="application/ld+json">
+        {"url":"https:\\/\\/www.oregonlottery.org\\/jackpot\\/megabucks\\/"}
+      </script>
       <script>
         var olapi = {"url":"https://api2.oregonlottery.org","apikey":"test-key"};
       </script>
@@ -2893,6 +2896,46 @@ def test_fetch_oregon_active_local_games_backfill_reads_official_api_fixtures(
             draw["winning_number"] == expected_number
             for draw in payload["games"][0]["draws"]
         )
+
+
+def test_fetch_oregon_live_api_config_uses_olapi_url_when_page_has_other_urls(
+    tmp_path,
+    monkeypatch,
+):
+    api_calls = []
+
+    def fake_read_source(source_url, source_dir, source_name, *, suffix=".html"):
+        assert source_name == "oregon-megabucks-or-discovery"
+        return _oregon_api_config_html(), source_url
+
+    def fake_read_oregon_api(api_url, api_key):
+        api_calls.append((api_url, api_key))
+        return _oregon_megabucks_results_json(), api_url
+
+    monkeypatch.setattr("nolottery.fetch._read_source", fake_read_source)
+    monkeypatch.setattr(
+        "nolottery.result_adapters.oregon._read_oregon_api",
+        fake_read_oregon_api,
+    )
+
+    result = runner.invoke(
+        app,
+        [
+            "--data-dir",
+            str(tmp_path / "data"),
+            "fetch",
+            "oregon-megabucks",
+            "-j",
+            "or",
+        ],
+    )
+
+    assert result.exit_code == 0, result.output
+    assert api_calls
+    assert api_calls[0][0].startswith(
+        "https://api2.oregonlottery.org/drawresults/ByDrawDate?"
+    )
+    assert api_calls[0][1] == "test-key"
 
 
 def test_fetch_illinois_powerball_backfill_reads_official_results_fixture(tmp_path):

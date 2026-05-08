@@ -139,18 +139,22 @@ def parse_oregon_keno_json(raw_json: str) -> tuple[ParsedDraw, ...]:
 
 
 def _parse_oregon_api_config(raw_html: str) -> _OregonApiConfig:
-    api_url_match = re.search(r'"url"\s*:\s*"([^"]+)"', raw_html)
+    olapi_match = re.search(r"var\s+olapi\s*=\s*(\{.*?\});", raw_html, re.DOTALL)
+    if olapi_match is not None:
+        payload = json.loads(olapi_match.group(1))
+        api_url = str(payload.get("url") or "")
+        api_key = str(payload.get("apikey") or "")
+        if api_url and api_key:
+            return _OregonApiConfig(api_url=api_url, api_key=api_key)
+
     api_key_match = re.search(r'"apikey"\s*:\s*"([^"]+)"', raw_html)
-    if api_url_match is None:
-        api_url_match = re.search(r"https://api2\.oregonlottery\.org", raw_html)
+    api_url_match = re.search(r"https://api2\.oregonlottery\.org", raw_html)
     if api_url_match is None or api_key_match is None:
         raise ValueError("could not find Oregon Lottery API configuration")
-    api_url = (
-        api_url_match.group(1)
-        if api_url_match.lastindex
-        else api_url_match.group(0)
+    return _OregonApiConfig(
+        api_url=api_url_match.group(0),
+        api_key=api_key_match.group(1),
     )
-    return _OregonApiConfig(api_url=api_url, api_key=api_key_match.group(1))
 
 
 def _oregon_api_url(
