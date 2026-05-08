@@ -90,6 +90,10 @@ def format_number_label(
         return f"White: {_join_numbers(numbers[:5])}; Star Ball: {numbers[5]}"
     if game_slug == "millionaire-for-life" and len(numbers) == 6:
         return f"White: {_join_numbers(numbers[:5])}; Life Ball: {numbers[5]}"
+    if game_slug == "nebraska-myday" and len(numbers) == 3:
+        return f"Month: {numbers[0]}; Day: {numbers[1]}; Year: {numbers[2]:02d}"
+    if game_slug == "nebraska-2by2" and len(numbers) == 4:
+        return f"Red: {_join_numbers(numbers[:2])}; White: {_join_numbers(numbers[2:])}"
     if game_slug == "superlotto-plus" and len(numbers) == 6:
         return f"White: {_join_numbers(numbers[:5])}; Mega: {numbers[5]}"
     if game_slug == "daily-derby" and len(numbers) == 4:
@@ -124,6 +128,8 @@ def suggest_numbers(game_slug: str, option_slug: str) -> tuple[int, ...]:
         "numbers": 3,
         "texas-pick-3": 3,
         "texas-daily-4": 4,
+        "nebraska-pick-4": 4,
+        "nebraska-pick-3": 3,
         "win-4": 4,
     }.get(game_slug)
     if digit_count is not None:
@@ -179,6 +185,12 @@ def suggest_numbers(game_slug: str, option_slug: str) -> tuple[int, ...]:
         return (1, 2, 3, 4, 5)
     if game_slug == "texas-all-or-nothing":
         return tuple(range(1, 13))
+    if game_slug == "nebraska-pick-5":
+        return (1, 2, 3, 4, 5)
+    if game_slug == "nebraska-myday":
+        return (1, 2, 3)
+    if game_slug == "nebraska-2by2":
+        return (1, 2, 1, 2)
     if game_slug == "pick-3":
         if "-3-way-" in option_slug:
             return (1, 1, 2)

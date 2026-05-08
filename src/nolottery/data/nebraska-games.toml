@@ -6,11 +6,46 @@ name = 'Pick 5'
 source_url = 'https://nelottery.com/homeapp/lotto/31/gamedetail'
 reviewed_on = '2026-05-07'
 
+[[games.wager_options]]
+slug = 'standard'
+label = 'Standard $1'
+ticket_cost = 1.0
+
+[[games.wager_options.prize_tiers]]
+label = '5 of 5 Jackpot Estimate'
+probability = 1.5197386639685596e-06
+prize = 50000
+
+[[games.wager_options.prize_tiers]]
+label = '4 of 5'
+probability = 0.00026595744680851064
+prize = 500
+
+[[games.wager_options.prize_tiers]]
+label = '3 of 5'
+probability = 0.009009009009009009
+prize = 9
+
+[[games.wager_options.prize_tiers]]
+label = '2 of 5 Free Quick Pick'
+probability = 0.1
+prize = 1
+
 [[games]]
 slug = 'nebraska-pick-4'
 name = 'Pick 4'
 source_url = 'https://nelottery.com/homeapp/lotto/41/gamedetail'
 reviewed_on = '2026-05-07'
+
+[[games.wager_options]]
+slug = 'straight-1'
+label = 'Straight $1'
+ticket_cost = 1.0
+
+[[games.wager_options.prize_tiers]]
+label = 'Straight'
+probability = 0.0001
+prize = 6000
 
 [[games]]
 slug = 'nebraska-pick-3'
@@ -18,14 +53,109 @@ name = 'Pick 3'
 source_url = 'https://nelottery.com/homeapp/lotto/32/gamedetail'
 reviewed_on = '2026-05-07'
 
+[[games.wager_options]]
+slug = 'straight-1'
+label = 'Straight $1'
+ticket_cost = 1.0
+
+[[games.wager_options.prize_tiers]]
+label = 'Straight'
+probability = 0.001
+prize = 600
+
 [[games]]
 slug = 'nebraska-myday'
 name = 'MyDaY'
 source_url = 'https://nelottery.com/homeapp/lotto/33/gamedetail'
 reviewed_on = '2026-05-07'
 
+[[games.wager_options]]
+slug = 'standard'
+label = 'Standard $1'
+ticket_cost = 1.0
+
+[[games.wager_options.prize_tiers]]
+label = 'Month+Day+Year'
+probability = 2.737850787132101e-05
+prize = 5000
+
+[[games.wager_options.prize_tiers]]
+label = 'Day+Year'
+probability = 0.00030120481927710846
+prize = 365
+
+[[games.wager_options.prize_tiers]]
+label = 'Month+Year'
+probability = 0.0008064516129032258
+prize = 52
+
+[[games.wager_options.prize_tiers]]
+label = 'Month+Day'
+probability = 0.0027100271002710027
+prize = 12
+
+[[games.wager_options.prize_tiers]]
+label = 'Year'
+probability = 0.008849557522123894
+prize = 7
+
+[[games.wager_options.prize_tiers]]
+label = 'Day'
+probability = 0.029411764705882353
+prize = 4
+
+[[games.wager_options.prize_tiers]]
+label = 'Month'
+probability = 0.07692307692307693
+prize = 1
+
 [[games]]
 slug = 'nebraska-2by2'
 name = '2by2'
 source_url = 'https://nelottery.com/homeapp/lotto/34/gamedetail'
 reviewed_on = '2026-05-07'
+
+[[games.wager_options]]
+slug = 'standard'
+label = 'Standard $1'
+ticket_cost = 1.0
+
+[[games.wager_options.prize_tiers]]
+label = '2 Red + 2 White'
+probability = 9.467455621301775e-06
+prize = 22000
+
+[[games.wager_options.prize_tiers]]
+label = '2 Red + 1 White'
+probability = 0.0004543389368468878
+prize = 100
+
+[[games.wager_options.prize_tiers]]
+label = '1 Red + 2 White'
+probability = 0.0004543389368468878
+prize = 100
+
+[[games.wager_options.prize_tiers]]
+label = '2 Red'
+probability = 0.0026109660574412533
+prize = 3
+
+[[games.wager_options.prize_tiers]]
+label = '2 White'
+probability = 0.0026109660574412533
+prize = 3
+
+[[games.wager_options.prize_tiers]]
+label = '1 Red + 1 White'
+probability = 0.021739130434782608
+prize = 3
+
+[[games.wager_options.prize_tiers]]
+label = '1 Red Free Quick Pick'
+probability = 0.125
+prize = 1
+
+[[games.wager_options.prize_tiers]]
+label = '1 White Free Quick Pick'
+probability = 0.125
+prize = 1

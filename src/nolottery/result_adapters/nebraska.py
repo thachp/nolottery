@@ -23,6 +23,7 @@ _NEBRASKA_DRAW_RESULTS_GAMES = {
     "mega-millions": (30, "Mega Millions", ("", "Mega Ball")),
     "lotto-america": (40, "Lotto America", ("", "Star Ball", None)),
     "millionaire-for-life": (42, "Millionaire for Life", ("", "Millionaire Ball")),
+    "lucky-for-life": (37, "Lucky for Life", ("", "Lucky Ball")),
     "nebraska-pick-5": (31, "Pick 5", ("",)),
     "nebraska-pick-4": (41, "Pick 4", ("",)),
     "nebraska-pick-3": (32, "Pick 3", ("",)),

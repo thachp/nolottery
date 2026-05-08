@@ -1465,6 +1465,11 @@ def _nebraska_full_numbers_html() -> str:
           <tr><th>Date</th><th>White</th><th>Millionaire Ball</th></tr>
           <tr><td><strong>05/06/2026</strong></td><td>02, 03, 14, 32, 44</td><td>07</td></tr>
         </table>
+        <h2>Lucky for Life Numbers</h2>
+        <table class="numbertable">
+          <tr><th>Date</th><th>White</th><th>Lucky Ball</th></tr>
+          <tr><td><strong>02/17/2026</strong></td><td>05, 11, 18, 24, 43</td><td>12</td></tr>
+        </table>
         <h2>Pick 5 Numbers</h2>
         <table class="numbertable">
           <tr><th>Date</th><th>Numbers</th></tr>
@@ -5433,6 +5438,58 @@ def test_fetch_nebraska_pick_5_backfill_reads_official_search_fixture(tmp_path):
     ]
 
 
+def test_fetch_nebraska_lucky_for_life_backfill_reads_past_drawings(tmp_path):
+    fixtures = tmp_path / "fixtures"
+    fixtures.mkdir()
+    (fixtures / "lucky-for-life-ne-backfill.html").write_text(
+        _nebraska_full_numbers_html(),
+        encoding="utf-8",
+    )
+
+    result = runner.invoke(
+        app,
+        [
+            "--data-dir",
+            str(tmp_path / "data"),
+            "fetch",
+            "lucky-for-life",
+            "-j",
+            "ne",
+            "--backfill",
+            "--source-dir",
+            str(fixtures),
+        ],
+    )
+
+    assert result.exit_code == 0, result.output
+    assert "Lucky for Life" in result.output
+    assert "1 draw" in result.output
+
+    draws_result = runner.invoke(
+        app,
+        [
+            "--data-dir",
+            str(tmp_path / "data"),
+            "draws",
+            "lucky-for-life",
+            "-j",
+            "ne",
+            "--output",
+            "json",
+        ],
+    )
+
+    assert draws_result.exit_code == 0, draws_result.output
+    payload = json.loads(draws_result.output)
+    assert payload["games"][0]["draws"] == [
+        {
+            "jurisdiction_code": "ne",
+            "draw_date": "Tue, Feb 17, 2026",
+            "winning_number": "5, 11, 18, 24, 43, 12 Lucky Ball",
+        }
+    ]
+
+
 @pytest.mark.parametrize(
     ("game_slug", "expected_winning_number"),
     [
@@ -5491,7 +5548,7 @@ def test_fetch_nebraska_backfill_covers_local_result_shapes(
     assert payload["games"][0]["draws"][0]["winning_number"] == expected_winning_number
 
 
-def test_fetch_all_nebraska_backfill_uses_full_active_draw_game_set(tmp_path):
+def test_fetch_all_nebraska_backfill_uses_full_draw_result_game_set(tmp_path):
     fixtures = tmp_path / "fixtures"
     fixtures.mkdir()
     fixture_html = _nebraska_full_numbers_html()
@@ -5499,6 +5556,7 @@ def test_fetch_all_nebraska_backfill_uses_full_active_draw_game_set(tmp_path):
         "powerball",
         "mega-millions",
         "lotto-america",
+        "lucky-for-life",
         "millionaire-for-life",
         "nebraska-pick-5",
         "nebraska-pick-4",
@@ -5527,7 +5585,7 @@ def test_fetch_all_nebraska_backfill_uses_full_active_draw_game_set(tmp_path):
     )
 
     assert result.exit_code == 0, result.output
-    assert "9 games fetched" in result.output
+    assert "10 games fetched" in result.output
 
     conn = sqlite3.connect(tmp_path / "data" / "lottery.sqlite3")
     try:
@@ -5544,6 +5602,7 @@ def test_fetch_all_nebraska_backfill_uses_full_active_draw_game_set(tmp_path):
         conn.close()
     assert rows == [
         ("lotto-america", 1),
+        ("lucky-for-life", 1),
         ("mega-millions", 1),
         ("millionaire-for-life", 1),
         ("nebraska-2by2", 1),

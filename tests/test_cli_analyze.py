@@ -267,6 +267,40 @@ def test_analyze_supports_active_texas_local_draw_games(tmp_path):
         assert payload["options"]
 
 
+def test_analyze_supports_active_nebraska_local_draw_games(tmp_path):
+    expected_best_options = {
+        "lotto-america": "Standard $1",
+        "millionaire-for-life": "Standard $5",
+        "nebraska-pick-5": "Standard $1",
+        "nebraska-pick-4": "Straight $1",
+        "nebraska-pick-3": "Straight $1",
+        "nebraska-myday": "Standard $1",
+        "nebraska-2by2": "Standard $1",
+    }
+
+    for game_slug, best_option in expected_best_options.items():
+        result = runner.invoke(
+            app,
+            [
+                "--data-dir",
+                str(tmp_path / game_slug),
+                "analyze",
+                game_slug,
+                "-j",
+                "ne",
+                "--output",
+                "json",
+            ],
+        )
+
+        assert result.exit_code == 0, result.output
+        payload = json.loads(result.output)
+        assert payload["jurisdiction_code"] == "ne"
+        assert payload["game_slug"] == game_slug
+        assert payload["best_option"] == best_option
+        assert payload["options"]
+
+
 def test_analyze_reports_cataloged_game_without_ev_support(tmp_path):
     result = runner.invoke(
         app,
@@ -508,6 +542,36 @@ def test_recommend_supports_florida_pick_2(tmp_path):
     assert payload["best"]["game_slug"] == "florida-pick-2"
     assert payload["best"]["number_selection"] == [1, 2]
     assert len(payload["best"]["prediction"]) == 2
+
+
+def test_recommend_supports_nebraska_local_number_selection(tmp_path):
+    result = runner.invoke(
+        app,
+        [
+            "--data-dir",
+            str(tmp_path),
+            "recommend",
+            "-j",
+            "ne",
+            "--budget",
+            "1",
+            "--output",
+            "json",
+        ],
+    )
+
+    assert result.exit_code == 0, result.output
+    payload = json.loads(result.output)
+    local_recommendations = {
+        recommendation["game_slug"]: recommendation
+        for recommendation in payload["recommendations"]
+        if recommendation["game_slug"].startswith("nebraska-")
+    }
+    assert local_recommendations
+    assert all(
+        recommendation["number_selection"]
+        for recommendation in local_recommendations.values()
+    )
 
 
 @pytest.mark.parametrize(

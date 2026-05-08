@@ -274,6 +274,43 @@ def test_low_share_supports_active_texas_local_draw_games(tmp_path):
         assert all(len(pick["numbers"]) == first_option_count for pick in picks)
 
 
+def test_low_share_supports_active_nebraska_local_draw_games(tmp_path):
+    for game_slug, first_option_count in [
+        ("lotto-america", 6),
+        ("millionaire-for-life", 6),
+        ("nebraska-pick-5", 5),
+        ("nebraska-pick-4", 4),
+        ("nebraska-pick-3", 3),
+        ("nebraska-myday", 3),
+        ("nebraska-2by2", 4),
+    ]:
+        result = runner.invoke(
+            app,
+            [
+                "--data-dir",
+                str(tmp_path / game_slug),
+                "low-share",
+                game_slug,
+                "-j",
+                "ne",
+                "--count",
+                "2",
+                "--candidates",
+                "50",
+                "--seed",
+                "4",
+                "--output",
+                "json",
+            ],
+        )
+
+        assert result.exit_code == 0, result.output
+        payload = json.loads(result.output)
+        picks = payload["games"][0]["options"][0]["picks"]
+        assert len(picks) == 2
+        assert all(len(pick["numbers"]) == first_option_count for pick in picks)
+
+
 def test_low_share_reports_cataloged_game_without_low_share_support(tmp_path):
     result = runner.invoke(
         app,

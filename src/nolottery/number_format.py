@@ -177,6 +177,33 @@ NUMBER_FORMATS: dict[str, NumberFormat] = {
         game_slug="texas-daily-4",
         pools=(NumberPool("digits", 0, 9, 4, ordered=True, allow_repeats=True),),
     ),
+    "nebraska-pick-5": NumberFormat(
+        game_slug="nebraska-pick-5",
+        pools=(NumberPool("numbers", 1, 40, 5),),
+    ),
+    "nebraska-pick-4": NumberFormat(
+        game_slug="nebraska-pick-4",
+        pools=(NumberPool("digits", 0, 9, 4, ordered=True, allow_repeats=True),),
+    ),
+    "nebraska-pick-3": NumberFormat(
+        game_slug="nebraska-pick-3",
+        pools=(NumberPool("digits", 0, 9, 3, ordered=True, allow_repeats=True),),
+    ),
+    "nebraska-myday": NumberFormat(
+        game_slug="nebraska-myday",
+        pools=(
+            NumberPool("month", 1, 12, 1),
+            NumberPool("day", 1, 31, 1),
+            NumberPool("year", 0, 99, 1),
+        ),
+    ),
+    "nebraska-2by2": NumberFormat(
+        game_slug="nebraska-2by2",
+        pools=(
+            NumberPool("red", 1, 26, 2),
+            NumberPool("white", 1, 26, 2),
+        ),
+    ),
 }
 
 
