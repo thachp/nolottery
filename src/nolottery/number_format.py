@@ -45,6 +45,40 @@ NUMBER_FORMATS: dict[str, NumberFormat] = {
             NumberPool("mega-ball", 1, 24, 1),
         ),
     ),
+    "lotto-america": NumberFormat(
+        game_slug="lotto-america",
+        pools=(
+            NumberPool("white", 1, 52, 5),
+            NumberPool("star-ball", 1, 10, 1),
+        ),
+    ),
+    "millionaire-for-life": NumberFormat(
+        game_slug="millionaire-for-life",
+        pools=(
+            NumberPool("white", 1, 58, 5),
+            NumberPool("life-ball", 1, 5, 1),
+        ),
+    ),
+    "idaho-cash": NumberFormat(
+        game_slug="idaho-cash",
+        pools=(NumberPool("white", 1, 45, 5),),
+    ),
+    "idaho-pick-3": NumberFormat(
+        game_slug="idaho-pick-3",
+        pools=(NumberPool("digits", 0, 9, 3, ordered=True, allow_repeats=True),),
+    ),
+    "idaho-pick-4": NumberFormat(
+        game_slug="idaho-pick-4",
+        pools=(NumberPool("digits", 0, 9, 4, ordered=True, allow_repeats=True),),
+    ),
+    "oregon-megabucks": NumberFormat(
+        game_slug="oregon-megabucks",
+        pools=(NumberPool("white", 1, 48, 6),),
+    ),
+    "oregon-cash-pop": NumberFormat(
+        game_slug="oregon-cash-pop",
+        pools=(NumberPool("numbers", 1, 15, 1),),
+    ),
     "superlotto-plus": NumberFormat(
         game_slug="superlotto-plus",
         pools=(
@@ -106,12 +140,12 @@ def quick_pick(
     rng: RandomSource | None = None,
 ) -> tuple[int, ...]:
     source = rng if rng is not None else random.SystemRandom()
-    if game_slug == "cashpop":
+    if game_slug in {"cashpop", "oregon-cash-pop"}:
         count = _selection_count(option_slug)
         if count >= 15:
             return tuple(range(1, 16))
         return tuple(sorted(source.sample(range(1, 16), count)))
-    if game_slug == "daily-keno":
+    if game_slug in {"daily-keno", "oregon-keno"}:
         return tuple(sorted(source.sample(range(1, 81), _selection_count(option_slug))))
     if game_slug == "hot-spot":
         return tuple(sorted(source.sample(range(1, 81), _selection_count(option_slug))))

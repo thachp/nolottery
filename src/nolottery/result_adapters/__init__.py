@@ -36,6 +36,7 @@ from nolottery.result_adapters import (
     national,
     nebraska,
     new_york,
+    oregon,
     texas,
     washington,
 )
@@ -83,6 +84,8 @@ def fetch_current_result(
             michigan._michigan_draw_history_source,
             michigan.parse_michigan_draw_history_json,
         )
+    if jurisdiction_code == "or" and game.slug in oregon._OREGON_API_GAMES:
+        return oregon.fetch_oregon_result(game, source_dir, read_source)
 
     simple_specs = _current_simple_specs()
     spec = simple_specs.get(jurisdiction_code)
@@ -136,6 +139,8 @@ def fetch_backfill_result(
             game.slug,
             idaho.parse_idaho_draw_page,
         )
+    if jurisdiction_code == "or" and game.slug in oregon._OREGON_API_GAMES:
+        return oregon.fetch_oregon_result(game, source_dir, read_source)
     return fetch_current_result(jurisdiction_code, game, source_dir, read_source)
 
 
@@ -212,6 +217,8 @@ def parse_draws(
         return california.parse_california_hot_spot(raw_content)
     if jurisdiction_code == "ca" and game_slug in california._CALIFORNIA_GAME_SLUGS:
         return california.parse_california_draw_game(raw_content)
+    if jurisdiction_code == "or" and game_slug in oregon._OREGON_API_GAMES:
+        return oregon.parse_oregon_api_results_json(raw_content, game_slug)
 
     spec = _parse_specs().get(jurisdiction_code)
     if spec is not None and game_slug in spec.game_slugs:
@@ -265,6 +272,7 @@ def _parse_specs() -> dict[str, _ParseSpec]:
             "ma": _ParseSpec(massachusetts._MASSACHUSETTS_DRAW_RESULTS_GAMES, massachusetts.parse_massachusetts_draw_results_json),
             "mi": _ParseSpec(michigan._MICHIGAN_DRAW_HISTORY_GAMES, michigan.parse_michigan_draw_history_json),
             "ny": _ParseSpec(new_york._NEW_YORK_DAILY_GAMES, new_york.parse_new_york_daily_numbers_json),
+            "or": _ParseSpec(oregon._OREGON_API_GAMES, oregon.parse_oregon_api_results_json),
             "tx": _ParseSpec(texas._TEXAS_SPECIAL_NUMBER_NAMES, texas.parse_texas_winning_numbers),
         }
     )

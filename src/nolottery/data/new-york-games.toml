@@ -12,6 +12,56 @@ name = 'Millionaire For Life'
 source_url = 'https://nylottery.ny.gov/draw-game/?game=millionaireforlife'
 reviewed_on = '2026-05-07'
 
+[[games.wager_options]]
+slug = 'standard'
+label = 'Standard $5'
+ticket_cost = 5.0
+
+[[games.wager_options.prize_tiers]]
+label = '5 White + Life Ball'
+probability = 4.3647956533618965e-08
+prize = 18000000
+
+[[games.wager_options.prize_tiers]]
+label = '5 White'
+probability = 1.7459182613447586e-07
+prize = 2200000
+
+[[games.wager_options.prize_tiers]]
+label = '4 White + Life Ball'
+probability = 1.1566711005725522e-05
+prize = 7500
+
+[[games.wager_options.prize_tiers]]
+label = '4 White'
+probability = 4.626630887387804e-05
+prize = 500
+
+[[games.wager_options.prize_tiers]]
+label = '3 White + Life Ball'
+probability = 0.0006013229104028864
+prize = 250
+
+[[games.wager_options.prize_tiers]]
+label = '3 White'
+probability = 0.002403846153846154
+prize = 50
+
+[[games.wager_options.prize_tiers]]
+label = '2 White + Life Ball'
+probability = 0.01020408163265306
+prize = 25
+
+[[games.wager_options.prize_tiers]]
+label = '2 White'
+probability = 0.04
+prize = 8
+
+[[games.wager_options.prize_tiers]]
+label = '1 White + Life Ball'
+probability = 0.0625
+prize = 8
+
 [[games]]
 slug = 'numbers'
 name = 'Numbers'

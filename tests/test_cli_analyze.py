@@ -139,6 +139,68 @@ def test_analyze_supports_other_florida_and_new_york_fixed_digit_rules(tmp_path)
         assert payload["options"][0]["gross_ev"] == prize * probability
 
 
+def test_analyze_supports_active_idaho_draw_games(tmp_path):
+    expected_best_options = {
+        "idaho-cash": "Two Plays $1",
+        "idaho-pick-3": "Exact Order $1",
+        "idaho-pick-4": "Exact Order $1",
+        "lotto-america": "Standard $1",
+        "millionaire-for-life": "Standard $5",
+    }
+
+    for game_slug, best_option in expected_best_options.items():
+        result = runner.invoke(
+            app,
+            [
+                "--data-dir",
+                str(tmp_path / game_slug),
+                "analyze",
+                game_slug,
+                "-j",
+                "id",
+                "--output",
+                "json",
+            ],
+        )
+
+        assert result.exit_code == 0, result.output
+        payload = json.loads(result.output)
+        assert payload["jurisdiction_code"] == "id"
+        assert payload["game_slug"] == game_slug
+        assert payload["best_option"] == best_option
+        assert payload["options"]
+
+
+def test_analyze_supports_active_oregon_draw_games(tmp_path):
+    expected_best_options = {
+        "oregon-megabucks": "Standard $1",
+        "oregon-keno": "2-Spot $1",
+        "oregon-cash-pop": "1 POP $1",
+    }
+
+    for game_slug, best_option in expected_best_options.items():
+        result = runner.invoke(
+            app,
+            [
+                "--data-dir",
+                str(tmp_path / game_slug),
+                "analyze",
+                game_slug,
+                "-j",
+                "or",
+                "--output",
+                "json",
+            ],
+        )
+
+        assert result.exit_code == 0, result.output
+        payload = json.loads(result.output)
+        assert payload["jurisdiction_code"] == "or"
+        assert payload["game_slug"] == game_slug
+        assert payload["best_option"] == best_option
+        assert payload["options"]
+
+
 def test_analyze_reports_cataloged_game_without_ev_support(tmp_path):
     result = runner.invoke(
         app,

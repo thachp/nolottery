@@ -138,7 +138,7 @@ def analyze(
     metadata = db.get_game(conn, game, jurisdiction)
     if metadata is None:
         raise typer.BadParameter(f"unknown game: {game}")
-    _validate_ev_supported(metadata)
+    _validate_ev_supported(jurisdiction, metadata)
 
     result = analyze_game(metadata, AppSettings())
     if output == "json":
@@ -538,7 +538,7 @@ def low_share(
         metadata = db.get_game(conn, game, jurisdiction)
         if metadata is None:
             raise typer.BadParameter(f"unknown game: {game}")
-        _validate_low_share_supported(metadata)
+        _validate_low_share_supported(jurisdiction, metadata)
         games = (metadata,)
 
     results = tuple(
@@ -1025,13 +1025,21 @@ def _validate_jurisdiction(conn, jurisdiction_code: str) -> None:
         raise typer.BadParameter(f"unknown jurisdiction: {jurisdiction_code}")
 
 
-def _validate_ev_supported(metadata: GameMetadata) -> None:
-    if not metadata.wager_options:
+def _validate_ev_supported(jurisdiction_code: str, metadata: GameMetadata) -> None:
+    if not metadata.wager_options or not _game_has_support_status(
+        jurisdiction_code,
+        metadata.slug,
+        "ev_supported",
+    ):
         raise typer.BadParameter(f"EV support pending for game: {metadata.slug}")
 
 
-def _validate_low_share_supported(metadata: GameMetadata) -> None:
-    if not metadata.wager_options:
+def _validate_low_share_supported(jurisdiction_code: str, metadata: GameMetadata) -> None:
+    if not metadata.wager_options or not _game_has_support_status(
+        jurisdiction_code,
+        metadata.slug,
+        "low_share_supported",
+    ):
         raise typer.BadParameter(
             f"low-share support pending for game: {metadata.slug}"
         )
@@ -1094,6 +1102,7 @@ def _load_ev_games(
         metadata
         for metadata in _load_games(conn, jurisdiction_code)
         if metadata.wager_options
+        and _game_has_support_status(jurisdiction_code, metadata.slug, "ev_supported")
     )
 
 

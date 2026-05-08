@@ -527,31 +527,18 @@ def _idaho_powerball_history_html() -> str:
     return """
     <html>
       <body>
-        <div id="tab4">
-          <table>
-            <caption>Winning Numbers</caption>
-            <tbody>
-              <tr>
-                <td data-title="Date">05/06/26</td>
-                <td data-title="Winning Numbers">
-                  <ul class="list-numbers list-numbers--bordered Powerball">
-                    <li>18</li><li>27</li><li>51</li><li>65</li><li>68</li>
-                    <li class="ball_red">5</li>
-                  </ul>
-                </td>
-              </tr>
-              <tr>
-                <td data-title="Date">05/04/26</td>
-                <td data-title="Winning Numbers">
-                  <ul class="list-numbers list-numbers--bordered Powerball">
-                    <li>30</li><li>36</li><li>42</li><li>60</li><li>63</li>
-                    <li class="ball_red">13</li>
-                  </ul>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+        <table>
+          <tbody>
+            <tr>
+              <td>2026-05-06</td>
+              <td>18 27 51 65 68 PB: 5 MP: x3 4,21,36,48,69,5</td>
+            </tr>
+            <tr>
+              <td>2026-05-04</td>
+              <td>30 36 42 60 63 PB: 13 MP: x2 20,32,35,51,60,7</td>
+            </tr>
+          </tbody>
+        </table>
       </body>
     </html>
     """
@@ -561,25 +548,142 @@ def _idaho_mega_millions_history_html() -> str:
     return """
     <html>
       <body>
+        <table>
+          <tbody>
+            <tr>
+              <td>2026-05-05</td>
+              <td>12 22 50 51 55 MB: 10</td>
+            </tr>
+          </tbody>
+        </table>
+      </body>
+    </html>
+    """
+
+
+def _idaho_local_history_html(*numbers_by_date: tuple[str, tuple[str, ...]]) -> str:
+    rows = "\n".join(
+        f"""
+              <tr>
+                <td>{date}</td>
+                <td data-title="Winning Numbers">
+                  {' '.join(numbers)}
+                </td>
+              </tr>
+        """
+        for date, numbers in numbers_by_date
+    )
+    return f"""
+    <html>
+      <body>
         <div id="tab4">
           <table>
             <caption>Winning Numbers</caption>
-            <tbody>
-              <tr>
-                <td data-title="Date">05/05/26</td>
-                <td data-title="Winning Numbers">
-                  <ul class="list-numbers list-numbers--bordered MegaMillions">
-                    <li>12</li><li>22</li><li>50</li><li>51</li><li>55</li>
-                    <li class="ball_yellow">10</li>
-                  </ul>
-                </td>
-              </tr>
-            </tbody>
+            <tbody>{rows}</tbody>
           </table>
         </div>
       </body>
     </html>
     """
+
+
+def _oregon_api_config_html() -> str:
+    return """
+    <html>
+      <script>
+        var olapi = {"url":"https://api2.oregonlottery.org","apikey":"test-key"};
+      </script>
+    </html>
+    """
+
+
+def _oregon_megabucks_results_json() -> str:
+    return json.dumps(
+        [
+            {
+                "DrawDateTime": "2026-05-06T19:30:00",
+                "WinningNumbers": [3, 9, 10, 28, 31, 39, 0, 0, 0, 0],
+            },
+            {
+                "DrawDateTime": "2026-05-02T19:30:00",
+                "WinningNumbers": [4, 10, 19, 27, 33, 42, 0, 0, 0, 0],
+            },
+        ]
+    )
+
+
+def _oregon_cash_pop_results_json() -> str:
+    return json.dumps(
+        [
+            {
+                "DrawDateTime": "2026-05-07T17:00:00",
+                "WinningNumbers": [8, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            },
+            {
+                "DrawDateTime": "2026-05-07T18:00:00",
+                "WinningNumbers": [14, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            },
+        ]
+    )
+
+
+def _oregon_keno_results_json() -> str:
+    return json.dumps(
+        [
+            {
+                "DrawDateTime": "2026-05-07T17:00:00",
+                "WinningNumbers": [
+                    5,
+                    7,
+                    8,
+                    10,
+                    11,
+                    13,
+                    16,
+                    17,
+                    20,
+                    22,
+                    28,
+                    32,
+                    33,
+                    35,
+                    41,
+                    44,
+                    45,
+                    56,
+                    70,
+                    72,
+                ],
+                "BullsEye": 54,
+            },
+            {
+                "DrawDateTime": "2026-05-07T17:04:00",
+                "WinningNumbers": [
+                    1,
+                    4,
+                    5,
+                    6,
+                    8,
+                    13,
+                    15,
+                    25,
+                    31,
+                    36,
+                    38,
+                    42,
+                    48,
+                    52,
+                    55,
+                    59,
+                    61,
+                    64,
+                    73,
+                    79,
+                ],
+                "BullsEye": 36,
+            },
+        ]
+    )
 
 
 def _illinois_powerball_results_html() -> str:
@@ -1616,7 +1720,6 @@ def test_fetch_reports_cataloged_game_without_fetch_support(tmp_path):
         "nm",
         "oh",
         "ok",
-        "or",
         "pa",
         "ri",
         "sc",
@@ -1689,6 +1792,55 @@ def test_fetch_all_uses_supported_national_games(tmp_path, jurisdiction):
             "winning_number": "30, 36, 42, 60, 63, 13 Powerball",
         },
     ]
+
+
+def test_fetch_all_oregon_backfill_uses_supported_national_and_local_games(tmp_path):
+    fixtures = tmp_path / "fixtures"
+    fixtures.mkdir()
+    (fixtures / "powerball.html").write_text(
+        _official_national_powerball_results_html(),
+        encoding="utf-8",
+    )
+    (fixtures / "mega-millions.html").write_text(
+        _official_national_mega_millions_results_html(),
+        encoding="utf-8",
+    )
+    for game_slug, raw_json in {
+        "oregon-megabucks": _oregon_megabucks_results_json(),
+        "oregon-cash-pop": _oregon_cash_pop_results_json(),
+        "oregon-keno": _oregon_keno_results_json(),
+    }.items():
+        (fixtures / f"{game_slug}-or-discovery.html").write_text(
+            _oregon_api_config_html(),
+            encoding="utf-8",
+        )
+        (fixtures / f"{game_slug}-or-backfill.json").write_text(
+            raw_json,
+            encoding="utf-8",
+        )
+
+    result = runner.invoke(
+        app,
+        [
+            "--data-dir",
+            str(tmp_path / "data"),
+            "fetch",
+            "all",
+            "-j",
+            "or",
+            "--backfill",
+            "--source-dir",
+            str(fixtures),
+        ],
+    )
+
+    assert result.exit_code == 0, result.output
+    assert "Powerball" in result.output
+    assert "Mega Millions" in result.output
+    assert "Oregon's Game Megabucks" in result.output
+    assert "Keno" in result.output
+    assert "Cash Pop" in result.output
+    assert "5 games fetched" in result.output
 
 
 def test_fetch_texas_powerball_backfill_reads_official_history_fixture(tmp_path):
@@ -2470,6 +2622,277 @@ def test_fetch_idaho_mega_millions_backfill_reads_official_draw_page_fixture(
             "winning_number": "12, 22, 50, 51, 55, 10 Mega Ball",
         }
     ]
+
+
+def test_fetch_idaho_active_local_games_backfill_reads_official_draw_page_fixture(
+    tmp_path,
+):
+    fixtures = tmp_path / "fixtures"
+    fixtures.mkdir()
+    (fixtures / "powerball-id-backfill.html").write_text(
+        _idaho_powerball_history_html(),
+        encoding="utf-8",
+    )
+    (fixtures / "mega-millions-id-backfill.html").write_text(
+        _idaho_mega_millions_history_html(),
+        encoding="utf-8",
+    )
+    cases = {
+        "idaho-cash": (
+            _idaho_local_history_html(
+                ("2026-05-06", ("02", "05", "17", "23", "43")),
+                ("2026-05-05", ("05", "06", "15", "17", "22")),
+            ),
+            "02, 05, 17, 23, 43",
+        ),
+        "idaho-pick-3": (
+            _idaho_local_history_html(
+                ("2026-05-07 Night", ("8", "2", "4")),
+                ("2026-05-07 Day", ("4", "1", "3")),
+            ),
+            "4, 1, 3",
+        ),
+        "idaho-pick-4": (
+            _idaho_local_history_html(
+                ("2026-05-07 Night", ("9", "4", "0", "4")),
+                ("2026-05-07 Day", ("6", "8", "2", "8")),
+            ),
+            "6, 8, 2, 8",
+        ),
+        "lotto-america": (
+            _idaho_local_history_html(
+                (
+                    "2026-05-06",
+                    ("03", "06", "07", "18", "49", "SB:", "10", "MP:", "x5"),
+                ),
+                (
+                    "2026-05-04",
+                    ("09", "10", "12", "50", "52", "SB:", "03", "MP:", "x3"),
+                ),
+            ),
+            "03, 06, 07, 18, 49, 10 Star Ball",
+        ),
+        "millionaire-for-life": (
+            _idaho_local_history_html(
+                ("2026-05-06", ("06", "18", "30", "32", "43", "MB:", "01")),
+                ("2026-05-05", ("14", "20", "23", "30", "55", "MB:", "02")),
+            ),
+            "06, 18, 30, 32, 43, 01 Life Ball",
+        ),
+    }
+    for game_slug, (html, _) in cases.items():
+        (fixtures / f"{game_slug}-id-backfill.html").write_text(
+            html,
+            encoding="utf-8",
+        )
+
+    result = runner.invoke(
+        app,
+        [
+            "--data-dir",
+            str(tmp_path / "data"),
+            "fetch",
+            "all",
+            "-j",
+            "id",
+            "--backfill",
+            "--source-dir",
+            str(fixtures),
+        ],
+    )
+
+    assert result.exit_code == 0, result.output
+    assert "7 games fetched" in result.output
+    for game_slug, (_, winning_number) in cases.items():
+        draws_result = runner.invoke(
+            app,
+            [
+                "--data-dir",
+                str(tmp_path / "data"),
+                "draws",
+                game_slug,
+                "-j",
+                "id",
+                "--output",
+                "json",
+            ],
+        )
+
+        assert draws_result.exit_code == 0, draws_result.output
+        payload = json.loads(draws_result.output)
+        assert any(
+            draw["winning_number"] == winning_number
+            for draw in payload["games"][0]["draws"]
+        )
+        assert len(payload["games"][0]["draws"]) == 2
+
+
+def test_fetch_idaho_pick_backfill_preserves_day_and_night_sessions(tmp_path):
+    fixtures = tmp_path / "fixtures"
+    fixtures.mkdir()
+    (fixtures / "idaho-pick-3-id-backfill.html").write_text(
+        _idaho_local_history_html(
+            ("2026-05-07 Night", ("8", "2", "4")),
+            ("2026-05-07 Day", ("4", "1", "3")),
+        ),
+        encoding="utf-8",
+    )
+
+    result = runner.invoke(
+        app,
+        [
+            "--data-dir",
+            str(tmp_path / "data"),
+            "fetch",
+            "idaho-pick-3",
+            "-j",
+            "id",
+            "--backfill",
+            "--source-dir",
+            str(fixtures),
+        ],
+    )
+
+    assert result.exit_code == 0, result.output
+    assert "2 draws" in result.output
+
+    draws_result = runner.invoke(
+        app,
+        [
+            "--data-dir",
+            str(tmp_path / "data"),
+            "draws",
+            "idaho-pick-3",
+            "-j",
+            "id",
+            "--output",
+            "json",
+        ],
+    )
+
+    assert draws_result.exit_code == 0, draws_result.output
+    payload = json.loads(draws_result.output)
+    assert payload["games"][0]["draws"] == [
+        {
+            "jurisdiction_code": "id",
+            "draw_date": "Thu, May 07, 2026 Night",
+            "winning_number": "8, 2, 4",
+        },
+        {
+            "jurisdiction_code": "id",
+            "draw_date": "Thu, May 07, 2026 Day",
+            "winning_number": "4, 1, 3",
+        },
+    ]
+
+
+def test_fetch_idaho_pick_backfill_uses_official_history_slug(tmp_path, monkeypatch):
+    calls = []
+
+    def fake_read_source(source_url, source_dir, source_name, *, suffix=".html"):
+        calls.append((source_url, source_name, suffix))
+        return (
+            _idaho_local_history_html(
+                ("2026-05-07 Night", ("8", "2", "4")),
+                ("2026-05-07 Day", ("4", "1", "3")),
+            ),
+            source_url,
+        )
+
+    monkeypatch.setattr("nolottery.fetch._read_source", fake_read_source)
+    result = runner.invoke(
+        app,
+        [
+            "--data-dir",
+            str(tmp_path / "data"),
+            "fetch",
+            "idaho-pick-3",
+            "-j",
+            "id",
+            "--backfill",
+        ],
+    )
+
+    assert result.exit_code == 0, result.output
+    assert "2 draws" in result.output
+    assert calls == [
+        (
+            "https://www.idaholottery.com/drawgame/history/pick-3",
+            "idaho-pick-3-id-backfill",
+            ".html",
+        )
+    ]
+
+
+def test_fetch_oregon_active_local_games_backfill_reads_official_api_fixtures(
+    tmp_path,
+):
+    fixtures = tmp_path / "fixtures"
+    fixtures.mkdir()
+    cases = {
+        "oregon-megabucks": (
+            _oregon_megabucks_results_json(),
+            "03, 09, 10, 28, 31, 39",
+            2,
+        ),
+        "oregon-cash-pop": (_oregon_cash_pop_results_json(), "08", 2),
+        "oregon-keno": (
+            _oregon_keno_results_json(),
+            "05, 07, 08, 10, 11, 13, 16, 17, 20, 22, "
+            "28, 32, 33, 35, 41, 44, 45, 56, 70, 72, 54 Bulls-eye",
+            2,
+        ),
+    }
+    for game_slug, (raw_json, _, _) in cases.items():
+        (fixtures / f"{game_slug}-or-discovery.html").write_text(
+            _oregon_api_config_html(),
+            encoding="utf-8",
+        )
+        (fixtures / f"{game_slug}-or-backfill.json").write_text(
+            raw_json,
+            encoding="utf-8",
+        )
+
+    for game_slug, (_, expected_number, expected_count) in cases.items():
+        result = runner.invoke(
+            app,
+            [
+                "--data-dir",
+                str(tmp_path / "data"),
+                "fetch",
+                game_slug,
+                "-j",
+                "or",
+                "--backfill",
+                "--source-dir",
+                str(fixtures),
+            ],
+        )
+
+        assert result.exit_code == 0, result.output
+        assert f"{expected_count} draws" in result.output
+
+        draws_result = runner.invoke(
+            app,
+            [
+                "--data-dir",
+                str(tmp_path / "data"),
+                "draws",
+                game_slug,
+                "-j",
+                "or",
+                "--output",
+                "json",
+            ],
+        )
+
+        assert draws_result.exit_code == 0, draws_result.output
+        payload = json.loads(draws_result.output)
+        assert len(payload["games"][0]["draws"]) == expected_count
+        assert any(
+            draw["winning_number"] == expected_number
+            for draw in payload["games"][0]["draws"]
+        )
 
 
 def test_fetch_illinois_powerball_backfill_reads_official_results_fixture(tmp_path):

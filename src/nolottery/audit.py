@@ -100,6 +100,49 @@ AUDIT_RULES: dict[str, AuditRule] = {
         game_slug="hit-5",
         pools=(AuditPool("numbers", 1, 42, 5),),
     ),
+    "idaho-cash": AuditRule(
+        game_slug="idaho-cash",
+        pools=(AuditPool("numbers", 1, 45, 5),),
+    ),
+    "idaho-pick-3": AuditRule(
+        game_slug="idaho-pick-3",
+        pools=(
+            AuditPool("position_1", 0, 9, 1, ordered=True),
+            AuditPool("position_2", 0, 9, 1, ordered=True),
+            AuditPool("position_3", 0, 9, 1, ordered=True),
+        ),
+    ),
+    "idaho-pick-4": AuditRule(
+        game_slug="idaho-pick-4",
+        pools=(
+            AuditPool("position_1", 0, 9, 1, ordered=True),
+            AuditPool("position_2", 0, 9, 1, ordered=True),
+            AuditPool("position_3", 0, 9, 1, ordered=True),
+            AuditPool("position_4", 0, 9, 1, ordered=True),
+        ),
+    ),
+    "oregon-megabucks": AuditRule(
+        game_slug="oregon-megabucks",
+        pools=(AuditPool("numbers", 1, 48, 6),),
+    ),
+    "oregon-keno": AuditRule(
+        game_slug="oregon-keno",
+        pools=(
+            AuditPool("numbers", 1, 80, 20),
+            AuditPool("bulls_eye", 1, 80, 1),
+        ),
+    ),
+    "oregon-cash-pop": AuditRule(
+        game_slug="oregon-cash-pop",
+        pools=(AuditPool("numbers", 1, 15, 1),),
+    ),
+    "lotto-america": AuditRule(
+        game_slug="lotto-america",
+        pools=(
+            AuditPool("white", 1, 52, 5),
+            AuditPool("star_ball", 1, 10, 1),
+        ),
+    ),
     "lotto": AuditRule(
         game_slug="lotto",
         pools=(AuditPool("numbers", 1, 49, 6),),
@@ -113,6 +156,13 @@ AUDIT_RULES: dict[str, AuditRule] = {
         pools=(
             AuditPool("white", 1, 70, 5),
             AuditPool("mega_ball", 1, 24, 1),
+        ),
+    ),
+    "millionaire-for-life": AuditRule(
+        game_slug="millionaire-for-life",
+        pools=(
+            AuditPool("white", 1, 58, 5),
+            AuditPool("life_ball", 1, 5, 1),
         ),
     ),
     "superlotto-plus": AuditRule(
@@ -193,7 +243,14 @@ def combination_audit(
         last=last,
     )
     rule = _rule_for(game_slug)
-    if rule.game_slug in {"pick-3", "daily-3", "daily-4", "daily-derby"}:
+    if rule.game_slug in {
+        "pick-3",
+        "daily-3",
+        "daily-4",
+        "daily-derby",
+        "idaho-pick-3",
+        "idaho-pick-4",
+    }:
         return _ordered_combination_audit(game_slug, size, draws, warnings)
     return [
         _combination_result(game_slug, pool, draws, warnings, size)
@@ -464,18 +521,18 @@ def _ordered_combination_audit(
     draws: tuple[Draw, ...],
     warnings: tuple[str, ...],
 ) -> list[dict[str, object]]:
-    if game_slug in {"pick-3", "daily-3"} and size == 2:
+    if game_slug in {"pick-3", "daily-3", "idaho-pick-3"} and size == 2:
         return [
             _ordered_digit_result(game_slug, "front_pair", draws, warnings, (0, 1)),
             _ordered_digit_result(game_slug, "back_pair", draws, warnings, (1, 2)),
         ]
-    if game_slug == "daily-4" and size == 2:
+    if game_slug in {"daily-4", "idaho-pick-4"} and size == 2:
         return [
             _ordered_digit_result(game_slug, "front_pair", draws, warnings, (0, 1)),
             _ordered_digit_result(game_slug, "middle_pair", draws, warnings, (1, 2)),
             _ordered_digit_result(game_slug, "back_pair", draws, warnings, (2, 3)),
         ]
-    if game_slug == "daily-4":
+    if game_slug in {"daily-4", "idaho-pick-4"}:
         return [
             _ordered_digit_result(game_slug, "front_triple", draws, warnings, (0, 1, 2)),
             _ordered_digit_result(game_slug, "back_triple", draws, warnings, (1, 2, 3)),
@@ -643,21 +700,33 @@ def _parse_draw(
     winning_number: str,
 ) -> Draw | None:
     numbers = _parse_numbers(rule.game_slug, winning_number)
-    if rule.game_slug in {"pick-3", "daily-3", "daily-4"}:
+    if rule.game_slug in {
+        "pick-3",
+        "daily-3",
+        "daily-4",
+        "idaho-pick-3",
+        "idaho-pick-4",
+    }:
         if len(numbers) != len(rule.pools):
             return None
         pools = {
             f"position_{index + 1}": (number,)
             for index, number in enumerate(numbers)
         }
-    elif rule.game_slug in {"powerball", "mega-millions", "superlotto-plus"}:
+    elif rule.game_slug in {
+        "powerball",
+        "mega-millions",
+        "superlotto-plus",
+        "lotto-america",
+        "millionaire-for-life",
+    }:
         if len(numbers) != 6:
             return None
         pools = {
             rule.pools[0].name: tuple(numbers[:5]),
             rule.pools[1].name: (numbers[5],),
         }
-    elif rule.game_slug == "hot-spot":
+    elif rule.game_slug in {"hot-spot", "oregon-keno"}:
         if len(numbers) != 20:
             return None
         bulls_eye_match = re.search(r"(\d{1,2}) Bulls-eye", winning_number)
@@ -698,11 +767,19 @@ def _parse_numbers(game_slug: str, winning_number: str) -> tuple[int, ...]:
         matches = re.findall(r"(?:First|Second|Third):\s*(\d{1,2})", winning_number)
         return tuple(int(match) for match in matches)
     tokens = re.findall(r"\d+", winning_number)
-    if game_slug in {"pick-3", "daily-3"} and len(tokens) == 1 and len(tokens[0]) == 3:
+    if (
+        game_slug in {"pick-3", "daily-3", "idaho-pick-3"}
+        and len(tokens) == 1
+        and len(tokens[0]) == 3
+    ):
         return tuple(int(digit) for digit in tokens[0])
-    if game_slug == "daily-4" and len(tokens) == 1 and len(tokens[0]) == 4:
+    if (
+        game_slug in {"daily-4", "idaho-pick-4"}
+        and len(tokens) == 1
+        and len(tokens[0]) == 4
+    ):
         return tuple(int(digit) for digit in tokens[0])
-    if game_slug == "hot-spot":
+    if game_slug in {"hot-spot", "oregon-keno"}:
         return tuple(int(token) for token in tokens[:20])
     return tuple(int(token) for token in tokens)
 
@@ -710,7 +787,7 @@ def _parse_numbers(game_slug: str, winning_number: str) -> tuple[int, ...]:
 def _sort_key(draw_date: str) -> tuple[int, str]:
     if match := re.match(r"^([A-Z][a-z]{2}, [A-Z][a-z]{2} \d{2}, \d{4}) ", draw_date):
         draw_date = match.group(1)
-    for session in (" Evening", " Midday"):
+    for session in (" Evening", " Night", " Midday", " Day"):
         if draw_date.endswith(session):
             draw_date = draw_date[: -len(session)]
             break

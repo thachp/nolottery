@@ -6,17 +6,327 @@ name = "Oregon's Game Megabucks"
 source_url = 'https://www.oregonlottery.org/jackpot/megabucks/'
 reviewed_on = '2026-05-07'
 
+[[games.wager_options]]
+slug = 'standard'
+label = 'Standard $1'
+ticket_cost = 1.0
+
+[[games.wager_options.prize_tiers]]
+label = '6 Matching Numbers Jackpot'
+probability = 1.6297910151577084e-07
+prize = 1900000
+
+[[games.wager_options.prize_tiers]]
+label = '5 Matching Numbers'
+probability = 4.107030867211888e-05
+prize = 800
+
+[[games.wager_options.prize_tiers]]
+label = '4 Matching Numbers'
+probability = 0.002103757310556654
+prize = 40
+
+[[games.wager_options.prize_tiers]]
+label = '3 Matching Numbers Free Ticket'
+probability = 0.037064492216456635
+prize = 1
+
 [[games]]
 slug = 'oregon-keno'
 name = 'Keno'
 source_url = 'https://www.oregonlottery.org/jackpot/keno/'
 reviewed_on = '2026-05-07'
 
+[[games.wager_options]]
+slug = '1-spot'
+label = '1-Spot $1'
+ticket_cost = 1.0
+
+[[games.wager_options.prize_tiers]]
+label = 'Match 1'
+probability = 0.25
+prize = 2.5
+
+[[games.wager_options]]
+slug = '2-spot'
+label = '2-Spot $1'
+ticket_cost = 1.0
+
+[[games.wager_options.prize_tiers]]
+label = 'Match 2'
+probability = 0.060126582278481014
+prize = 11
+
+[[games.wager_options]]
+slug = '3-spot'
+label = '3-Spot $1'
+ticket_cost = 1.0
+
+[[games.wager_options.prize_tiers]]
+label = 'Match 3'
+probability = 0.013875365141187927
+prize = 27
+
+[[games.wager_options.prize_tiers]]
+label = 'Match 2'
+probability = 0.13875365141187926
+prize = 2
+
+[[games.wager_options]]
+slug = '4-spot'
+label = '4-Spot $1'
+ticket_cost = 1.0
+
+[[games.wager_options.prize_tiers]]
+label = 'Match 4'
+probability = 0.003063392303898633
+prize = 72
+
+[[games.wager_options.prize_tiers]]
+label = 'Match 3'
+probability = 0.04324789134915717
+prize = 5
+
+[[games.wager_options.prize_tiers]]
+label = 'Match 2'
+probability = 0.21263546580002277
+prize = 1
+
+[[games.wager_options]]
+slug = '5-spot'
+label = '5-Spot $1'
+ticket_cost = 1.0
+
+[[games.wager_options.prize_tiers]]
+label = 'Match 5'
+probability = 0.0006449246955576069
+prize = 465
+
+[[games.wager_options.prize_tiers]]
+label = 'Match 4'
+probability = 0.01209233804170513
+prize = 15
+
+[[games.wager_options.prize_tiers]]
+label = 'Match 3'
+probability = 0.08393505228948267
+prize = 2
+
+[[games.wager_options]]
+slug = '6-spot'
+label = '6-Spot $1'
+ticket_cost = 1.0
+
+[[games.wager_options.prize_tiers]]
+label = 'Match 6'
+probability = 0.0001289849391115214
+prize = 1600
+
+[[games.wager_options.prize_tiers]]
+label = 'Match 5'
+probability = 0.0030956385386765135
+prize = 55
+
+[[games.wager_options.prize_tiers]]
+label = 'Match 4'
+probability = 0.028537917778424106
+prize = 5
+
+[[games.wager_options.prize_tiers]]
+label = 'Match 3'
+probability = 0.12981954754106653
+prize = 1
+
+[[games.wager_options]]
+slug = '7-spot'
+label = '7-Spot $1'
+ticket_cost = 1.0
+
+[[games.wager_options.prize_tiers]]
+label = 'Match 7'
+probability = 2.440255604812567e-05
+prize = 5500
+
+[[games.wager_options.prize_tiers]]
+label = 'Match 6'
+probability = 0.00073207668144377
+prize = 150
+
+[[games.wager_options.prize_tiers]]
+label = 'Match 5'
+probability = 0.008638504841036487
+prize = 15
+
+[[games.wager_options.prize_tiers]]
+label = 'Match 4'
+probability = 0.05219096674792877
+prize = 2
+
+[[games.wager_options.prize_tiers]]
+label = 'Match 3'
+probability = 0.17499324144893766
+prize = 1
+
+[[games.wager_options]]
+slug = '8-spot'
+label = '8-Spot $1'
+ticket_cost = 1.0
+
+[[games.wager_options.prize_tiers]]
+label = 'Match 8'
+probability = 4.345660666104571e-06
+prize = 15000
+
+[[games.wager_options.prize_tiers]]
+label = 'Match 7'
+probability = 0.00016045516305616877
+prize = 600
+
+[[games.wager_options.prize_tiers]]
+label = 'Match 6'
+probability = 0.0023667136550784896
+prize = 60
+
+[[games.wager_options.prize_tiers]]
+label = 'Match 5'
+probability = 0.01830258559927365
+prize = 10
+
+[[games.wager_options.prize_tiers]]
+label = 'Match 4'
+probability = 0.08150370149676549
+prize = 2
+
+[[games.wager_options]]
+slug = '9-spot'
+label = '9-Spot $1'
+ticket_cost = 1.0
+
+[[games.wager_options.prize_tiers]]
+label = 'Match 9'
+probability = 7.242767776840952e-07
+prize = 50000
+
+[[games.wager_options.prize_tiers]]
+label = 'Match 8'
+probability = 3.2592454995784283e-05
+prize = 3000
+
+[[games.wager_options.prize_tiers]]
+label = 'Match 7'
+probability = 0.0005916784137696224
+prize = 215
+
+[[games.wager_options.prize_tiers]]
+label = 'Match 6'
+probability = 0.005719557999773016
+prize = 25
+
+[[games.wager_options.prize_tiers]]
+label = 'Match 5'
+probability = 0.03260148059870619
+prize = 4
+
+[[games.wager_options.prize_tiers]]
+label = 'Match 4'
+probability = 0.11410518209547167
+prize = 1
+
+[[games.wager_options]]
+slug = '10-spot'
+label = '10-Spot $1'
+ticket_cost = 1.0
+
+[[games.wager_options.prize_tiers]]
+label = 'Match 10'
+probability = 1.122118951341556e-07
+prize = 200000
+
+[[games.wager_options.prize_tiers]]
+label = 'Match 9'
+probability = 6.120648825499396e-06
+prize = 4500
+
+[[games.wager_options.prize_tiers]]
+label = 'Match 8'
+probability = 0.00013541935526417413
+prize = 500
+
+[[games.wager_options.prize_tiers]]
+label = 'Match 7'
+probability = 0.0016111430985276101
+prize = 55
+
+[[games.wager_options.prize_tiers]]
+label = 'Match 6'
+probability = 0.011479394577009222
+prize = 10
+
+[[games.wager_options.prize_tiers]]
+label = 'Match 5'
+probability = 0.05142768770500132
+prize = 2
+
+[[games.wager_options.prize_tiers]]
+label = 'Match 0'
+probability = 0.04579070078902784
+prize = 5
+
 [[games]]
 slug = 'oregon-cash-pop'
 name = 'Cash Pop'
 source_url = 'https://www.oregonlottery.org/jackpot/cash-pop/'
 reviewed_on = '2026-05-07'
+
+[[games.wager_options]]
+slug = 'one-pop'
+label = '1 POP $1'
+ticket_cost = 1.0
+
+[[games.wager_options.prize_tiers]]
+label = '$5'
+probability = 0.0322061191626409
+prize = 5
+
+[[games.wager_options.prize_tiers]]
+label = '$7'
+probability = 0.013333333333333334
+prize = 7
+
+[[games.wager_options.prize_tiers]]
+label = '$10'
+probability = 0.009523809523809525
+prize = 10
+
+[[games.wager_options.prize_tiers]]
+label = '$15'
+probability = 0.005555555555555556
+prize = 15
+
+[[games.wager_options.prize_tiers]]
+label = '$20'
+probability = 0.003703703703703704
+prize = 20
+
+[[games.wager_options.prize_tiers]]
+label = '$25'
+probability = 0.0015873015873015873
+prize = 25
+
+[[games.wager_options.prize_tiers]]
+label = '$50'
+probability = 0.00044444641976186565
+prize = 50
+
+[[games.wager_options.prize_tiers]]
+label = '$100'
+probability = 0.00024242659322757068
+prize = 100
+
+[[games.wager_options.prize_tiers]]
+label = '$250'
+probability = 6.666666666666667e-05
+prize = 250
 
 [[games]]
 slug = 'oregon-lucky-lines'

@@ -584,7 +584,7 @@ blocking_reason = 'No state lottery established'
 [[jurisdictions]]
 code = 'id'
 name = 'Idaho'
-blocking_reason = 'Idaho local draw-game rules and adapters pending'
+blocking_reason = ''
 
 [[jurisdictions.offerings]]
 game_slug = 'powerball'
@@ -603,35 +603,40 @@ blocking_reason = ''
 [[jurisdictions.offerings]]
 game_slug = 'lotto-america'
 source_url = 'https://www.idaholottery.com/games/draw/lotto-america'
-support_statuses = ['cataloged']
-blocking_reason = 'Rules and fetch adapter pending'
+support_statuses = ['cataloged', 'rules_verified', 'ev_supported', 'fetch_supported', 'audit_supported', 'low_share_supported']
+results_adapter = 'id_draw_page'
+blocking_reason = ''
 
 [[jurisdictions.offerings]]
 game_slug = 'millionaire-for-life'
 source_url = 'https://www.idaholottery.com/games/draw/millionaire-for-life'
-support_statuses = ['cataloged']
-blocking_reason = 'Rules and fetch adapter pending'
+support_statuses = ['cataloged', 'rules_verified', 'ev_supported', 'fetch_supported', 'audit_supported', 'low_share_supported']
+results_adapter = 'id_draw_page'
+blocking_reason = ''
 
 [[jurisdictions.offerings]]
 game_slug = 'lucky-for-life'
 source_url = 'https://www.idaholottery.com/games/draw/lucky-for-life'
 support_statuses = ['cataloged']
-blocking_reason = 'Rules and fetch adapter pending'
+blocking_reason = 'Retired after February 2026; historical adapter pending'
 
 [[jurisdictions.offerings]]
 game_slug = 'idaho-cash'
-support_statuses = ['cataloged']
-blocking_reason = 'Rules and fetch adapter pending'
+support_statuses = ['cataloged', 'rules_verified', 'ev_supported', 'fetch_supported', 'audit_supported', 'low_share_supported']
+results_adapter = 'id_draw_page'
+blocking_reason = ''
 
 [[jurisdictions.offerings]]
 game_slug = 'idaho-pick-3'
-support_statuses = ['cataloged']
-blocking_reason = 'Rules and fetch adapter pending'
+support_statuses = ['cataloged', 'rules_verified', 'ev_supported', 'fetch_supported', 'audit_supported', 'low_share_supported']
+results_adapter = 'id_draw_page'
+blocking_reason = ''
 
 [[jurisdictions.offerings]]
 game_slug = 'idaho-pick-4'
-support_statuses = ['cataloged']
-blocking_reason = 'Rules and fetch adapter pending'
+support_statuses = ['cataloged', 'rules_verified', 'ev_supported', 'fetch_supported', 'audit_supported', 'low_share_supported']
+results_adapter = 'id_draw_page'
+blocking_reason = ''
 
 [[jurisdictions]]
 code = 'il'
@@ -1765,7 +1770,7 @@ blocking_reason = 'Retired after February 2026; historical adapter pending'
 [[jurisdictions]]
 code = 'or'
 name = 'Oregon'
-blocking_reason = 'Oregon draw-game rules and adapters pending'
+blocking_reason = ''
 
 [[jurisdictions.offerings]]
 game_slug = 'powerball'
@@ -1781,18 +1786,21 @@ results_adapter = 'official_national_results_page'
 
 [[jurisdictions.offerings]]
 game_slug = 'oregon-megabucks'
-support_statuses = ['cataloged']
-blocking_reason = 'Rules and fetch adapter pending'
+support_statuses = ['cataloged', 'rules_verified', 'ev_supported', 'fetch_supported', 'audit_supported', 'low_share_supported']
+results_adapter = 'or_lottery_api'
+blocking_reason = ''
 
 [[jurisdictions.offerings]]
 game_slug = 'oregon-keno'
-support_statuses = ['cataloged']
-blocking_reason = 'Rules and fetch adapter pending'
+support_statuses = ['cataloged', 'rules_verified', 'ev_supported', 'fetch_supported', 'audit_supported', 'low_share_supported']
+results_adapter = 'or_lottery_api'
+blocking_reason = ''
 
 [[jurisdictions.offerings]]
 game_slug = 'oregon-cash-pop'
-support_statuses = ['cataloged']
-blocking_reason = 'Rules and fetch adapter pending'
+support_statuses = ['cataloged', 'rules_verified', 'ev_supported', 'fetch_supported', 'audit_supported', 'low_share_supported']
+results_adapter = 'or_lottery_api'
+blocking_reason = ''
 
 [[jurisdictions.offerings]]
 game_slug = 'oregon-lucky-lines'

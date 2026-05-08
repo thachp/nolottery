@@ -122,9 +122,9 @@ def _generate_option(
 
 
 def _candidate_numbers(rng, game_slug: str, option_slug: str) -> tuple[int, ...]:
-    if game_slug == "cashpop":
+    if game_slug in {"cashpop", "oregon-cash-pop"}:
         return tuple(sorted(rng.sample(range(1, 16), _selection_count(option_slug))))
-    if game_slug == "daily-keno":
+    if game_slug in {"daily-keno", "oregon-keno"}:
         return tuple(sorted(rng.sample(range(1, 81), _selection_count(option_slug))))
     if game_slug == "hot-spot":
         return tuple(sorted(rng.sample(range(1, 81), _selection_count(option_slug))))
@@ -181,6 +181,10 @@ def _score_numbers(
     if game_slug == "powerball":
         return _score_play(game_slug, numbers[:5], bonus=numbers[5])
     if game_slug == "mega-millions":
+        return _score_play(game_slug, numbers[:5], bonus=numbers[5])
+    if game_slug == "lotto-america":
+        return _score_play(game_slug, numbers[:5], bonus=numbers[5])
+    if game_slug == "millionaire-for-life":
         return _score_play(game_slug, numbers[:5], bonus=numbers[5])
     if game_slug == "superlotto-plus":
         return _score_play(game_slug, numbers[:5], bonus=numbers[5])
@@ -325,7 +329,13 @@ def _draw_key(
         if "box" in option_slug or "superbox" in option_slug:
             return tuple(sorted(digits))
         return digits
-    if game_slug in {"powerball", "mega-millions", "superlotto-plus"}:
+    if game_slug in {
+        "powerball",
+        "mega-millions",
+        "superlotto-plus",
+        "lotto-america",
+        "millionaire-for-life",
+    }:
         first_pool, second_pool = tuple(draw.pools)
         return (*tuple(sorted(draw.pools[first_pool])), draw.pools[second_pool][0])
     if game_slug == "daily-derby":
@@ -385,6 +395,11 @@ def _target_spread(game_slug: str) -> int:
         "lotto": 20,
         "match-4": 8,
         "mega-millions": 24,
+        "lotto-america": 18,
+        "millionaire-for-life": 20,
+        "oregon-cash-pop": 6,
+        "oregon-keno": 25,
+        "oregon-megabucks": 18,
         "powerball": 24,
         "superlotto-plus": 18,
         "fantasy-5": 14,

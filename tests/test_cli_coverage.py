@@ -867,7 +867,18 @@ def test_coverage_reports_oregon_full_draw_game_catalog(tmp_path):
     assert games["oregon-lucky-lines"]["blocking_reason"] == (
         "Retired after January 2025; historical adapter pending"
     )
-    assert games["oregon-megabucks"]["support_statuses"] == ["cataloged"]
+    for game_slug in ("oregon-megabucks", "oregon-keno", "oregon-cash-pop"):
+        assert games[game_slug]["support_statuses"] == [
+            "cataloged",
+            "rules_verified",
+            "ev_supported",
+            "fetch_supported",
+            "audit_supported",
+            "low_share_supported",
+        ]
+        assert games[game_slug]["results_adapter"] == "or_lottery_api"
+        assert games[game_slug]["blocking_reason"] == ""
+    assert games["oregon-lucky-lines"]["support_statuses"] == ["cataloged"]
 
 
 def test_coverage_reports_pennsylvania_full_draw_game_catalog(tmp_path):
@@ -1184,9 +1195,26 @@ def test_coverage_reports_idaho_catalog_and_supported_national_games(tmp_path):
         "low_share_supported",
     ]
     assert games["mega-millions"]["results_adapter"] == "id_draw_page"
-    assert games["idaho-cash"]["support_statuses"] == ["cataloged"]
-    assert games["idaho-cash"]["blocking_reason"] == (
-        "Rules and fetch adapter pending"
+    for game_slug in (
+        "idaho-cash",
+        "idaho-pick-3",
+        "idaho-pick-4",
+        "lotto-america",
+        "millionaire-for-life",
+    ):
+        assert games[game_slug]["support_statuses"] == [
+            "cataloged",
+            "rules_verified",
+            "ev_supported",
+            "fetch_supported",
+            "audit_supported",
+            "low_share_supported",
+        ]
+        assert games[game_slug]["results_adapter"] == "id_draw_page"
+        assert games[game_slug]["blocking_reason"] == ""
+    assert games["lucky-for-life"]["support_statuses"] == ["cataloged"]
+    assert games["lucky-for-life"]["blocking_reason"] == (
+        "Retired after February 2026; historical adapter pending"
     )
 
 

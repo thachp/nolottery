@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import sqlite3
 from dataclasses import dataclass
-from datetime import date, datetime
+from datetime import datetime
 from pathlib import Path
 
 from .metadata import (
@@ -383,15 +383,29 @@ def _ensure_column(
         conn.execute(f"alter table {table_name} add column {column_name} {definition}")
 
 
-def _draw_sort_key(draw_date: str, first_id: int) -> tuple[bool, date, int, int]:
+def _draw_sort_key(draw_date: str, first_id: int) -> tuple[bool, datetime, int, int]:
     session_rank = 0
-    for session, rank in {" Midday": 1, " Evening": 2}.items():
+    for session, rank in {
+        " Day": 1,
+        " Midday": 1,
+        " Night": 2,
+        " Evening": 2,
+    }.items():
         if draw_date.endswith(session):
             draw_date = draw_date[: -len(session)]
             session_rank = rank
             break
     try:
-        parsed = datetime.strptime(draw_date, _DRAW_DATE_FORMAT).date()
+        parsed = _parse_draw_datetime(draw_date)
     except ValueError:
-        return (False, date.min, session_rank, first_id)
+        return (False, datetime.min, session_rank, first_id)
     return (True, parsed, session_rank, first_id)
+
+
+def _parse_draw_datetime(draw_date: str) -> datetime:
+    for pattern in (f"{_DRAW_DATE_FORMAT} %H:%M", _DRAW_DATE_FORMAT):
+        try:
+            return datetime.strptime(draw_date, pattern)
+        except ValueError:
+            continue
+    raise ValueError(draw_date)

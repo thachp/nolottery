@@ -6,14 +6,59 @@ name = 'Idaho Cash'
 source_url = 'https://www.idaholottery.com/games/draw/idaho-cash'
 reviewed_on = '2026-05-07'
 
+[[games.wager_options]]
+slug = 'two-plays'
+label = 'Two Plays $1'
+ticket_cost = 1.0
+
+[[games.wager_options.prize_tiers]]
+label = '5 White Jackpot'
+probability = 1.6369827134625459e-06
+prize = 205600
+
+[[games.wager_options.prize_tiers]]
+label = '4 White'
+probability = 0.0003274394237066143
+prize = 200
+
+[[games.wager_options.prize_tiers]]
+label = '3 White'
+probability = 0.01282051282051282
+prize = 5
+
+[[games.wager_options.prize_tiers]]
+label = '2 White Free Ticket'
+probability = 0.16666666666666666
+prize = 1
+
 [[games]]
 slug = 'idaho-pick-3'
 name = 'Pick 3'
 source_url = 'https://www.idaholottery.com/games/draw/pick-3'
 reviewed_on = '2026-05-07'
 
+[[games.wager_options]]
+slug = 'exact-order-1'
+label = 'Exact Order $1'
+ticket_cost = 1.0
+
+[[games.wager_options.prize_tiers]]
+label = 'Exact Order'
+probability = 0.001
+prize = 500
+
 [[games]]
 slug = 'idaho-pick-4'
 name = 'Pick 4'
 source_url = 'https://www.idaholottery.com/games/draw/pick-4'
 reviewed_on = '2026-05-07'
+
+[[games.wager_options]]
+slug = 'exact-order-1'
+label = 'Exact Order $1'
+ticket_cost = 1.0
+
+[[games.wager_options.prize_tiers]]
+label = 'Exact Order'
+probability = 0.0001
+prize = 5000

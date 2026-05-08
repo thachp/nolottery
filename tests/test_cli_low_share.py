@@ -117,6 +117,91 @@ def test_low_share_supports_florida_and_new_york_digit_games(tmp_path):
         assert all(len(pick["numbers"]) == digits for pick in picks)
 
 
+def test_low_share_supports_active_idaho_draw_games(tmp_path):
+    for game_slug, number_count in [
+        ("idaho-cash", 5),
+        ("idaho-pick-3", 3),
+        ("idaho-pick-4", 4),
+        ("lotto-america", 6),
+        ("millionaire-for-life", 6),
+    ]:
+        result = runner.invoke(
+            app,
+            [
+                "--data-dir",
+                str(tmp_path / game_slug),
+                "low-share",
+                game_slug,
+                "-j",
+                "id",
+                "--count",
+                "2",
+                "--candidates",
+                "20",
+                "--seed",
+                "4",
+                "--output",
+                "json",
+            ],
+        )
+
+        assert result.exit_code == 0, result.output
+        payload = json.loads(result.output)
+        picks = payload["games"][0]["options"][0]["picks"]
+        assert len(picks) == 2
+        assert all(len(pick["numbers"]) == number_count for pick in picks)
+
+
+def test_low_share_supports_active_oregon_draw_games(tmp_path):
+    for game_slug, expected_options, first_option_count in [
+        ("oregon-megabucks", {"standard"}, 6),
+        (
+            "oregon-keno",
+            {
+                "1-spot",
+                "2-spot",
+                "3-spot",
+                "4-spot",
+                "5-spot",
+                "6-spot",
+                "7-spot",
+                "8-spot",
+                "9-spot",
+                "10-spot",
+            },
+            1,
+        ),
+        ("oregon-cash-pop", {"one-pop"}, 1),
+    ]:
+        result = runner.invoke(
+            app,
+            [
+                "--data-dir",
+                str(tmp_path / game_slug),
+                "low-share",
+                game_slug,
+                "-j",
+                "or",
+                "--count",
+                "2",
+                "--candidates",
+                "50",
+                "--seed",
+                "4",
+                "--output",
+                "json",
+            ],
+        )
+
+        assert result.exit_code == 0, result.output
+        payload = json.loads(result.output)
+        options = payload["games"][0]["options"]
+        assert {option["option_slug"] for option in options} == expected_options
+        picks = options[0]["picks"]
+        assert len(picks) == 2
+        assert all(len(pick["numbers"]) == first_option_count for pick in picks)
+
+
 def test_low_share_reports_cataloged_game_without_low_share_support(tmp_path):
     result = runner.invoke(
         app,

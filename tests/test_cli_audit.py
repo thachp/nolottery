@@ -2,6 +2,7 @@ import json
 
 from typer.testing import CliRunner
 
+from nolottery import db
 from nolottery.cli import app
 
 
@@ -31,6 +32,21 @@ def _drawings_html(*draws: tuple[str, tuple[str, ...]]) -> str:
         for date, numbers in draws
     )
     return f"<html><body>{tables}</body></html>"
+
+
+def _idaho_draw_page_html(*draws: tuple[str, tuple[str, ...]]) -> str:
+    rows = "\n".join(
+        f"""
+        <tr>
+          <td data-title="Date">{date}</td>
+          <td data-title="Winning Numbers">
+            <ul>{''.join(f'<li>{number}</li>' for number in numbers)}</ul>
+          </td>
+        </tr>
+        """
+        for date, numbers in draws
+    )
+    return f"<html><body><table><tbody>{rows}</tbody></table></body></html>"
 
 
 def test_audit_frequency_reports_uniform_cashpop_buckets(tmp_path):
@@ -126,6 +142,160 @@ def test_audit_chi_square_reports_powerball_pools_separately(tmp_path):
     assert payload["audits"][0]["test"] == "chi-square"
     assert payload["audits"][0]["degrees_of_freedom"] == 68
     assert payload["audits"][1]["degrees_of_freedom"] == 25
+
+
+def test_audit_frequency_parses_active_idaho_game_pools(tmp_path):
+    data_dir = tmp_path / "data"
+    cases = {
+        "idaho-cash": (
+            _idaho_draw_page_html(
+                ("05/06/26", ("02", "05", "17", "23", "43")),
+                ("05/05/26", ("05", "06", "15", "17", "22")),
+            ),
+            ["numbers"],
+        ),
+        "idaho-pick-3": (
+            _idaho_draw_page_html(
+                ("05/07/26", ("4", "1", "3", "8")),
+                ("05/06/26", ("1", "2", "3", "6")),
+            ),
+            ["position_1", "position_2", "position_3"],
+        ),
+        "idaho-pick-4": (
+            _idaho_draw_page_html(
+                ("05/07/26", ("6", "8", "2", "8", "24")),
+                ("05/06/26", ("1", "2", "3", "4", "10")),
+            ),
+            ["position_1", "position_2", "position_3", "position_4"],
+        ),
+        "lotto-america": (
+            _idaho_draw_page_html(
+                ("05/06/26", ("03", "06", "07", "18", "49", "10")),
+                ("05/04/26", ("09", "10", "12", "50", "52", "03")),
+            ),
+            ["white", "star_ball"],
+        ),
+        "millionaire-for-life": (
+            _idaho_draw_page_html(
+                ("05/06/26", ("06", "18", "30", "32", "43", "01")),
+                ("05/05/26", ("14", "20", "23", "30", "55", "02")),
+            ),
+            ["white", "life_ball"],
+        ),
+    }
+
+    for game_slug, (html, expected_pools) in cases.items():
+        fixture = tmp_path / f"{game_slug}.html"
+        fixture.write_text(html, encoding="utf-8")
+        fetch_result = runner.invoke(
+            app,
+            [
+                "--data-dir",
+                str(data_dir),
+                "fetch",
+                game_slug,
+                "-j",
+                "id",
+                "--source-file",
+                str(fixture),
+            ],
+        )
+        assert fetch_result.exit_code == 0, fetch_result.output
+
+        result = runner.invoke(
+            app,
+            [
+                "--data-dir",
+                str(data_dir),
+                "audit",
+                "frequency",
+                game_slug,
+                "-j",
+                "id",
+                "--output",
+                "json",
+            ],
+        )
+
+        assert result.exit_code == 0, result.output
+        payload = json.loads(result.output)
+        if len(expected_pools) == 1:
+            assert payload["pool"] == expected_pools[0]
+            assert payload["draw_count"] == 2
+        else:
+            assert [audit["pool"] for audit in payload["audits"]] == expected_pools
+            assert all(audit["draw_count"] == 2 for audit in payload["audits"])
+
+
+def test_audit_frequency_parses_active_oregon_game_pools(tmp_path):
+    conn = db.connect(tmp_path)
+    rows = [
+        ("or", "oregon-megabucks", "Wed, May 06, 2026", "03, 09, 10, 28, 31, 39"),
+        ("or", "oregon-megabucks", "Sat, May 02, 2026", "04, 10, 19, 27, 33, 42"),
+        (
+            "or",
+            "oregon-keno",
+            "Thu, May 07, 2026 17:00",
+            "05, 07, 08, 10, 11, 13, 16, 17, 20, 22, "
+            "28, 32, 33, 35, 41, 44, 45, 56, 70, 72, 54 Bulls-eye",
+        ),
+        (
+            "or",
+            "oregon-keno",
+            "Thu, May 07, 2026 17:04",
+            "01, 04, 05, 06, 08, 13, 15, 25, 31, 36, "
+            "38, 42, 48, 52, 55, 59, 61, 64, 73, 79, 36 Bulls-eye",
+        ),
+        ("or", "oregon-cash-pop", "Thu, May 07, 2026 17:00", "08"),
+        ("or", "oregon-cash-pop", "Thu, May 07, 2026 18:00", "14"),
+    ]
+    conn.executemany(
+        """
+        insert into draw_results (
+            jurisdiction_code,
+            game_slug,
+            draw_date,
+            winning_number,
+            prize_amount,
+            wa_winners,
+            total
+        )
+        values (?, ?, ?, ?, 0, 0, 0)
+        """,
+        rows,
+    )
+    conn.commit()
+
+    cases = {
+        "oregon-megabucks": ["numbers"],
+        "oregon-keno": ["numbers", "bulls_eye"],
+        "oregon-cash-pop": ["numbers"],
+    }
+
+    for game_slug, expected_pools in cases.items():
+        result = runner.invoke(
+            app,
+            [
+                "--data-dir",
+                str(tmp_path),
+                "audit",
+                "frequency",
+                game_slug,
+                "-j",
+                "or",
+                "--output",
+                "json",
+            ],
+        )
+
+        assert result.exit_code == 0, result.output
+        payload = json.loads(result.output)
+        if len(expected_pools) == 1:
+            assert payload["pool"] == expected_pools[0]
+            assert payload["draw_count"] == 2
+        else:
+            assert [audit["pool"] for audit in payload["audits"]] == expected_pools
+            assert all(audit["draw_count"] == 2 for audit in payload["audits"])
 
 
 def test_audit_pairs_includes_combination_chi_square_and_full_json_buckets(tmp_path):

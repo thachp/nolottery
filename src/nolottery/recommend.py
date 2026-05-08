@@ -86,6 +86,10 @@ def format_number_label(
         return f"White: {_join_numbers(numbers[:5])}; Powerball: {numbers[5]}"
     if game_slug == "mega-millions" and len(numbers) == 6:
         return f"White: {_join_numbers(numbers[:5])}; Mega Ball: {numbers[5]}"
+    if game_slug == "lotto-america" and len(numbers) == 6:
+        return f"White: {_join_numbers(numbers[:5])}; Star Ball: {numbers[5]}"
+    if game_slug == "millionaire-for-life" and len(numbers) == 6:
+        return f"White: {_join_numbers(numbers[:5])}; Life Ball: {numbers[5]}"
     if game_slug == "superlotto-plus" and len(numbers) == 6:
         return f"White: {_join_numbers(numbers[:5])}; Mega: {numbers[5]}"
     if game_slug == "daily-derby" and len(numbers) == 4:
@@ -113,21 +117,31 @@ def suggest_numbers(game_slug: str, option_slug: str) -> tuple[int, ...]:
         "florida-pick-3": 3,
         "florida-pick-4": 4,
         "florida-pick-5": 5,
+        "idaho-pick-3": 3,
+        "idaho-pick-4": 4,
         "numbers": 3,
         "win-4": 4,
     }.get(game_slug)
     if digit_count is not None:
         return tuple(range(1, digit_count + 1))
-    if game_slug == "cashpop":
+    if game_slug in {"cashpop", "oregon-cash-pop"}:
         count = _selection_count(option_slug)
         return tuple(range(1, min(count, 15) + 1))
-    if game_slug == "daily-keno":
+    if game_slug in {"daily-keno", "oregon-keno"}:
         count = _selection_count(option_slug)
         return tuple(range(1, min(count, 80) + 1))
     if game_slug == "powerball":
         return (1, 2, 3, 4, 5, 1)
     if game_slug == "mega-millions":
         return (1, 2, 3, 4, 5, 1)
+    if game_slug == "lotto-america":
+        return (1, 2, 3, 4, 5, 1)
+    if game_slug == "millionaire-for-life":
+        return (1, 2, 3, 4, 5, 1)
+    if game_slug == "idaho-cash":
+        return (1, 2, 3, 4, 5)
+    if game_slug == "oregon-megabucks":
+        return (1, 2, 3, 4, 5, 6)
     if game_slug == "superlotto-plus":
         return (1, 2, 3, 4, 5, 1)
     if game_slug == "fantasy-5":
