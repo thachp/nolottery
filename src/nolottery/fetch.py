@@ -37,7 +37,6 @@ from .result_adapters.california import (
 from .result_adapters.colorado import parse_colorado_drawing_history
 from .result_adapters.connecticut import parse_connecticut_winning_numbers
 from .result_adapters.delaware import parse_delaware_search_winners
-from .result_adapters.florida import parse_florida_pick_history_text
 from .result_adapters.georgia import parse_georgia_draw_games_json
 from .result_adapters.idaho import _idaho_history_url, parse_idaho_draw_page
 from .result_adapters.illinois import parse_illinois_results_page

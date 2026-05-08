@@ -51,7 +51,7 @@ def fetch_current_result(
     source_dir: Path | None,
     read_source: SourceReader,
 ) -> AdapterFetch | None:
-    if jurisdiction_code == "fl" and game.slug in florida._FLORIDA_PICK_GAMES:
+    if jurisdiction_code == "fl" and game.slug in florida._FLORIDA_HISTORY_GAMES:
         return _florida_fetch(game, source_dir)
     if jurisdiction_code == "ny" and game.slug in new_york._NEW_YORK_DAILY_GAMES:
         return _new_york_fetch(game, source_dir, read_source)
@@ -268,7 +268,7 @@ def _parse_specs() -> dict[str, _ParseSpec]:
             "az": _ParseSpec(arizona._ARIZONA_PAST_180_GAMES, arizona.parse_arizona_past_180_text),
             "ct": _ParseSpec(connecticut._CONNECTICUT_WINNING_NUMBERS_GAMES, connecticut.parse_connecticut_winning_numbers),
             "de": _ParseSpec(delaware._DELAWARE_SEARCH_WINNERS_GAMES, delaware.parse_delaware_search_winners),
-            "fl": _ParseSpec(florida._FLORIDA_PICK_GAMES, florida.parse_florida_pick_history_text),
+            "fl": _ParseSpec(florida._FLORIDA_HISTORY_GAMES, florida.parse_florida_history_text),
             "ga": _ParseSpec(georgia._GEORGIA_DRAW_GAMES, georgia.parse_georgia_draw_games_json),
             "ky": _ParseSpec(kentucky._KENTUCKY_WINNING_NUMBERS_GAMES, kentucky.parse_kentucky_winning_numbers_json),
             "ma": _ParseSpec(massachusetts._MASSACHUSETTS_DRAW_RESULTS_GAMES, massachusetts.parse_massachusetts_draw_results_json),
@@ -313,7 +313,7 @@ def _source_function_fetch(
 
 
 def _florida_fetch(game: GameMetadata, source_dir: Path | None) -> AdapterFetch:
-    raw_text, source_url, draws = florida._florida_pick_history_draws(
+    raw_text, source_url, draws = florida._florida_history_draws(
         game.slug,
         source_dir=source_dir,
     )

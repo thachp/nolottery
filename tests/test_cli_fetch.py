@@ -4957,19 +4957,24 @@ def test_fetch_nebraska_mega_millions_backfill_reads_official_page_fixture(
     ]
 
 
-def test_fetch_all_backfill_uses_supported_subset_for_florida(tmp_path):
+def test_fetch_all_backfill_uses_full_supported_set_for_florida(tmp_path):
     fixtures = tmp_path / "fixtures"
     fixtures.mkdir()
-    for game_slug, digits in {
-        "florida-pick-2": "5 - 7",
-        "florida-pick-3": "5 - 1 - 7",
-        "florida-pick-4": "9 - 3 - 3 - 6",
-        "florida-pick-5": "2 - 5 - 6 - 0 - 1",
-    }.items():
-        (fixtures / f"{game_slug}-fl-backfill.txt").write_text(
-            f"05/06/26 E {digits} FB 2",
-            encoding="utf-8",
-        )
+    fixture_text = {
+        "cash4life": "02/21/26 20 - 25- 30 - 52- 55 CB 4",
+        "florida-cash-pop": "5/6/2026 11 15 14 2 2",
+        "florida-fantasy-5": "5/6/26 EVENING 6 9 11 17 31",
+        "florida-lotto": "05/06/26 2 - 9 - 13 - 43- 46 - 49 LOTTO",
+        "florida-pick-2": "05/06/26 E 5 - 7 FB 2",
+        "florida-pick-3": "05/06/26 E 5 - 1 - 7 FB 2",
+        "florida-pick-4": "05/06/26 E 9 - 3 - 3 - 6 FB 2",
+        "florida-pick-5": "05/06/26 E 2 - 5 - 6 - 0 - 1 FB 2",
+        "jackpot-triple-play": "05/05/26 5 - 8 - 9 - 19 - 29 - 32",
+        "mega-millions": "05/05/26 12 - 22- 50 - 51- 55 MB 10",
+        "powerball": "5/6/26 18 27 51 65 68 PB 5 X3 POWERBALL",
+    }
+    for game_slug, text in fixture_text.items():
+        (fixtures / f"{game_slug}-fl-backfill.txt").write_text(text, encoding="utf-8")
 
     result = runner.invoke(
         app,
@@ -4987,8 +4992,132 @@ def test_fetch_all_backfill_uses_supported_subset_for_florida(tmp_path):
     )
 
     assert result.exit_code == 0, result.output
-    assert "4 games fetched" in result.output
-    assert "Fantasy 5" not in result.output
+    assert "11 games fetched" in result.output
+    assert "Fantasy 5" in result.output
+
+
+def test_fetch_all_florida_backfill_reads_official_history_fixtures(tmp_path):
+    fixtures = tmp_path / "fixtures"
+    fixtures.mkdir()
+    fixture_text = {
+        "cash4life": """
+            CASH4LIFE
+            02/21/26   20 - 25- 30 -   52- 55 CB   4
+            02/20/26    2 - 28- 49 -   50- 56 CB   1
+        """,
+        "florida-cash-pop": """
+            CASH POP
+            Draw Date Morning Matinee Afternoon Evening Late Night
+            5/6/2026 11 15 14 2 2
+            5/5/2026 5 2 2 13 1
+        """,
+        "florida-fantasy-5": """
+            FANTASY 5
+            Draw Date Draw Type Winning Numbers
+            5/6/26 EVENING 6 9 11 17 31
+            5/6/26 MIDDAY 2 8 20 23 34
+            5/5/26 EVENING 22 23 24 33 34
+        """,
+        "florida-lotto": """
+            FLORIDA LOTTO
+            05/06/26 2 - 9 - 13 - 43- 46 - 49 LOTTO
+            05/06/26 5 - 19- 25 - 28- 39 - 40 LOTTO DP
+            12/31/25 9 - 24- 48 - 49- 50 - 53 LOTTO
+        """,
+        "florida-pick-2": "05/06/26 E 5 - 7 FB 2\n05/06/26 M 3 - 2 FB 1",
+        "florida-pick-3": "05/06/26 E 5 - 1 - 7 FB 2",
+        "florida-pick-4": "05/06/26 E 9 - 3 - 3 - 6 FB 2",
+        "florida-pick-5": "05/06/26 E 2 - 5 - 6 - 0 - 1 FB 2",
+        "jackpot-triple-play": """
+            JACKPOT TRIPLE PLAY
+            05/05/26 5 - 8 - 9 - 19 - 29 - 32
+            10/10/25 16 - 17 - 26 - 30 - 33 - 41
+        """,
+        "mega-millions": """
+            MEGA MILLIONS
+            05/05/26 12 - 22- 50 - 51- 55 MB 10
+            11/07/25 16 - 21- 23 - 48- 70 MB 5
+        """,
+        "powerball": """
+            POWERBALL & POWERBALL DOUBLE PLAY
+            5/6/26 18 27 51 65 68 PB 5 X3 POWERBALL
+            5/6/26 4 21 36 48 69 PB 5 POWERBALL DP
+            12/31/25 11 18 21 24 38 PB 26 X10 POWERBALL
+        """,
+    }
+    for game_slug, text in fixture_text.items():
+        (fixtures / f"{game_slug}-fl-backfill.txt").write_text(text, encoding="utf-8")
+
+    result = runner.invoke(
+        app,
+        [
+            "--data-dir",
+            str(tmp_path / "data"),
+            "fetch",
+            "all",
+            "-j",
+            "fl",
+            "--backfill",
+            "--source-dir",
+            str(fixtures),
+        ],
+    )
+
+    assert result.exit_code == 0, result.output
+    assert "11 games fetched" in result.output
+    assert "Fantasy 5" in result.output
+    assert "Florida Lotto" in result.output
+
+    with sqlite3.connect(tmp_path / "data" / "lottery.sqlite3") as conn:
+        rows = conn.execute(
+            """
+            select game_slug, draw_date, winning_number
+            from draw_results
+            where jurisdiction_code = 'fl'
+            order by game_slug, draw_date, winning_number
+            """
+        ).fetchall()
+
+    assert (
+        "florida-cash-pop",
+        "Wed, May 06, 2026 Afternoon",
+        "14",
+    ) in rows
+    assert (
+        "florida-fantasy-5",
+        "Wed, May 06, 2026 Midday",
+        "2, 8, 20, 23, 34",
+    ) in rows
+    assert (
+        "florida-lotto",
+        "Wed, May 06, 2026",
+        "2, 9, 13, 43, 46, 49",
+    ) in rows
+    assert (
+        "florida-lotto",
+        "Wed, May 06, 2026",
+        "5, 19, 25, 28, 39, 40",
+    ) not in rows
+    assert (
+        "powerball",
+        "Wed, May 06, 2026",
+        "18, 27, 51, 65, 68, 5 Powerball",
+    ) in rows
+    assert (
+        "powerball",
+        "Wed, May 06, 2026",
+        "4, 21, 36, 48, 69, 5 Powerball",
+    ) not in rows
+    assert (
+        "cash4life",
+        "Sat, Feb 21, 2026",
+        "20, 25, 30, 52, 55, 4 Cash Ball",
+    ) in rows
+    assert (
+        "jackpot-triple-play",
+        "Fri, Oct 10, 2025",
+        "16, 17, 26, 30, 33, 41",
+    ) in rows
 
 
 def test_fetch_all_backfill_uses_supported_subset_for_new_york(tmp_path):

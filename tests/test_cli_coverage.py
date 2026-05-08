@@ -101,10 +101,17 @@ def test_coverage_reports_representative_catalog_jurisdictions(tmp_path):
     ev_supported = {
         "ny": {"numbers", "win-4"},
         "fl": {
+            "cash4life",
+            "florida-cash-pop",
+            "florida-fantasy-5",
+            "florida-lotto",
             "florida-pick-2",
             "florida-pick-3",
             "florida-pick-4",
             "florida-pick-5",
+            "jackpot-triple-play",
+            "mega-millions",
+            "powerball",
         },
         "dc": {"powerball", "mega-millions"},
     }
@@ -234,18 +241,61 @@ def test_coverage_reports_florida_and_new_york_ev_supported_games(tmp_path):
             game = next(
                 game for game in payload["games"] if game["game_slug"] == game_slug
             )
-            assert game["support_statuses"] == [
-                "cataloged",
-                "rules_verified",
-                "ev_supported",
-                "fetch_supported",
-                "low_share_supported",
-            ]
-            assert game["blocking_reason"] == "Audit support pending"
-            assert game["results_adapter"] in {
-                "fl_pick_history_pdf",
-                "ny_daily_numbers_socrata",
-            }
+            if jurisdiction == "fl":
+                assert game["support_statuses"] == FULL_SUPPORT_STATUSES
+                assert game["blocking_reason"] == ""
+                assert game["results_adapter"] == "fl_history_pdf"
+            else:
+                assert game["support_statuses"] == [
+                    "cataloged",
+                    "rules_verified",
+                    "ev_supported",
+                    "fetch_supported",
+                    "low_share_supported",
+                ]
+                assert game["blocking_reason"] == "Audit support pending"
+                assert game["results_adapter"] == "ny_daily_numbers_socrata"
+
+
+def test_coverage_reports_florida_full_history_fetch_support(tmp_path):
+    result = runner.invoke(
+        app,
+        [
+            "--data-dir",
+            str(tmp_path / "fl"),
+            "coverage",
+            "-j",
+            "fl",
+            "--output",
+            "json",
+        ],
+    )
+
+    assert result.exit_code == 0, result.output
+    payload = json.loads(result.output)
+    games = {game["game_slug"]: game for game in payload["games"]}
+    assert {
+        game_slug
+        for game_slug, game in games.items()
+        if "fetch_supported" in game["support_statuses"]
+    } == {
+        "cash4life",
+        "florida-cash-pop",
+        "florida-fantasy-5",
+        "florida-lotto",
+        "florida-pick-2",
+        "florida-pick-3",
+        "florida-pick-4",
+        "florida-pick-5",
+        "jackpot-triple-play",
+        "mega-millions",
+        "powerball",
+    }
+    assert {
+        games[game_slug]["results_adapter"]
+        for game_slug in games
+        if "fetch_supported" in games[game_slug]["support_statuses"]
+    } == {"fl_history_pdf"}
 
 
 @pytest.mark.parametrize(

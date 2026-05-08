@@ -140,62 +140,69 @@ name = 'Florida'
 
 [[jurisdictions.offerings]]
 game_slug = 'florida-cash-pop'
-support_statuses = ['cataloged']
-blocking_reason = 'Rules and fetch adapter pending'
+support_statuses = ['cataloged', 'rules_verified', 'ev_supported', 'fetch_supported', 'audit_supported', 'low_share_supported']
+results_adapter = 'fl_history_pdf'
+blocking_reason = ''
 
 [[jurisdictions.offerings]]
 game_slug = 'florida-pick-2'
-support_statuses = ['cataloged', 'rules_verified', 'ev_supported', 'fetch_supported', 'low_share_supported']
-results_adapter = 'fl_pick_history_pdf'
-blocking_reason = 'Audit support pending'
+support_statuses = ['cataloged', 'rules_verified', 'ev_supported', 'fetch_supported', 'audit_supported', 'low_share_supported']
+results_adapter = 'fl_history_pdf'
+blocking_reason = ''
 
 [[jurisdictions.offerings]]
 game_slug = 'florida-pick-3'
-support_statuses = ['cataloged', 'rules_verified', 'ev_supported', 'fetch_supported', 'low_share_supported']
-results_adapter = 'fl_pick_history_pdf'
-blocking_reason = 'Audit support pending'
+support_statuses = ['cataloged', 'rules_verified', 'ev_supported', 'fetch_supported', 'audit_supported', 'low_share_supported']
+results_adapter = 'fl_history_pdf'
+blocking_reason = ''
 
 [[jurisdictions.offerings]]
 game_slug = 'florida-pick-4'
-support_statuses = ['cataloged', 'rules_verified', 'ev_supported', 'fetch_supported', 'low_share_supported']
-results_adapter = 'fl_pick_history_pdf'
-blocking_reason = 'Audit support pending'
+support_statuses = ['cataloged', 'rules_verified', 'ev_supported', 'fetch_supported', 'audit_supported', 'low_share_supported']
+results_adapter = 'fl_history_pdf'
+blocking_reason = ''
 
 [[jurisdictions.offerings]]
 game_slug = 'florida-pick-5'
-support_statuses = ['cataloged', 'rules_verified', 'ev_supported', 'fetch_supported', 'low_share_supported']
-results_adapter = 'fl_pick_history_pdf'
-blocking_reason = 'Audit support pending'
+support_statuses = ['cataloged', 'rules_verified', 'ev_supported', 'fetch_supported', 'audit_supported', 'low_share_supported']
+results_adapter = 'fl_history_pdf'
+blocking_reason = ''
 
 [[jurisdictions.offerings]]
 game_slug = 'florida-fantasy-5'
-support_statuses = ['cataloged']
-blocking_reason = 'Rules and fetch adapter pending'
+support_statuses = ['cataloged', 'rules_verified', 'ev_supported', 'fetch_supported', 'audit_supported', 'low_share_supported']
+results_adapter = 'fl_history_pdf'
+blocking_reason = ''
 
 [[jurisdictions.offerings]]
 game_slug = 'cash4life'
-support_statuses = ['cataloged']
-blocking_reason = 'Rules and fetch adapter pending'
+support_statuses = ['cataloged', 'rules_verified', 'ev_supported', 'fetch_supported', 'audit_supported', 'low_share_supported']
+results_adapter = 'fl_history_pdf'
+blocking_reason = ''
 
 [[jurisdictions.offerings]]
 game_slug = 'jackpot-triple-play'
-support_statuses = ['cataloged']
-blocking_reason = 'Rules and fetch adapter pending'
+support_statuses = ['cataloged', 'rules_verified', 'ev_supported', 'fetch_supported', 'audit_supported', 'low_share_supported']
+results_adapter = 'fl_history_pdf'
+blocking_reason = ''
 
 [[jurisdictions.offerings]]
 game_slug = 'florida-lotto'
-support_statuses = ['cataloged']
-blocking_reason = 'Rules and fetch adapter pending'
+support_statuses = ['cataloged', 'rules_verified', 'ev_supported', 'fetch_supported', 'audit_supported', 'low_share_supported']
+results_adapter = 'fl_history_pdf'
+blocking_reason = ''
 
 [[jurisdictions.offerings]]
 game_slug = 'mega-millions'
-support_statuses = ['cataloged']
-blocking_reason = 'Rules and fetch adapter pending'
+support_statuses = ['cataloged', 'rules_verified', 'ev_supported', 'fetch_supported', 'audit_supported', 'low_share_supported']
+results_adapter = 'fl_history_pdf'
+blocking_reason = ''
 
 [[jurisdictions.offerings]]
 game_slug = 'powerball'
-support_statuses = ['cataloged']
-blocking_reason = 'Rules and fetch adapter pending'
+support_statuses = ['cataloged', 'rules_verified', 'ev_supported', 'fetch_supported', 'audit_supported', 'low_share_supported']
+results_adapter = 'fl_history_pdf'
+blocking_reason = ''
 
 [[jurisdictions]]
 code = 'dc'
