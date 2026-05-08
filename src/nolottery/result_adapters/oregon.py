@@ -21,6 +21,8 @@ from nolottery.result_adapters.common import (
 _OREGON_DRAW_GAME_SELECTORS = {
     "oregon-megabucks": "mb",
     "oregon-cash-pop": "cp",
+    "oregon-pick-4": "p4",
+    "oregon-win-for-life": "wf",
 }
 _OREGON_KENO_GAMES = {"oregon-keno"}
 _OREGON_API_GAMES = frozenset((*_OREGON_DRAW_GAME_SELECTORS, *_OREGON_KENO_GAMES))
@@ -95,6 +97,16 @@ def parse_oregon_draw_results_json(
             if len(winning_numbers) != 1:
                 continue
             draw_date = _draw_date(record, keep_time=True)
+        elif game_slug == "oregon-pick-4":
+            winning_numbers = numbers[:4]
+            if len(winning_numbers) != 4:
+                continue
+            draw_date = _draw_date(record, keep_time=True)
+        elif game_slug == "oregon-win-for-life":
+            winning_numbers = tuple(number for number in numbers[:4] if number > 0)
+            if len(winning_numbers) != 4:
+                continue
+            draw_date = _draw_date(record, keep_time=False)
         else:
             continue
         if draw_date is None:

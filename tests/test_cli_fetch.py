@@ -689,6 +689,36 @@ def _oregon_keno_results_json() -> str:
     )
 
 
+def _oregon_pick4_results_json() -> str:
+    return json.dumps(
+        [
+            {
+                "DrawDateTime": "2026-05-07T13:00:00",
+                "WinningNumbers": [6, 4, 0, 7, 0, 0, 0, 0, 0, 0],
+            },
+            {
+                "DrawDateTime": "2026-05-07T16:00:00",
+                "WinningNumbers": [3, 9, 2, 9, 0, 0, 0, 0, 0, 0],
+            },
+        ]
+    )
+
+
+def _oregon_win_for_life_results_json() -> str:
+    return json.dumps(
+        [
+            {
+                "DrawDateTime": "2026-05-06T19:30:00",
+                "WinningNumbers": [7, 45, 52, 54, 0, 0, 0, 0, 0, 0],
+            },
+            {
+                "DrawDateTime": "2026-05-04T19:30:00",
+                "WinningNumbers": [6, 23, 61, 73, 0, 0, 0, 0, 0, 0],
+            },
+        ]
+    )
+
+
 def _illinois_powerball_results_html() -> str:
     return """
     <html>
@@ -1812,6 +1842,8 @@ def test_fetch_all_oregon_backfill_uses_supported_national_and_local_games(tmp_p
         "oregon-megabucks": _oregon_megabucks_results_json(),
         "oregon-cash-pop": _oregon_cash_pop_results_json(),
         "oregon-keno": _oregon_keno_results_json(),
+        "oregon-pick-4": _oregon_pick4_results_json(),
+        "oregon-win-for-life": _oregon_win_for_life_results_json(),
     }.items():
         (fixtures / f"{game_slug}-or-discovery.html").write_text(
             _oregon_api_config_html(),
@@ -1843,7 +1875,7 @@ def test_fetch_all_oregon_backfill_uses_supported_national_and_local_games(tmp_p
     assert "Oregon's Game Megabucks" in result.output
     assert "Keno" in result.output
     assert "Cash Pop" in result.output
-    assert "5 games fetched" in result.output
+    assert "7 games fetched" in result.output
 
 
 def test_fetch_texas_powerball_backfill_reads_official_history_fixture(tmp_path):
@@ -2843,6 +2875,12 @@ def test_fetch_oregon_active_local_games_backfill_reads_official_api_fixtures(
             _oregon_keno_results_json(),
             "05, 07, 08, 10, 11, 13, 16, 17, 20, 22, "
             "28, 32, 33, 35, 41, 44, 45, 56, 70, 72, 54 Bulls-eye",
+            2,
+        ),
+        "oregon-pick-4": (_oregon_pick4_results_json(), "06, 04, 00, 07", 2),
+        "oregon-win-for-life": (
+            _oregon_win_for_life_results_json(),
+            "07, 45, 52, 54",
             2,
         ),
     }

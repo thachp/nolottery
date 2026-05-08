@@ -1803,6 +1803,18 @@ results_adapter = 'or_lottery_api'
 blocking_reason = ''
 
 [[jurisdictions.offerings]]
+game_slug = 'oregon-pick-4'
+support_statuses = ['cataloged', 'rules_verified', 'ev_supported', 'fetch_supported', 'audit_supported', 'low_share_supported']
+results_adapter = 'or_lottery_api'
+blocking_reason = ''
+
+[[jurisdictions.offerings]]
+game_slug = 'oregon-win-for-life'
+support_statuses = ['cataloged', 'rules_verified', 'ev_supported', 'fetch_supported', 'audit_supported', 'low_share_supported']
+results_adapter = 'or_lottery_api'
+blocking_reason = ''
+
+[[jurisdictions.offerings]]
 game_slug = 'oregon-lucky-lines'
 support_statuses = ['cataloged']
 blocking_reason = 'Retired after January 2025; historical adapter pending'

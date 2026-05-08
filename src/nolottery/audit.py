@@ -136,6 +136,19 @@ AUDIT_RULES: dict[str, AuditRule] = {
         game_slug="oregon-cash-pop",
         pools=(AuditPool("numbers", 1, 15, 1),),
     ),
+    "oregon-pick-4": AuditRule(
+        game_slug="oregon-pick-4",
+        pools=(
+            AuditPool("position_1", 0, 9, 1, ordered=True),
+            AuditPool("position_2", 0, 9, 1, ordered=True),
+            AuditPool("position_3", 0, 9, 1, ordered=True),
+            AuditPool("position_4", 0, 9, 1, ordered=True),
+        ),
+    ),
+    "oregon-win-for-life": AuditRule(
+        game_slug="oregon-win-for-life",
+        pools=(AuditPool("numbers", 1, 77, 4),),
+    ),
     "lotto-america": AuditRule(
         game_slug="lotto-america",
         pools=(
@@ -250,6 +263,7 @@ def combination_audit(
         "daily-derby",
         "idaho-pick-3",
         "idaho-pick-4",
+        "oregon-pick-4",
     }:
         return _ordered_combination_audit(game_slug, size, draws, warnings)
     return [
@@ -526,13 +540,13 @@ def _ordered_combination_audit(
             _ordered_digit_result(game_slug, "front_pair", draws, warnings, (0, 1)),
             _ordered_digit_result(game_slug, "back_pair", draws, warnings, (1, 2)),
         ]
-    if game_slug in {"daily-4", "idaho-pick-4"} and size == 2:
+    if game_slug in {"daily-4", "idaho-pick-4", "oregon-pick-4"} and size == 2:
         return [
             _ordered_digit_result(game_slug, "front_pair", draws, warnings, (0, 1)),
             _ordered_digit_result(game_slug, "middle_pair", draws, warnings, (1, 2)),
             _ordered_digit_result(game_slug, "back_pair", draws, warnings, (2, 3)),
         ]
-    if game_slug in {"daily-4", "idaho-pick-4"}:
+    if game_slug in {"daily-4", "idaho-pick-4", "oregon-pick-4"}:
         return [
             _ordered_digit_result(game_slug, "front_triple", draws, warnings, (0, 1, 2)),
             _ordered_digit_result(game_slug, "back_triple", draws, warnings, (1, 2, 3)),
@@ -706,6 +720,7 @@ def _parse_draw(
         "daily-4",
         "idaho-pick-3",
         "idaho-pick-4",
+        "oregon-pick-4",
     }:
         if len(numbers) != len(rule.pools):
             return None
@@ -774,7 +789,7 @@ def _parse_numbers(game_slug: str, winning_number: str) -> tuple[int, ...]:
     ):
         return tuple(int(digit) for digit in tokens[0])
     if (
-        game_slug in {"daily-4", "idaho-pick-4"}
+        game_slug in {"daily-4", "idaho-pick-4", "oregon-pick-4"}
         and len(tokens) == 1
         and len(tokens[0]) == 4
     ):

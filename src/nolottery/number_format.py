@@ -79,6 +79,14 @@ NUMBER_FORMATS: dict[str, NumberFormat] = {
         game_slug="oregon-cash-pop",
         pools=(NumberPool("numbers", 1, 15, 1),),
     ),
+    "oregon-pick-4": NumberFormat(
+        game_slug="oregon-pick-4",
+        pools=(NumberPool("digits", 0, 9, 4, ordered=True, allow_repeats=True),),
+    ),
+    "oregon-win-for-life": NumberFormat(
+        game_slug="oregon-win-for-life",
+        pools=(NumberPool("numbers", 1, 77, 4),),
+    ),
     "superlotto-plus": NumberFormat(
         game_slug="superlotto-plus",
         pools=(

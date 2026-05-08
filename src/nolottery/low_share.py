@@ -400,6 +400,7 @@ def _target_spread(game_slug: str) -> int:
         "oregon-cash-pop": 6,
         "oregon-keno": 25,
         "oregon-megabucks": 18,
+        "oregon-win-for-life": 25,
         "powerball": 24,
         "superlotto-plus": 18,
         "fantasy-5": 14,

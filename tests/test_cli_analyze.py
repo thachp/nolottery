@@ -176,6 +176,8 @@ def test_analyze_supports_active_oregon_draw_games(tmp_path):
         "oregon-megabucks": "Standard $1",
         "oregon-keno": "2-Spot $1",
         "oregon-cash-pop": "1 POP $1",
+        "oregon-pick-4": "Straight $1",
+        "oregon-win-for-life": "Standard $2",
     }
 
     for game_slug, best_option in expected_best_options.items():

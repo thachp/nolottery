@@ -329,6 +329,68 @@ probability = 6.666666666666667e-05
 prize = 250
 
 [[games]]
+slug = 'oregon-pick-4'
+name = 'Pick 4'
+source_url = 'https://www.oregonlottery.org/pick-4/winning-numbers/'
+reviewed_on = '2026-05-08'
+
+[[games.wager_options]]
+slug = 'straight-1'
+label = 'Straight $1'
+ticket_cost = 1.0
+
+[[games.wager_options.prize_tiers]]
+label = 'Straight'
+probability = 0.0001
+prize = 5000
+
+[[games]]
+slug = 'oregon-win-for-life'
+name = 'Win for Life'
+source_url = 'https://www.oregonlottery.org/jackpot/win-for-life/'
+reviewed_on = '2026-05-08'
+
+[[games.wager_options]]
+slug = 'standard'
+label = 'Standard $2'
+ticket_cost = 2.0
+
+[[games.wager_options.prize_tiers]]
+label = 'All 4 Numbers in Win for Life Set'
+probability = 7.389485134954739e-07
+prize = 52000
+
+[[games.wager_options.prize_tiers]]
+label = 'All 4 Numbers in Either $50,000 Set'
+probability = 1.477891375026231e-06
+prize = 50000
+
+[[games.wager_options.prize_tiers]]
+label = 'All 4 Numbers in Any $20,000 Set'
+probability = 2.9557906295523447e-06
+prize = 20000
+
+[[games.wager_options.prize_tiers]]
+label = 'All 4 Numbers in Any $10,000 Set'
+probability = 5.911599855756972e-06
+prize = 10000
+
+[[games.wager_options.prize_tiers]]
+label = '3 Numbers in Any Set'
+probability = 0.003236245954692557
+prize = 25
+
+[[games.wager_options.prize_tiers]]
+label = '2 Numbers in Any Set'
+probability = 0.16666666666666666
+prize = 2
+
+[[games.wager_options.prize_tiers]]
+label = '0 Numbers on Ticket'
+probability = 0.038461538461538464
+prize = 3
+
+[[games]]
 slug = 'oregon-lucky-lines'
 name = 'Lucky Lines'
 source_url = 'https://www.oregonlottery.org/jackpot/lucky-lines/'

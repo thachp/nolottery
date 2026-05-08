@@ -862,12 +862,20 @@ def test_coverage_reports_oregon_full_draw_game_catalog(tmp_path):
         "oregon-keno",
         "oregon-lucky-lines",
         "oregon-megabucks",
+        "oregon-pick-4",
+        "oregon-win-for-life",
         "powerball",
     }
     assert games["oregon-lucky-lines"]["blocking_reason"] == (
         "Retired after January 2025; historical adapter pending"
     )
-    for game_slug in ("oregon-megabucks", "oregon-keno", "oregon-cash-pop"):
+    for game_slug in (
+        "oregon-megabucks",
+        "oregon-keno",
+        "oregon-cash-pop",
+        "oregon-pick-4",
+        "oregon-win-for-life",
+    ):
         assert games[game_slug]["support_statuses"] == [
             "cataloged",
             "rules_verified",

@@ -172,6 +172,8 @@ def test_low_share_supports_active_oregon_draw_games(tmp_path):
             1,
         ),
         ("oregon-cash-pop", {"one-pop"}, 1),
+        ("oregon-pick-4", {"straight-1"}, 4),
+        ("oregon-win-for-life", {"standard"}, 4),
     ]:
         result = runner.invoke(
             app,

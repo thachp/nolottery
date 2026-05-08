@@ -248,6 +248,10 @@ def test_audit_frequency_parses_active_oregon_game_pools(tmp_path):
         ),
         ("or", "oregon-cash-pop", "Thu, May 07, 2026 17:00", "08"),
         ("or", "oregon-cash-pop", "Thu, May 07, 2026 18:00", "14"),
+        ("or", "oregon-pick-4", "Thu, May 07, 2026 13:00", "06, 4, 0, 7"),
+        ("or", "oregon-pick-4", "Thu, May 07, 2026 16:00", "03, 9, 2, 9"),
+        ("or", "oregon-win-for-life", "Wed, May 06, 2026", "07, 45, 52, 54"),
+        ("or", "oregon-win-for-life", "Mon, May 04, 2026", "06, 23, 61, 73"),
     ]
     conn.executemany(
         """
@@ -270,6 +274,8 @@ def test_audit_frequency_parses_active_oregon_game_pools(tmp_path):
         "oregon-megabucks": ["numbers"],
         "oregon-keno": ["numbers", "bulls_eye"],
         "oregon-cash-pop": ["numbers"],
+        "oregon-pick-4": ["position_1", "position_2", "position_3", "position_4"],
+        "oregon-win-for-life": ["numbers"],
     }
 
     for game_slug, expected_pools in cases.items():
