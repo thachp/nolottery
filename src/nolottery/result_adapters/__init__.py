@@ -121,7 +121,7 @@ def fetch_backfill_result(
         )
     if jurisdiction_code == "ca":
         return None
-    if jurisdiction_code == "tx" and game.slug in texas._TEXAS_SPECIAL_NUMBER_NAMES:
+    if jurisdiction_code == "tx" and game.slug in texas._TEXAS_WINNING_NUMBER_GAMES:
         return _read_and_parse(
             read_source,
             game.source_url,
@@ -273,7 +273,7 @@ def _parse_specs() -> dict[str, _ParseSpec]:
             "mi": _ParseSpec(michigan._MICHIGAN_DRAW_HISTORY_GAMES, michigan.parse_michigan_draw_history_json),
             "ny": _ParseSpec(new_york._NEW_YORK_DAILY_GAMES, new_york.parse_new_york_daily_numbers_json),
             "or": _ParseSpec(oregon._OREGON_API_GAMES, oregon.parse_oregon_api_results_json),
-            "tx": _ParseSpec(texas._TEXAS_SPECIAL_NUMBER_NAMES, texas.parse_texas_winning_numbers),
+            "tx": _ParseSpec(texas._TEXAS_WINNING_NUMBER_GAMES, texas.parse_texas_winning_numbers),
         }
     )
     return specs

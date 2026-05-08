@@ -203,6 +203,39 @@ def test_analyze_supports_active_oregon_draw_games(tmp_path):
         assert payload["options"]
 
 
+def test_analyze_supports_active_texas_local_draw_games(tmp_path):
+    expected_best_options = {
+        "texas-lotto": "Standard $1",
+        "texas-two-step": "Standard $1",
+        "texas-cash-five": "Standard $1",
+        "texas-all-or-nothing": "Standard $2",
+        "texas-pick-3": "Exact Order $1",
+        "texas-daily-4": "Exact Order $1",
+    }
+
+    for game_slug, best_option in expected_best_options.items():
+        result = runner.invoke(
+            app,
+            [
+                "--data-dir",
+                str(tmp_path / game_slug),
+                "analyze",
+                game_slug,
+                "-j",
+                "tx",
+                "--output",
+                "json",
+            ],
+        )
+
+        assert result.exit_code == 0, result.output
+        payload = json.loads(result.output)
+        assert payload["jurisdiction_code"] == "tx"
+        assert payload["game_slug"] == game_slug
+        assert payload["best_option"] == best_option
+        assert payload["options"]
+
+
 def test_analyze_reports_cataloged_game_without_ev_support(tmp_path):
     result = runner.invoke(
         app,

@@ -375,18 +375,24 @@ blocking_reason = 'Rules and fetch adapter pending'
 
 [[jurisdictions.offerings]]
 game_slug = 'colorado-lotto-plus'
-support_statuses = ['cataloged']
-blocking_reason = 'Rules and fetch adapter pending'
+source_url = 'https://www.coloradolottery.com/en/games/lotto/drawings/'
+support_statuses = ['cataloged', 'fetch_supported']
+results_adapter = 'co_drawing_history'
+blocking_reason = 'Rules verification pending'
 
 [[jurisdictions.offerings]]
 game_slug = 'colorado-cash-5'
-support_statuses = ['cataloged']
-blocking_reason = 'Rules and fetch adapter pending'
+source_url = 'https://www.coloradolottery.com/en/games/cash5/drawings/'
+support_statuses = ['cataloged', 'fetch_supported']
+results_adapter = 'co_drawing_history'
+blocking_reason = 'Rules verification pending'
 
 [[jurisdictions.offerings]]
 game_slug = 'colorado-pick-3'
-support_statuses = ['cataloged']
-blocking_reason = 'Rules and fetch adapter pending'
+source_url = 'https://www.coloradolottery.com/en/games/pick3/drawings/'
+support_statuses = ['cataloged', 'fetch_supported']
+results_adapter = 'co_drawing_history'
+blocking_reason = 'Rules verification pending'
 
 [[jurisdictions]]
 code = 'ct'
@@ -2099,33 +2105,45 @@ blocking_reason = ''
 
 [[jurisdictions.offerings]]
 game_slug = 'texas-lotto'
-support_statuses = ['cataloged']
-blocking_reason = 'Rules and fetch adapter pending'
+source_url = 'https://www.texaslottery.com/export/sites/lottery/Games/Lotto_Texas/Winning_Numbers/index.html'
+support_statuses = ['cataloged', 'rules_verified', 'ev_supported', 'fetch_supported', 'audit_supported', 'low_share_supported']
+results_adapter = 'tx_winning_numbers'
+blocking_reason = ''
 
 [[jurisdictions.offerings]]
 game_slug = 'texas-two-step'
-support_statuses = ['cataloged']
-blocking_reason = 'Rules and fetch adapter pending'
+source_url = 'https://www.texaslottery.com/export/sites/lottery/Games/Texas_Two_Step/Winning_Numbers/index.html'
+support_statuses = ['cataloged', 'rules_verified', 'ev_supported', 'fetch_supported', 'audit_supported', 'low_share_supported']
+results_adapter = 'tx_winning_numbers'
+blocking_reason = ''
 
 [[jurisdictions.offerings]]
 game_slug = 'texas-cash-five'
-support_statuses = ['cataloged']
-blocking_reason = 'Rules and fetch adapter pending'
+source_url = 'https://www.texaslottery.com/export/sites/lottery/Games/Cash_Five/Winning_Numbers/index.html'
+support_statuses = ['cataloged', 'rules_verified', 'ev_supported', 'fetch_supported', 'audit_supported', 'low_share_supported']
+results_adapter = 'tx_winning_numbers'
+blocking_reason = ''
 
 [[jurisdictions.offerings]]
 game_slug = 'texas-all-or-nothing'
-support_statuses = ['cataloged']
-blocking_reason = 'Rules and fetch adapter pending'
+source_url = 'https://www.texaslottery.com/export/sites/lottery/Games/All_or_Nothing/Winning_Numbers/index.html'
+support_statuses = ['cataloged', 'rules_verified', 'ev_supported', 'fetch_supported', 'audit_supported', 'low_share_supported']
+results_adapter = 'tx_winning_numbers'
+blocking_reason = ''
 
 [[jurisdictions.offerings]]
 game_slug = 'texas-pick-3'
-support_statuses = ['cataloged']
-blocking_reason = 'Rules and fetch adapter pending'
+source_url = 'https://www.texaslottery.com/export/sites/lottery/Games/Pick_3/Winning_Numbers/index.html'
+support_statuses = ['cataloged', 'rules_verified', 'ev_supported', 'fetch_supported', 'audit_supported', 'low_share_supported']
+results_adapter = 'tx_winning_numbers'
+blocking_reason = ''
 
 [[jurisdictions.offerings]]
 game_slug = 'texas-daily-4'
-support_statuses = ['cataloged']
-blocking_reason = 'Rules and fetch adapter pending'
+source_url = 'https://www.texaslottery.com/export/sites/lottery/Games/Daily_4/Winning_Numbers/index.html'
+support_statuses = ['cataloged', 'rules_verified', 'ev_supported', 'fetch_supported', 'audit_supported', 'low_share_supported']
+results_adapter = 'tx_winning_numbers'
+blocking_reason = ''
 
 [[jurisdictions]]
 code = 'ut'

@@ -1943,8 +1943,32 @@ def test_coverage_reports_colorado_catalog_and_supported_national_games(tmp_path
         "low_share_supported",
     ]
     assert games["mega-millions"]["results_adapter"] == "co_drawing_history"
-    assert games["colorado-lotto-plus"]["support_statuses"] == ["cataloged"]
-    assert games["colorado-lotto-plus"]["blocking_reason"] == (
+    assert all(
+        games[game_slug]["support_statuses"] == ["cataloged", "fetch_supported"]
+        for game_slug in {
+            "colorado-cash-5",
+            "colorado-lotto-plus",
+            "colorado-pick-3",
+        }
+    )
+    assert all(
+        games[game_slug]["results_adapter"] == "co_drawing_history"
+        for game_slug in {
+            "colorado-cash-5",
+            "colorado-lotto-plus",
+            "colorado-pick-3",
+        }
+    )
+    assert all(
+        games[game_slug]["blocking_reason"] == "Rules verification pending"
+        for game_slug in {
+            "colorado-cash-5",
+            "colorado-lotto-plus",
+            "colorado-pick-3",
+        }
+    )
+    assert games["millionaire-for-life"]["support_statuses"] == ["cataloged"]
+    assert games["millionaire-for-life"]["blocking_reason"] == (
         "Rules and fetch adapter pending"
     )
 
@@ -2080,13 +2104,44 @@ def test_coverage_reports_texas_full_draw_game_catalog(tmp_path):
     )
     assert all(
         games[game_slug]["results_adapter"] == "tx_winning_numbers"
-        for game_slug in {"mega-millions", "powerball"}
+        for game_slug in {
+            "mega-millions",
+            "powerball",
+            "texas-all-or-nothing",
+            "texas-cash-five",
+            "texas-daily-4",
+            "texas-lotto",
+            "texas-pick-3",
+            "texas-two-step",
+        }
     )
     assert all(
-        games[game_slug]["support_statuses"] == ["cataloged"]
-        for game_slug in set(games) - {"mega-millions", "powerball"}
+        games[game_slug]["support_statuses"]
+        == [
+            "cataloged",
+            "rules_verified",
+            "ev_supported",
+            "fetch_supported",
+            "audit_supported",
+            "low_share_supported",
+        ]
+        for game_slug in {
+            "texas-all-or-nothing",
+            "texas-cash-five",
+            "texas-daily-4",
+            "texas-lotto",
+            "texas-pick-3",
+            "texas-two-step",
+        }
     )
     assert all(
-        games[game_slug]["blocking_reason"] == "Rules and fetch adapter pending"
-        for game_slug in set(games) - {"mega-millions", "powerball"}
+        games[game_slug]["blocking_reason"] == ""
+        for game_slug in {
+            "texas-all-or-nothing",
+            "texas-cash-five",
+            "texas-daily-4",
+            "texas-lotto",
+            "texas-pick-3",
+            "texas-two-step",
+        }
     )

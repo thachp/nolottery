@@ -170,6 +170,28 @@ def _texas_powerball_history_html() -> str:
     """
 
 
+def _texas_local_history_html(
+    *,
+    headers: tuple[str, ...],
+    rows: tuple[tuple[str, ...], ...],
+) -> str:
+    header_html = "".join(f"<th>{header}</th>" for header in headers)
+    row_html = "\n".join(
+        "<tr>" + "".join(f"<td>{cell}</td>" for cell in row) + "</tr>"
+        for row in rows
+    )
+    return f"""
+    <html>
+      <body>
+        <table>
+          <thead><tr>{header_html}</tr></thead>
+          <tbody>{row_html}</tbody>
+        </table>
+      </body>
+    </html>
+    """
+
+
 def _arizona_powerball_past_180_text() -> str:
     return """
     Past 180 Days Drawing Information
@@ -306,6 +328,25 @@ def _colorado_mega_millions_history_html() -> str:
         <p>5 11 22 25 69</p>
         <p>21</p>
         <p>$323,000,000 Jackpot</p>
+      </body>
+    </html>
+    """
+
+
+def _colorado_local_history_html(
+    *,
+    label: str,
+    rows: tuple[tuple[str, str], ...],
+) -> str:
+    draw_html = "\n".join(
+        f"<a>{draw_date}</a><p>{label}</p><p>{numbers}</p>"
+        for draw_date, numbers in rows
+    )
+    return f"""
+    <html>
+      <body>
+        <h1>{label}</h1>
+        {draw_html}
       </body>
     </html>
     """
@@ -1936,6 +1977,221 @@ def test_fetch_texas_powerball_backfill_reads_official_history_fixture(tmp_path)
     ]
 
 
+def test_fetch_texas_local_backfill_reads_official_winning_number_fixture(tmp_path):
+    fixtures = tmp_path / "fixtures"
+    fixtures.mkdir()
+    (fixtures / "powerball.html").write_text(
+        _texas_powerball_history_html(),
+        encoding="utf-8",
+    )
+    (fixtures / "mega-millions.html").write_text(
+        _texas_powerball_history_html().replace("Powerball", "Mega Millions").replace(
+            "<th>Powerball</th>",
+            "<th>Mega Ball</th>",
+        ),
+        encoding="utf-8",
+    )
+    (fixtures / "texas-lotto.html").write_text(
+        _texas_local_history_html(
+            headers=(
+                "Draw Date",
+                "Winning Numbers",
+                "Estimated Jackpot",
+                "Jackpot Winners",
+            ),
+            rows=(
+                ("05/07/2026", "08 - 11 - 23 - 35 - 39 - 48", "$5.75 Million", "0"),
+                ("05/05/2026", "06 - 16 - 24 - 37 - 41 - 46", "$5.5 Million", "0"),
+            ),
+        ),
+        encoding="utf-8",
+    )
+    (fixtures / "texas-two-step.html").write_text(
+        _texas_local_history_html(
+            headers=("Draw Date", "Winning Numbers", "Bonus Ball", "Top Prize"),
+            rows=(
+                ("05/05/2026", "02 - 05 - 21 - 31", "29", "$200,000"),
+                ("05/01/2026", "01 - 13 - 16 - 34", "07", "$200,000"),
+            ),
+        ),
+        encoding="utf-8",
+    )
+    (fixtures / "texas-cash-five.html").write_text(
+        _texas_local_history_html(
+            headers=("Draw Date", "Winning Numbers", "Top Prize"),
+            rows=(
+                ("05/06/2026", "05 - 12 - 19 - 21 - 29", "$25,000"),
+                ("05/05/2026", "01 - 04 - 07 - 24 - 35", "$25,000"),
+            ),
+        ),
+        encoding="utf-8",
+    )
+    (fixtures / "texas-all-or-nothing.html").write_text(
+        _texas_local_history_html(
+            headers=("Draw Date", "Draw Time", "Winning Numbers", "Top Prize Winners"),
+            rows=(
+                (
+                    "05/07/2026",
+                    "Evening",
+                    "02 - 04 - 06 - 09 - 10 - 11 - 14 - 15 - 17 - 19 - 20 - 22",
+                    "0",
+                ),
+                (
+                    "05/07/2026",
+                    "Day",
+                    "01 - 04 - 05 - 11 - 12 - 13 - 14 - 15 - 16 - 22 - 23 - 24",
+                    "0",
+                ),
+            ),
+        ),
+        encoding="utf-8",
+    )
+    (fixtures / "texas-pick-3.html").write_text(
+        _texas_local_history_html(
+            headers=(
+                "Draw Date",
+                "Morning Winning Numbers",
+                "FIRE BALL",
+                "Day Winning Numbers",
+                "FIRE BALL",
+                "Evening Winning Numbers",
+                "FIRE BALL",
+                "Night Winning Numbers",
+                "FIRE BALL",
+            ),
+            rows=(
+                (
+                    "05/07/2026",
+                    "0 - 5 - 4",
+                    "5",
+                    "8 - 6 - 8",
+                    "2",
+                    "",
+                    "",
+                    "",
+                    "",
+                ),
+                (
+                    "05/06/2026",
+                    "6 - 0 - 4",
+                    "4",
+                    "5 - 8 - 5",
+                    "7",
+                    "8 - 5 - 4",
+                    "0",
+                    "6 - 0 - 8",
+                    "6",
+                ),
+            ),
+        ),
+        encoding="utf-8",
+    )
+    (fixtures / "texas-daily-4.html").write_text(
+        _texas_local_history_html(
+            headers=(
+                "Draw Date",
+                "Morning Winning Numbers",
+                "FIRE BALL",
+                "Day Winning Numbers",
+                "FIRE BALL",
+                "Evening Winning Numbers",
+                "FIRE BALL",
+                "Night Winning Numbers",
+                "FIRE BALL",
+            ),
+            rows=(
+                (
+                    "05/07/2026",
+                    "5 - 4 - 4 - 9",
+                    "7",
+                    "4 - 7 - 9 - 8",
+                    "5",
+                    "",
+                    "",
+                    "",
+                    "",
+                ),
+                (
+                    "05/06/2026",
+                    "0 - 1 - 5 - 4",
+                    "2",
+                    "9 - 6 - 3 - 8",
+                    "4",
+                    "9 - 2 - 8 - 5",
+                    "5",
+                    "0 - 3 - 3 - 0",
+                    "3",
+                ),
+            ),
+        ),
+        encoding="utf-8",
+    )
+
+    result = runner.invoke(
+        app,
+        [
+            "--data-dir",
+            str(tmp_path / "data"),
+            "fetch",
+            "all",
+            "-j",
+            "tx",
+            "--backfill",
+            "--source-dir",
+            str(fixtures),
+        ],
+    )
+
+    assert result.exit_code == 0, result.output
+    assert "8 games fetched" in result.output
+    expected = {
+        "texas-lotto": "08, 11, 23, 35, 39, 48",
+        "texas-two-step": "02, 05, 21, 31, 29 Bonus Ball",
+        "texas-cash-five": "05, 12, 19, 21, 29",
+        "texas-all-or-nothing": (
+            "02, 04, 06, 09, 10, 11, 14, 15, 17, 19, 20, 22"
+        ),
+        "texas-pick-3": "0, 5, 4, 5 Fire Ball",
+        "texas-daily-4": "5, 4, 4, 9, 7 Fire Ball",
+    }
+    for game_slug, winning_number in expected.items():
+        draws_result = runner.invoke(
+            app,
+            [
+                "--data-dir",
+                str(tmp_path / "data"),
+                "draws",
+                game_slug,
+                "-j",
+                "tx",
+                "--limit",
+                "10",
+                "--output",
+                "json",
+            ],
+        )
+
+        assert draws_result.exit_code == 0, draws_result.output
+        payload = json.loads(draws_result.output)
+        draws = payload["games"][0]["draws"]
+        assert any(draw["winning_number"] == winning_number for draw in draws)
+        assert payload["games"][0]["draws"]
+        if game_slug == "texas-all-or-nothing":
+            assert any(
+                draw["draw_date"] == "Thu, May 07, 2026 Evening"
+                for draw in draws
+            )
+            assert len(draws) == 2
+        elif game_slug in {"texas-pick-3", "texas-daily-4"}:
+            assert any(
+                draw["draw_date"] == "Thu, May 07, 2026 Morning"
+                for draw in draws
+            )
+            assert len(draws) == 6
+        else:
+            assert len(draws) == 2
+
+
 def test_fetch_arizona_powerball_backfill_reads_official_past_180_fixture(tmp_path):
     fixtures = tmp_path / "fixtures"
     fixtures.mkdir()
@@ -2174,7 +2430,7 @@ def test_fetch_colorado_powerball_backfill_reads_official_history_fixture(tmp_pa
     ]
 
 
-def test_fetch_all_colorado_backfill_uses_supported_national_games(tmp_path):
+def test_fetch_all_colorado_backfill_uses_supported_national_and_local_games(tmp_path):
     fixtures = tmp_path / "fixtures"
     fixtures.mkdir()
     (fixtures / "powerball-co-backfill.html").write_text(
@@ -2183,6 +2439,36 @@ def test_fetch_all_colorado_backfill_uses_supported_national_games(tmp_path):
     )
     (fixtures / "mega-millions-co-backfill.html").write_text(
         _colorado_mega_millions_history_html(),
+        encoding="utf-8",
+    )
+    (fixtures / "colorado-lotto-plus-co-backfill.html").write_text(
+        _colorado_local_history_html(
+            label="Colorado Lotto+ Numbers",
+            rows=(
+                ("Wednesday, 5/6/26", "1 9 12 20 30 36"),
+                ("Saturday, 5/2/26", "4 7 17 26 33 40"),
+            ),
+        ),
+        encoding="utf-8",
+    )
+    (fixtures / "colorado-cash-5-co-backfill.html").write_text(
+        _colorado_local_history_html(
+            label="Cash 5 Numbers",
+            rows=(
+                ("Wednesday, 5/6/26", "2 10 16 25 31"),
+                ("Tuesday, 5/5/26", "4 8 15 21 29"),
+            ),
+        ),
+        encoding="utf-8",
+    )
+    (fixtures / "colorado-pick-3-co-backfill.html").write_text(
+        _colorado_local_history_html(
+            label="Pick 3 Numbers",
+            rows=(
+                ("Jan. 13, 2026: Midday", "3 7 1"),
+                ("Jan. 12, 2026: Evening", "9 0 4"),
+            ),
+        ),
         encoding="utf-8",
     )
 
@@ -2204,7 +2490,35 @@ def test_fetch_all_colorado_backfill_uses_supported_national_games(tmp_path):
     assert result.exit_code == 0, result.output
     assert "Powerball" in result.output
     assert "Mega Millions" in result.output
-    assert "2 games fetched" in result.output
+    assert "5 games fetched" in result.output
+    expected = {
+        "colorado-lotto-plus": "1, 9, 12, 20, 30, 36",
+        "colorado-cash-5": "2, 10, 16, 25, 31",
+        "colorado-pick-3": "3, 7, 1",
+    }
+    for game_slug, winning_number in expected.items():
+        draws_result = runner.invoke(
+            app,
+            [
+                "--data-dir",
+                str(tmp_path / "data"),
+                "draws",
+                game_slug,
+                "-j",
+                "co",
+                "--output",
+                "json",
+            ],
+        )
+
+        assert draws_result.exit_code == 0, draws_result.output
+        payload = json.loads(draws_result.output)
+        assert payload["games"][0]["draws"][0]["winning_number"] == winning_number
+        assert len(payload["games"][0]["draws"]) == 2
+        if game_slug == "colorado-pick-3":
+            assert payload["games"][0]["draws"][0]["draw_date"] == (
+                "Tue, Jan 13, 2026 Midday"
+            )
 
 
 def test_fetch_connecticut_powerball_backfill_reads_official_ajax_fixture(tmp_path):

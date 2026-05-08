@@ -200,6 +200,42 @@ AUDIT_RULES: dict[str, AuditRule] = {
             AuditPool("powerball", 1, 26, 1),
         ),
     ),
+    "texas-lotto": AuditRule(
+        game_slug="texas-lotto",
+        pools=(AuditPool("numbers", 1, 54, 6),),
+    ),
+    "texas-two-step": AuditRule(
+        game_slug="texas-two-step",
+        pools=(
+            AuditPool("white", 1, 35, 4),
+            AuditPool("bonus_ball", 1, 35, 1),
+        ),
+    ),
+    "texas-cash-five": AuditRule(
+        game_slug="texas-cash-five",
+        pools=(AuditPool("numbers", 1, 35, 5),),
+    ),
+    "texas-all-or-nothing": AuditRule(
+        game_slug="texas-all-or-nothing",
+        pools=(AuditPool("numbers", 1, 24, 12),),
+    ),
+    "texas-pick-3": AuditRule(
+        game_slug="texas-pick-3",
+        pools=(
+            AuditPool("position_1", 0, 9, 1, ordered=True),
+            AuditPool("position_2", 0, 9, 1, ordered=True),
+            AuditPool("position_3", 0, 9, 1, ordered=True),
+        ),
+    ),
+    "texas-daily-4": AuditRule(
+        game_slug="texas-daily-4",
+        pools=(
+            AuditPool("position_1", 0, 9, 1, ordered=True),
+            AuditPool("position_2", 0, 9, 1, ordered=True),
+            AuditPool("position_3", 0, 9, 1, ordered=True),
+            AuditPool("position_4", 0, 9, 1, ordered=True),
+        ),
+    ),
 }
 
 
@@ -264,6 +300,8 @@ def combination_audit(
         "idaho-pick-3",
         "idaho-pick-4",
         "oregon-pick-4",
+        "texas-pick-3",
+        "texas-daily-4",
     }:
         return _ordered_combination_audit(game_slug, size, draws, warnings)
     return [
@@ -535,18 +573,26 @@ def _ordered_combination_audit(
     draws: tuple[Draw, ...],
     warnings: tuple[str, ...],
 ) -> list[dict[str, object]]:
-    if game_slug in {"pick-3", "daily-3", "idaho-pick-3"} and size == 2:
+    if (
+        game_slug in {"pick-3", "daily-3", "idaho-pick-3", "texas-pick-3"}
+        and size == 2
+    ):
         return [
             _ordered_digit_result(game_slug, "front_pair", draws, warnings, (0, 1)),
             _ordered_digit_result(game_slug, "back_pair", draws, warnings, (1, 2)),
         ]
-    if game_slug in {"daily-4", "idaho-pick-4", "oregon-pick-4"} and size == 2:
+    if game_slug in {
+        "daily-4",
+        "idaho-pick-4",
+        "oregon-pick-4",
+        "texas-daily-4",
+    } and size == 2:
         return [
             _ordered_digit_result(game_slug, "front_pair", draws, warnings, (0, 1)),
             _ordered_digit_result(game_slug, "middle_pair", draws, warnings, (1, 2)),
             _ordered_digit_result(game_slug, "back_pair", draws, warnings, (2, 3)),
         ]
-    if game_slug in {"daily-4", "idaho-pick-4", "oregon-pick-4"}:
+    if game_slug in {"daily-4", "idaho-pick-4", "oregon-pick-4", "texas-daily-4"}:
         return [
             _ordered_digit_result(game_slug, "front_triple", draws, warnings, (0, 1, 2)),
             _ordered_digit_result(game_slug, "back_triple", draws, warnings, (1, 2, 3)),
@@ -721,6 +767,8 @@ def _parse_draw(
         "idaho-pick-3",
         "idaho-pick-4",
         "oregon-pick-4",
+        "texas-pick-3",
+        "texas-daily-4",
     }:
         if len(numbers) != len(rule.pools):
             return None
@@ -740,6 +788,13 @@ def _parse_draw(
         pools = {
             rule.pools[0].name: tuple(numbers[:5]),
             rule.pools[1].name: (numbers[5],),
+        }
+    elif rule.game_slug == "texas-two-step":
+        if len(numbers) != 5:
+            return None
+        pools = {
+            "white": tuple(numbers[:4]),
+            "bonus_ball": (numbers[4],),
         }
     elif rule.game_slug in {"hot-spot", "oregon-keno"}:
         if len(numbers) != 20:
@@ -788,12 +843,16 @@ def _parse_numbers(game_slug: str, winning_number: str) -> tuple[int, ...]:
         and len(tokens[0]) == 3
     ):
         return tuple(int(digit) for digit in tokens[0])
+    if game_slug == "texas-pick-3":
+        return tuple(int(token) for token in tokens[:3])
     if (
         game_slug in {"daily-4", "idaho-pick-4", "oregon-pick-4"}
         and len(tokens) == 1
         and len(tokens[0]) == 4
     ):
         return tuple(int(digit) for digit in tokens[0])
+    if game_slug == "texas-daily-4":
+        return tuple(int(token) for token in tokens[:4])
     if game_slug in {"hot-spot", "oregon-keno"}:
         return tuple(int(token) for token in tokens[:20])
     return tuple(int(token) for token in tokens)

@@ -304,6 +304,114 @@ def test_audit_frequency_parses_active_oregon_game_pools(tmp_path):
             assert all(audit["draw_count"] == 2 for audit in payload["audits"])
 
 
+def test_audit_frequency_parses_active_texas_local_game_pools(tmp_path):
+    conn = db.connect(tmp_path)
+    rows = [
+        ("tx", "texas-lotto", "Thu, May 07, 2026", "08, 11, 23, 35, 39, 48"),
+        ("tx", "texas-lotto", "Tue, May 05, 2026", "06, 16, 24, 37, 41, 46"),
+        (
+            "tx",
+            "texas-two-step",
+            "Tue, May 05, 2026",
+            "02, 05, 21, 31, 29 Bonus Ball",
+        ),
+        (
+            "tx",
+            "texas-two-step",
+            "Fri, May 01, 2026",
+            "01, 13, 16, 34, 07 Bonus Ball",
+        ),
+        ("tx", "texas-cash-five", "Wed, May 06, 2026", "05, 12, 19, 21, 29"),
+        ("tx", "texas-cash-five", "Tue, May 05, 2026", "01, 04, 07, 24, 35"),
+        (
+            "tx",
+            "texas-all-or-nothing",
+            "Thu, May 07, 2026 Evening",
+            "02, 04, 06, 09, 10, 11, 14, 15, 17, 19, 20, 22",
+        ),
+        (
+            "tx",
+            "texas-all-or-nothing",
+            "Thu, May 07, 2026 Day",
+            "01, 04, 05, 11, 12, 13, 14, 15, 16, 22, 23, 24",
+        ),
+        (
+            "tx",
+            "texas-pick-3",
+            "Thu, May 07, 2026 Morning",
+            "0, 5, 4, 5 Fire Ball",
+        ),
+        (
+            "tx",
+            "texas-pick-3",
+            "Thu, May 07, 2026 Day",
+            "8, 6, 8, 2 Fire Ball",
+        ),
+        (
+            "tx",
+            "texas-daily-4",
+            "Thu, May 07, 2026 Morning",
+            "5, 4, 4, 9, 7 Fire Ball",
+        ),
+        (
+            "tx",
+            "texas-daily-4",
+            "Thu, May 07, 2026 Day",
+            "4, 7, 9, 8, 5 Fire Ball",
+        ),
+    ]
+    conn.executemany(
+        """
+        insert into draw_results (
+            jurisdiction_code,
+            game_slug,
+            draw_date,
+            winning_number,
+            prize_amount,
+            wa_winners,
+            total
+        )
+        values (?, ?, ?, ?, 0, 0, 0)
+        """,
+        rows,
+    )
+    conn.commit()
+
+    cases = {
+        "texas-lotto": ["numbers"],
+        "texas-two-step": ["white", "bonus_ball"],
+        "texas-cash-five": ["numbers"],
+        "texas-all-or-nothing": ["numbers"],
+        "texas-pick-3": ["position_1", "position_2", "position_3"],
+        "texas-daily-4": ["position_1", "position_2", "position_3", "position_4"],
+    }
+
+    for game_slug, expected_pools in cases.items():
+        result = runner.invoke(
+            app,
+            [
+                "--data-dir",
+                str(tmp_path),
+                "audit",
+                "frequency",
+                game_slug,
+                "-j",
+                "tx",
+                "--output",
+                "json",
+            ],
+        )
+
+        assert result.exit_code == 0, result.output
+        payload = json.loads(result.output)
+        if len(expected_pools) == 1:
+            assert payload["pool"] == expected_pools[0]
+            assert payload["draw_count"] == 2
+        else:
+            assert [audit["pool"] for audit in payload["audits"]] == expected_pools
+            assert all(audit["draw_count"] == 2 for audit in payload["audits"])
+
+
 def test_audit_pairs_includes_combination_chi_square_and_full_json_buckets(tmp_path):
     data_dir = tmp_path / "data"
     fixture = tmp_path / "hit-5.html"

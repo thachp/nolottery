@@ -138,6 +138,33 @@ NUMBER_FORMATS: dict[str, NumberFormat] = {
         game_slug="match-4",
         pools=(NumberPool("white", 1, 24, 4),),
     ),
+    "texas-lotto": NumberFormat(
+        game_slug="texas-lotto",
+        pools=(NumberPool("numbers", 1, 54, 6),),
+    ),
+    "texas-two-step": NumberFormat(
+        game_slug="texas-two-step",
+        pools=(
+            NumberPool("white", 1, 35, 4),
+            NumberPool("bonus-ball", 1, 35, 1),
+        ),
+    ),
+    "texas-cash-five": NumberFormat(
+        game_slug="texas-cash-five",
+        pools=(NumberPool("numbers", 1, 35, 5),),
+    ),
+    "texas-all-or-nothing": NumberFormat(
+        game_slug="texas-all-or-nothing",
+        pools=(NumberPool("numbers", 1, 24, 12),),
+    ),
+    "texas-pick-3": NumberFormat(
+        game_slug="texas-pick-3",
+        pools=(NumberPool("digits", 0, 9, 3, ordered=True, allow_repeats=True),),
+    ),
+    "texas-daily-4": NumberFormat(
+        game_slug="texas-daily-4",
+        pools=(NumberPool("digits", 0, 9, 4, ordered=True, allow_repeats=True),),
+    ),
 }
 
 

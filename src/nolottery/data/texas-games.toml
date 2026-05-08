@@ -6,11 +6,76 @@ name = 'Lotto Texas'
 source_url = 'https://www.texaslottery.com/export/sites/lottery/Games/Lotto_Texas/index.html'
 reviewed_on = '2026-05-07'
 
+[[games.wager_options]]
+slug = 'standard'
+label = 'Standard $1'
+ticket_cost = 1.0
+
+[[games.wager_options.prize_tiers]]
+label = '6 of 6 Jackpot Estimate'
+probability = 3.8718922498849565e-08
+prize = 6750000
+
+[[games.wager_options.prize_tiers]]
+label = '5 of 6'
+probability = 1.1151049679668674e-05
+prize = 2333
+
+[[games.wager_options.prize_tiers]]
+label = '4 of 6'
+probability = 0.0006551241686805346
+prize = 53
+
+[[games.wager_options.prize_tiers]]
+label = '3 of 6'
+probability = 0.013393649670802041
+prize = 3
+
 [[games]]
 slug = 'texas-two-step'
 name = 'Texas Two Step'
 source_url = 'https://www.texaslottery.com/export/sites/lottery/Games/Texas_Two_Step/index.html'
 reviewed_on = '2026-05-07'
+
+[[games.wager_options]]
+slug = 'standard'
+label = 'Standard $1'
+ticket_cost = 1.0
+
+[[games.wager_options.prize_tiers]]
+label = '4 of 4 + Bonus Jackpot'
+probability = 5.456728145803775e-07
+prize = 200000
+
+[[games.wager_options.prize_tiers]]
+label = '4 of 4'
+probability = 1.8552875695732837e-05
+prize = 2412
+
+[[games.wager_options.prize_tiers]]
+label = '3 of 4 + Bonus'
+probability = 6.766342900796683e-05
+prize = 54
+
+[[games.wager_options.prize_tiers]]
+label = '3 of 4'
+probability = 0.002300556586270872
+prize = 20
+
+[[games.wager_options.prize_tiers]]
+label = '2 of 4 + Bonus'
+probability = 0.0015224271526792536
+prize = 23
+
+[[games.wager_options.prize_tiers]]
+label = '1 of 4 + Bonus'
+probability = 0.009811197206155189
+prize = 7
+
+[[games.wager_options.prize_tiers]]
+label = '0 of 4 + Bonus'
+probability = 0.017169595110771582
+prize = 5
 
 [[games]]
 slug = 'texas-cash-five'
@@ -18,11 +83,66 @@ name = 'Cash Five'
 source_url = 'https://www.texaslottery.com/export/sites/lottery/Games/Cash_Five/index.html'
 reviewed_on = '2026-05-07'
 
+[[games.wager_options]]
+slug = 'standard'
+label = 'Standard $1'
+ticket_cost = 1.0
+
+[[games.wager_options.prize_tiers]]
+label = '5 of 5'
+probability = 3.0804110500505186e-06
+prize = 25000
+
+[[games.wager_options.prize_tiers]]
+label = '4 of 5'
+probability = 0.00046206165750757784
+prize = 350
+
+[[games.wager_options.prize_tiers]]
+label = '3 of 5'
+probability = 0.013399788067719756
+prize = 15
+
+[[games.wager_options.prize_tiers]]
+label = '2 of 5'
+probability = 0.12506468863205106
+prize = 2
+
 [[games]]
 slug = 'texas-all-or-nothing'
 name = 'All or Nothing'
 source_url = 'https://www.texaslottery.com/export/sites/lottery/Games/All_or_Nothing/index.html'
 reviewed_on = '2026-05-07'
+
+[[games.wager_options]]
+slug = 'standard'
+label = 'Standard $2'
+ticket_cost = 2.0
+
+[[games.wager_options.prize_tiers]]
+label = 'Match 12 or 0'
+probability = 7.39602301050679e-07
+prize = 250000
+
+[[games.wager_options.prize_tiers]]
+label = 'Match 11 or 1'
+probability = 0.00010650273135129778
+prize = 500
+
+[[games.wager_options.prize_tiers]]
+label = 'Match 10 or 2'
+probability = 0.0032217076233767576
+prize = 50
+
+[[games.wager_options.prize_tiers]]
+label = 'Match 9 or 3'
+probability = 0.035796751370852864
+prize = 10
+
+[[games.wager_options.prize_tiers]]
+label = 'Match 8 or 4'
+probability = 0.18122105381494263
+prize = 2
 
 [[games]]
 slug = 'texas-pick-3'
@@ -30,8 +150,28 @@ name = 'Pick 3'
 source_url = 'https://www.texaslottery.com/export/sites/lottery/Games/Pick_3/index.html'
 reviewed_on = '2026-05-07'
 
+[[games.wager_options]]
+slug = 'exact-order-1'
+label = 'Exact Order $1'
+ticket_cost = 1.0
+
+[[games.wager_options.prize_tiers]]
+label = 'Exact Order'
+probability = 0.001
+prize = 500
+
 [[games]]
 slug = 'texas-daily-4'
 name = 'Daily 4'
 source_url = 'https://www.texaslottery.com/export/sites/lottery/Games/Daily_4/index.html'
 reviewed_on = '2026-05-07'
+
+[[games.wager_options]]
+slug = 'exact-order-1'
+label = 'Exact Order $1'
+ticket_cost = 1.0
+
+[[games.wager_options.prize_tiers]]
+label = 'Exact Order'
+probability = 0.0001
+prize = 5000

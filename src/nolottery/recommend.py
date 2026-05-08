@@ -121,6 +121,8 @@ def suggest_numbers(game_slug: str, option_slug: str) -> tuple[int, ...]:
         "idaho-pick-4": 4,
         "oregon-pick-4": 4,
         "numbers": 3,
+        "texas-pick-3": 3,
+        "texas-daily-4": 4,
         "win-4": 4,
     }.get(game_slug)
     if digit_count is not None:
@@ -164,6 +166,14 @@ def suggest_numbers(game_slug: str, option_slug: str) -> tuple[int, ...]:
         return (1, 2, 3, 4, 5)
     if game_slug == "match-4":
         return (1, 2, 3, 4)
+    if game_slug == "texas-lotto":
+        return (1, 2, 3, 4, 5, 6)
+    if game_slug == "texas-two-step":
+        return (1, 2, 3, 4, 1)
+    if game_slug == "texas-cash-five":
+        return (1, 2, 3, 4, 5)
+    if game_slug == "texas-all-or-nothing":
+        return tuple(range(1, 13))
     if game_slug == "pick-3":
         if "-3-way-" in option_slug:
             return (1, 1, 2)
