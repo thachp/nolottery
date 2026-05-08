@@ -1983,7 +1983,7 @@ def test_coverage_reports_montana_catalog_and_supported_national_games(tmp_path)
     )
 
 
-def test_coverage_reports_nebraska_catalog_and_supported_national_games(tmp_path):
+def test_coverage_reports_nebraska_full_fetch_supported_catalog(tmp_path):
     result = runner.invoke(
         app,
         [
@@ -2023,10 +2023,11 @@ def test_coverage_reports_nebraska_catalog_and_supported_national_games(tmp_path
         "low_share_supported",
     ]
     assert games["mega-millions"]["results_adapter"] == "ne_draw_results_page"
-    assert games["nebraska-pick-5"]["support_statuses"] == ["cataloged"]
-    assert games["nebraska-pick-5"]["blocking_reason"] == (
-        "Rules and fetch adapter pending"
-    )
+    for game_slug in set(games) - {"lucky-for-life"}:
+        assert "fetch_supported" in games[game_slug]["support_statuses"]
+        assert "audit_supported" in games[game_slug]["support_statuses"]
+        assert games[game_slug]["results_adapter"] == "ne_draw_results_page"
+    assert games["nebraska-pick-5"]["blocking_reason"] == "Rules verification pending"
     assert games["lucky-for-life"]["blocking_reason"] == (
         "Retired after February 2026; historical adapter pending"
     )

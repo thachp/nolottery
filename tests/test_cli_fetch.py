@@ -1420,6 +1420,81 @@ def _nebraska_draw_results_html() -> str:
     """
 
 
+def _nebraska_pick_5_numbers_html() -> str:
+    return """
+    <html>
+      <body>
+        <h2 id="numResLabel">Pick 5 Numbers</h2>
+        <table class="numbertable" aria-describedby="numResLabel">
+          <tr class="tableheader"><th>Date</th><th>Numbers</th></tr>
+          <tr class="dark">
+            <td><strong>05/06/2026</strong></td>
+            <td>01, 05, 15, 23, 36</td>
+          </tr>
+          <tr class="lite">
+            <td><strong>05/07/2026</strong></td>
+            <td>13, 19, 22, 28, 37</td>
+          </tr>
+        </table>
+      </body>
+    </html>
+    """
+
+
+def _nebraska_full_numbers_html() -> str:
+    return """
+    <html>
+      <body>
+        <h2>Powerball Numbers</h2>
+        <table class="numbertable">
+          <tr><th>Date</th><th>White</th><th>Powerball</th><th>Power Play</th></tr>
+          <tr><td><strong>05/06/2026</strong></td><td>18, 27, 51, 65, 68</td><td>05</td><td>03</td></tr>
+        </table>
+        <h2>Mega Millions Numbers</h2>
+        <table class="numbertable">
+          <tr><th>Date</th><th>White</th><th>Mega Ball</th></tr>
+          <tr><td><strong>05/05/2026</strong></td><td>12, 22, 50, 51, 55</td><td>10</td></tr>
+        </table>
+        <h2>Lotto America Numbers</h2>
+        <table class="numbertable">
+          <tr><th>Date</th><th>Red</th><th>Star Ball</th><th>All Star Bonus</th></tr>
+          <tr><td><strong>05/06/2026</strong></td><td>03, 06, 07, 18, 49</td><td>10</td><td>05</td></tr>
+        </table>
+        <h2>Millionaire for Life Numbers</h2>
+        <table class="numbertable">
+          <tr><th>Date</th><th>White</th><th>Millionaire Ball</th></tr>
+          <tr><td><strong>05/06/2026</strong></td><td>02, 03, 14, 32, 44</td><td>07</td></tr>
+        </table>
+        <h2>Pick 5 Numbers</h2>
+        <table class="numbertable">
+          <tr><th>Date</th><th>Numbers</th></tr>
+          <tr><td><strong>05/07/2026</strong></td><td>13, 19, 22, 28, 37</td></tr>
+        </table>
+        <h2>Pick 4 Numbers</h2>
+        <table class="numbertable">
+          <tr><th>Date</th><th>Numbers</th></tr>
+          <tr><td><strong>05/07/2026</strong></td><td>04, 00, 06, 09</td></tr>
+        </table>
+        <h2>Pick 3 Numbers</h2>
+        <table class="numbertable">
+          <tr><th>Date</th><th>Numbers</th></tr>
+          <tr><td><strong>05/07/2026</strong></td><td>03, 06, 05</td></tr>
+        </table>
+        <h2>MyDaY Numbers</h2>
+        <table class="numbertable">
+          <tr><th>Date</th><th>Month</th><th>Day</th><th>Year</th></tr>
+          <tr><td><strong>05/07/2026</strong></td><td>01</td><td>15</td><td>21</td></tr>
+        </table>
+        <h2>2by2 Numbers</h2>
+        <table class="numbertable">
+          <tr><th>Date</th><th>Red</th><th>White</th></tr>
+          <tr><td><strong>05/07/2026</strong></td><td>07, 15</td><td>02, 16</td></tr>
+        </table>
+      </body>
+    </html>
+    """
+
+
 def test_fetch_cashpop_persists_official_page_snapshot_and_draws(tmp_path):
     fixture = tmp_path / "cashpop.html"
     fixture.write_text(DRAWING_HTML, encoding="utf-8")
@@ -5298,6 +5373,185 @@ def test_fetch_nebraska_mega_millions_backfill_reads_official_page_fixture(
             "draw_date": "Tue, May 05, 2026",
             "winning_number": "12, 22, 50, 51, 55, 10 Mega Ball",
         }
+    ]
+
+
+def test_fetch_nebraska_pick_5_backfill_reads_official_search_fixture(tmp_path):
+    fixtures = tmp_path / "fixtures"
+    fixtures.mkdir()
+    (fixtures / "nebraska-pick-5-ne-backfill.html").write_text(
+        _nebraska_pick_5_numbers_html(),
+        encoding="utf-8",
+    )
+
+    result = runner.invoke(
+        app,
+        [
+            "--data-dir",
+            str(tmp_path / "data"),
+            "fetch",
+            "nebraska-pick-5",
+            "-j",
+            "ne",
+            "--backfill",
+            "--source-dir",
+            str(fixtures),
+        ],
+    )
+
+    assert result.exit_code == 0, result.output
+    assert "Pick 5" in result.output
+    assert "2 draws" in result.output
+
+    draws_result = runner.invoke(
+        app,
+        [
+            "--data-dir",
+            str(tmp_path / "data"),
+            "draws",
+            "nebraska-pick-5",
+            "-j",
+            "ne",
+            "--output",
+            "json",
+        ],
+    )
+
+    assert draws_result.exit_code == 0, draws_result.output
+    payload = json.loads(draws_result.output)
+    assert payload["games"][0]["draws"] == [
+        {
+            "jurisdiction_code": "ne",
+            "draw_date": "Thu, May 07, 2026",
+            "winning_number": "13, 19, 22, 28, 37",
+        },
+        {
+            "jurisdiction_code": "ne",
+            "draw_date": "Wed, May 06, 2026",
+            "winning_number": "1, 5, 15, 23, 36",
+        },
+    ]
+
+
+@pytest.mark.parametrize(
+    ("game_slug", "expected_winning_number"),
+    [
+        ("lotto-america", "3, 6, 7, 18, 49, 10 Star Ball"),
+        ("millionaire-for-life", "2, 3, 14, 32, 44, 7 Millionaire Ball"),
+        ("nebraska-pick-4", "4, 0, 6, 9"),
+        ("nebraska-pick-3", "3, 6, 5"),
+        ("nebraska-myday", "1 Month, 15 Day, 21 Year"),
+        ("nebraska-2by2", "7 Red, 15 Red, 2 White, 16 White"),
+    ],
+)
+def test_fetch_nebraska_backfill_covers_local_result_shapes(
+    tmp_path,
+    game_slug,
+    expected_winning_number,
+):
+    fixtures = tmp_path / "fixtures"
+    fixtures.mkdir()
+    (fixtures / f"{game_slug}-ne-backfill.html").write_text(
+        _nebraska_full_numbers_html(),
+        encoding="utf-8",
+    )
+
+    result = runner.invoke(
+        app,
+        [
+            "--data-dir",
+            str(tmp_path / "data"),
+            "fetch",
+            game_slug,
+            "-j",
+            "ne",
+            "--backfill",
+            "--source-dir",
+            str(fixtures),
+        ],
+    )
+
+    assert result.exit_code == 0, result.output
+    draws_result = runner.invoke(
+        app,
+        [
+            "--data-dir",
+            str(tmp_path / "data"),
+            "draws",
+            game_slug,
+            "-j",
+            "ne",
+            "--output",
+            "json",
+        ],
+    )
+
+    assert draws_result.exit_code == 0, draws_result.output
+    payload = json.loads(draws_result.output)
+    assert payload["games"][0]["draws"][0]["winning_number"] == expected_winning_number
+
+
+def test_fetch_all_nebraska_backfill_uses_full_active_draw_game_set(tmp_path):
+    fixtures = tmp_path / "fixtures"
+    fixtures.mkdir()
+    fixture_html = _nebraska_full_numbers_html()
+    for game_slug in (
+        "powerball",
+        "mega-millions",
+        "lotto-america",
+        "millionaire-for-life",
+        "nebraska-pick-5",
+        "nebraska-pick-4",
+        "nebraska-pick-3",
+        "nebraska-myday",
+        "nebraska-2by2",
+    ):
+        (fixtures / f"{game_slug}-ne-backfill.html").write_text(
+            fixture_html,
+            encoding="utf-8",
+        )
+
+    result = runner.invoke(
+        app,
+        [
+            "--data-dir",
+            str(tmp_path / "data"),
+            "fetch",
+            "all",
+            "-j",
+            "ne",
+            "--backfill",
+            "--source-dir",
+            str(fixtures),
+        ],
+    )
+
+    assert result.exit_code == 0, result.output
+    assert "9 games fetched" in result.output
+
+    conn = sqlite3.connect(tmp_path / "data" / "lottery.sqlite3")
+    try:
+        rows = conn.execute(
+            """
+            select game_slug, count(*)
+            from draw_results
+            where jurisdiction_code = 'ne'
+            group by game_slug
+            order by game_slug
+            """
+        ).fetchall()
+    finally:
+        conn.close()
+    assert rows == [
+        ("lotto-america", 1),
+        ("mega-millions", 1),
+        ("millionaire-for-life", 1),
+        ("nebraska-2by2", 1),
+        ("nebraska-myday", 1),
+        ("nebraska-pick-3", 1),
+        ("nebraska-pick-4", 1),
+        ("nebraska-pick-5", 1),
+        ("powerball", 1),
     ]
 
 

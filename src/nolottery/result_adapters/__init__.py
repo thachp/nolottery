@@ -100,6 +100,8 @@ def fetch_current_result(
         )
     if jurisdiction_code == "or" and game.slug in oregon._OREGON_API_GAMES:
         return oregon.fetch_oregon_result(game, source_dir, read_source)
+    if jurisdiction_code == "ne" and game.slug in nebraska._NEBRASKA_DRAW_RESULTS_GAMES:
+        return nebraska.fetch_nebraska_result(game, source_dir, read_source)
 
     simple_specs = _current_simple_specs()
     spec = simple_specs.get(jurisdiction_code)
@@ -167,6 +169,13 @@ def fetch_backfill_result(
         return colorado.fetch_colorado_backfill_result(game, source_dir, read_source)
     if jurisdiction_code == "or" and game.slug in oregon._OREGON_API_GAMES:
         return oregon.fetch_oregon_result(game, source_dir, read_source)
+    if jurisdiction_code == "ne" and game.slug in nebraska._NEBRASKA_DRAW_RESULTS_GAMES:
+        return nebraska.fetch_nebraska_result(
+            game,
+            source_dir,
+            read_source,
+            backfill=True,
+        )
     if jurisdiction_code == "ny" and game.slug in new_york._NEW_YORK_OPEN_DATA_GAMES:
         return new_york.fetch_new_york_open_data_result(
             game,

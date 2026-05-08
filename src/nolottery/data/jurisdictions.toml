@@ -1413,7 +1413,7 @@ blocking_reason = 'Rules and fetch adapter pending'
 [[jurisdictions]]
 code = 'ne'
 name = 'Nebraska'
-blocking_reason = 'Nebraska local draw-game rules and adapters pending'
+blocking_reason = 'Nebraska local draw-game rules pending'
 
 [[jurisdictions.offerings]]
 game_slug = 'powerball'
@@ -1432,39 +1432,46 @@ blocking_reason = ''
 [[jurisdictions.offerings]]
 game_slug = 'lotto-america'
 source_url = 'https://nelottery.com/homeapp/lotto/40/gamedetail'
-support_statuses = ['cataloged']
-blocking_reason = 'Rules and fetch adapter pending'
+support_statuses = ['cataloged', 'fetch_supported', 'audit_supported']
+results_adapter = 'ne_draw_results_page'
+blocking_reason = 'Rules verification pending'
 
 [[jurisdictions.offerings]]
 game_slug = 'millionaire-for-life'
 source_url = 'https://nelottery.com/homeapp/lotto/42/gamedetail'
-support_statuses = ['cataloged']
-blocking_reason = 'Rules and fetch adapter pending'
+support_statuses = ['cataloged', 'fetch_supported', 'audit_supported']
+results_adapter = 'ne_draw_results_page'
+blocking_reason = 'Rules verification pending'
 
 [[jurisdictions.offerings]]
 game_slug = 'nebraska-pick-5'
-support_statuses = ['cataloged']
-blocking_reason = 'Rules and fetch adapter pending'
+support_statuses = ['cataloged', 'fetch_supported', 'audit_supported']
+results_adapter = 'ne_draw_results_page'
+blocking_reason = 'Rules verification pending'
 
 [[jurisdictions.offerings]]
 game_slug = 'nebraska-pick-4'
-support_statuses = ['cataloged']
-blocking_reason = 'Rules and fetch adapter pending'
+support_statuses = ['cataloged', 'fetch_supported', 'audit_supported']
+results_adapter = 'ne_draw_results_page'
+blocking_reason = 'Rules verification pending'
 
 [[jurisdictions.offerings]]
 game_slug = 'nebraska-pick-3'
-support_statuses = ['cataloged']
-blocking_reason = 'Rules and fetch adapter pending'
+support_statuses = ['cataloged', 'fetch_supported', 'audit_supported']
+results_adapter = 'ne_draw_results_page'
+blocking_reason = 'Rules verification pending'
 
 [[jurisdictions.offerings]]
 game_slug = 'nebraska-myday'
-support_statuses = ['cataloged']
-blocking_reason = 'Rules and fetch adapter pending'
+support_statuses = ['cataloged', 'fetch_supported', 'audit_supported']
+results_adapter = 'ne_draw_results_page'
+blocking_reason = 'Rules verification pending'
 
 [[jurisdictions.offerings]]
 game_slug = 'nebraska-2by2'
-support_statuses = ['cataloged']
-blocking_reason = 'Rules and fetch adapter pending'
+support_statuses = ['cataloged', 'fetch_supported', 'audit_supported']
+results_adapter = 'ne_draw_results_page'
+blocking_reason = 'Rules verification pending'
 
 [[jurisdictions.offerings]]
 game_slug = 'lucky-for-life'
