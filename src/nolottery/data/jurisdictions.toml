@@ -370,8 +370,10 @@ blocking_reason = 'Rules and fetch adapter pending'
 
 [[jurisdictions.offerings]]
 game_slug = 'lucky-for-life'
-support_statuses = ['cataloged']
-blocking_reason = 'Rules and fetch adapter pending'
+source_url = 'https://www.myarkansaslottery.com/games/lucky-for-life/did-i-win-date'
+support_statuses = ['cataloged', 'rules_verified', 'ev_supported', 'fetch_supported', 'audit_supported', 'low_share_supported']
+results_adapter = 'ar_did_i_win_date'
+blocking_reason = ''
 
 [[jurisdictions.offerings]]
 game_slug = 'millionaire-for-life'
@@ -1476,9 +1478,9 @@ blocking_reason = ''
 [[jurisdictions.offerings]]
 game_slug = 'lucky-for-life'
 source_url = 'https://nelottery.com/homeapp/lotto/37/gamedetail'
-support_statuses = ['cataloged', 'fetch_supported', 'audit_supported']
+support_statuses = ['cataloged', 'rules_verified', 'ev_supported', 'fetch_supported', 'audit_supported', 'low_share_supported']
 results_adapter = 'ne_draw_results_page'
-blocking_reason = 'Retired after February 2026'
+blocking_reason = ''
 
 [[jurisdictions]]
 code = 'nv'

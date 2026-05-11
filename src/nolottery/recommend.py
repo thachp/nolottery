@@ -90,6 +90,8 @@ def format_number_label(
         return f"White: {_join_numbers(numbers[:5])}; Star Ball: {numbers[5]}"
     if game_slug == "millionaire-for-life" and len(numbers) == 6:
         return f"White: {_join_numbers(numbers[:5])}; Life Ball: {numbers[5]}"
+    if game_slug == "lucky-for-life" and len(numbers) == 6:
+        return f"White: {_join_numbers(numbers[:5])}; Lucky Ball: {numbers[5]}"
     if game_slug == "nebraska-myday" and len(numbers) == 3:
         return f"Month: {numbers[0]}; Day: {numbers[1]}; Year: {numbers[2]:02d}"
     if game_slug == "nebraska-2by2" and len(numbers) == 4:
@@ -147,6 +149,8 @@ def suggest_numbers(game_slug: str, option_slug: str) -> tuple[int, ...]:
     if game_slug == "lotto-america":
         return (1, 2, 3, 4, 5, 1)
     if game_slug == "millionaire-for-life":
+        return (1, 2, 3, 4, 5, 1)
+    if game_slug == "lucky-for-life":
         return (1, 2, 3, 4, 5, 1)
     if game_slug == "idaho-cash":
         return (1, 2, 3, 4, 5)

@@ -29,3 +29,58 @@ slug = 'lucky-for-life'
 name = 'Lucky for Life'
 source_url = 'https://www.myarkansaslottery.com/games/lucky-for-life'
 reviewed_on = '2026-05-07'
+
+[[games.wager_options]]
+slug = 'standard'
+label = 'Standard $2'
+ticket_cost = 2.0
+
+[[games.wager_options.prize_tiers]]
+label = '5 White + Lucky Ball Cash Option'
+probability = 3.244493656815178e-08
+prize = 5750000
+
+[[games.wager_options.prize_tiers]]
+label = '5 White Cash Option'
+probability = 5.515634490933553e-07
+prize = 390000
+
+[[games.wager_options.prize_tiers]]
+label = '4 White + Lucky Ball'
+probability = 6.975636867368501e-06
+prize = 5000
+
+[[games.wager_options.prize_tiers]]
+label = '4 White'
+probability = 0.00011858176219209776
+prize = 200
+
+[[games.wager_options.prize_tiers]]
+label = '3 White + Lucky Ball'
+probability = 0.00029299736302373277
+prize = 150
+
+[[games.wager_options.prize_tiers]]
+label = '3 White'
+probability = 0.004975124378109453
+prize = 20
+
+[[games.wager_options.prize_tiers]]
+label = '2 White + Lucky Ball'
+probability = 0.004
+prize = 25
+
+[[games.wager_options.prize_tiers]]
+label = '2 White'
+probability = 0.06666666666666667
+prize = 3
+
+[[games.wager_options.prize_tiers]]
+label = '1 White + Lucky Ball'
+probability = 0.02
+prize = 6
+
+[[games.wager_options.prize_tiers]]
+label = 'Lucky Ball'
+probability = 0.03125
+prize = 4

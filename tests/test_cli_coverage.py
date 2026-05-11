@@ -2023,16 +2023,10 @@ def test_coverage_reports_nebraska_full_fetch_supported_catalog(tmp_path):
         "low_share_supported",
     ]
     assert games["mega-millions"]["results_adapter"] == "ne_draw_results_page"
-    for game_slug in set(games) - {"lucky-for-life"}:
+    for game_slug in games:
         assert games[game_slug]["support_statuses"] == FULL_SUPPORT_STATUSES
         assert games[game_slug]["results_adapter"] == "ne_draw_results_page"
         assert games[game_slug]["blocking_reason"] == ""
-    assert games["lucky-for-life"]["support_statuses"] == [
-        "cataloged",
-        "fetch_supported",
-        "audit_supported",
-    ]
-    assert games["lucky-for-life"]["blocking_reason"] == "Retired after February 2026"
 
 
 def test_coverage_reports_colorado_full_draw_game_catalog(tmp_path):
@@ -2146,6 +2140,9 @@ def test_coverage_reports_arkansas_catalog_and_supported_national_games(tmp_path
         "low_share_supported",
     ]
     assert games["mega-millions"]["results_adapter"] == "ar_did_i_win_date"
+    assert games["lucky-for-life"]["support_statuses"] == FULL_SUPPORT_STATUSES
+    assert games["lucky-for-life"]["results_adapter"] == "ar_did_i_win_date"
+    assert games["lucky-for-life"]["blocking_reason"] == ""
     assert games["arkansas-lotto"]["support_statuses"] == ["cataloged"]
     assert games["arkansas-lotto"]["blocking_reason"] == (
         "Rules and fetch adapter pending"

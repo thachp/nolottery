@@ -59,6 +59,13 @@ NUMBER_FORMATS: dict[str, NumberFormat] = {
             NumberPool("life-ball", 1, 5, 1),
         ),
     ),
+    "lucky-for-life": NumberFormat(
+        game_slug="lucky-for-life",
+        pools=(
+            NumberPool("white", 1, 48, 5),
+            NumberPool("lucky-ball", 1, 18, 1),
+        ),
+    ),
     "idaho-cash": NumberFormat(
         game_slug="idaho-cash",
         pools=(NumberPool("white", 1, 45, 5),),

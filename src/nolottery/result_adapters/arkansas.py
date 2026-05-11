@@ -28,6 +28,7 @@ from nolottery.result_adapters.common import (
 )
 
 _ARKANSAS_DID_I_WIN_GAMES = {
+    "lucky-for-life": "Lucky Ball",
     "mega-millions": "Mega Ball",
     "powerball": "Powerball",
 }

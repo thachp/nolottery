@@ -277,6 +277,7 @@ def test_low_share_supports_active_texas_local_draw_games(tmp_path):
 def test_low_share_supports_active_nebraska_local_draw_games(tmp_path):
     for game_slug, first_option_count in [
         ("lotto-america", 6),
+        ("lucky-for-life", 6),
         ("millionaire-for-life", 6),
         ("nebraska-pick-5", 5),
         ("nebraska-pick-4", 4),
@@ -309,6 +310,35 @@ def test_low_share_supports_active_nebraska_local_draw_games(tmp_path):
         picks = payload["games"][0]["options"][0]["picks"]
         assert len(picks) == 2
         assert all(len(pick["numbers"]) == first_option_count for pick in picks)
+
+
+def test_low_share_supports_arkansas_lucky_for_life_lucky_ball(tmp_path):
+    result = runner.invoke(
+        app,
+        [
+            "--data-dir",
+            str(tmp_path),
+            "low-share",
+            "lucky-for-life",
+            "-j",
+            "ar",
+            "--count",
+            "1",
+            "--candidates",
+            "5",
+            "--seed",
+            "4",
+            "--output",
+            "json",
+        ],
+    )
+
+    assert result.exit_code == 0, result.output
+    payload = json.loads(result.output)
+    pick = payload["games"][0]["options"][0]["picks"][0]
+    assert pick["numbers"] == [4, 15, 19, 34, 35, 12]
+    assert pick["label"] == "White: 4, 15, 19, 34, 35; Lucky Ball: 12"
+    assert "bonus ball avoids popular numbers" in pick["reasons"]
 
 
 def test_low_share_reports_cataloged_game_without_low_share_support(tmp_path):

@@ -270,6 +270,7 @@ def test_analyze_supports_active_texas_local_draw_games(tmp_path):
 def test_analyze_supports_active_nebraska_local_draw_games(tmp_path):
     expected_best_options = {
         "lotto-america": "Standard $1",
+        "lucky-for-life": "Standard $2",
         "millionaire-for-life": "Standard $5",
         "nebraska-pick-5": "Standard $1",
         "nebraska-pick-4": "Straight $1",
@@ -299,6 +300,29 @@ def test_analyze_supports_active_nebraska_local_draw_games(tmp_path):
         assert payload["game_slug"] == game_slug
         assert payload["best_option"] == best_option
         assert payload["options"]
+
+
+def test_analyze_supports_arkansas_lucky_for_life(tmp_path):
+    result = runner.invoke(
+        app,
+        [
+            "--data-dir",
+            str(tmp_path),
+            "analyze",
+            "lucky-for-life",
+            "-j",
+            "ar",
+            "--output",
+            "json",
+        ],
+    )
+
+    assert result.exit_code == 0, result.output
+    payload = json.loads(result.output)
+    assert payload["jurisdiction_code"] == "ar"
+    assert payload["game_slug"] == "lucky-for-life"
+    assert payload["best_option"] == "Standard $2"
+    assert payload["options"]
 
 
 def test_analyze_reports_cataloged_game_without_ev_support(tmp_path):
@@ -554,7 +578,7 @@ def test_recommend_supports_nebraska_local_number_selection(tmp_path):
             "-j",
             "ne",
             "--budget",
-            "1",
+            "2",
             "--output",
             "json",
         ],
@@ -571,6 +595,44 @@ def test_recommend_supports_nebraska_local_number_selection(tmp_path):
     assert all(
         recommendation["number_selection"]
         for recommendation in local_recommendations.values()
+    )
+    lucky_for_life = next(
+        recommendation
+        for recommendation in payload["recommendations"]
+        if recommendation["game_slug"] == "lucky-for-life"
+    )
+    assert lucky_for_life["number_selection"] == [1, 2, 3, 4, 5, 1]
+    assert lucky_for_life["number_selection_label"] == (
+        "White: 1, 2, 3, 4, 5; Lucky Ball: 1"
+    )
+
+
+def test_recommend_supports_arkansas_lucky_for_life(tmp_path):
+    result = runner.invoke(
+        app,
+        [
+            "--data-dir",
+            str(tmp_path),
+            "recommend",
+            "-j",
+            "ar",
+            "--budget",
+            "2",
+            "--output",
+            "json",
+        ],
+    )
+
+    assert result.exit_code == 0, result.output
+    payload = json.loads(result.output)
+    lucky_for_life = next(
+        recommendation
+        for recommendation in payload["recommendations"]
+        if recommendation["game_slug"] == "lucky-for-life"
+    )
+    assert lucky_for_life["number_selection"] == [1, 2, 3, 4, 5, 1]
+    assert lucky_for_life["number_selection_label"] == (
+        "White: 1, 2, 3, 4, 5; Lucky Ball: 1"
     )
 
 

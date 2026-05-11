@@ -184,7 +184,7 @@ def _score_numbers(
         return _score_play(game_slug, numbers[:5], bonus=numbers[5])
     if game_slug == "lotto-america":
         return _score_play(game_slug, numbers[:5], bonus=numbers[5])
-    if game_slug == "millionaire-for-life":
+    if game_slug in {"lucky-for-life", "millionaire-for-life"}:
         return _score_play(game_slug, numbers[:5], bonus=numbers[5])
     if game_slug == "superlotto-plus":
         return _score_play(game_slug, numbers[:5], bonus=numbers[5])
