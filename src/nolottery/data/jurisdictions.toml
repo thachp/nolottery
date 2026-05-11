@@ -350,8 +350,10 @@ blocking_reason = ''
 
 [[jurisdictions.offerings]]
 game_slug = 'arkansas-lotto'
-support_statuses = ['cataloged']
-blocking_reason = 'Rules and fetch adapter pending'
+source_url = 'https://www.myarkansaslottery.com/games/lotto/did-i-win-date'
+support_statuses = ['cataloged', 'fetch_supported']
+results_adapter = 'ar_did_i_win_date'
+blocking_reason = ''
 
 [[jurisdictions.offerings]]
 game_slug = 'arkansas-natural-state-jackpot'
@@ -377,8 +379,10 @@ blocking_reason = ''
 
 [[jurisdictions.offerings]]
 game_slug = 'millionaire-for-life'
-support_statuses = ['cataloged']
-blocking_reason = 'Rules and fetch adapter pending'
+source_url = 'https://www.myarkansaslottery.com/games/millionaire-for-life/did-i-win-date'
+support_statuses = ['cataloged', 'rules_verified', 'ev_supported', 'fetch_supported', 'audit_supported', 'low_share_supported']
+results_adapter = 'ar_did_i_win_date'
+blocking_reason = ''
 
 [[jurisdictions]]
 code = 'co'

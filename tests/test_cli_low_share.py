@@ -341,6 +341,35 @@ def test_low_share_supports_arkansas_lucky_for_life_lucky_ball(tmp_path):
     assert "bonus ball avoids popular numbers" in pick["reasons"]
 
 
+def test_low_share_supports_arkansas_millionaire_for_life(tmp_path):
+    result = runner.invoke(
+        app,
+        [
+            "--data-dir",
+            str(tmp_path),
+            "low-share",
+            "millionaire-for-life",
+            "-j",
+            "ar",
+            "--count",
+            "1",
+            "--candidates",
+            "5",
+            "--seed",
+            "4",
+            "--output",
+            "json",
+        ],
+    )
+
+    assert result.exit_code == 0, result.output
+    payload = json.loads(result.output)
+    pick = payload["games"][0]["options"][0]["picks"][0]
+    assert pick["numbers"] == [4, 15, 19, 49, 52, 5]
+    assert pick["label"] == "White: 4, 15, 19, 49, 52; Life Ball: 5"
+    assert "bonus ball avoids popular numbers" in pick["reasons"]
+
+
 def test_low_share_reports_cataloged_game_without_low_share_support(tmp_path):
     result = runner.invoke(
         app,

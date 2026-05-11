@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 import re
 import ssl
+from dataclasses import dataclass
 from datetime import UTC, date, datetime
 from math import ceil
 from pathlib import Path
@@ -27,40 +28,56 @@ from nolottery.result_adapters.common import (
     _page_lines,
 )
 
+
+@dataclass(frozen=True)
+class _ArkansasDidIWinGame:
+    number_count: int
+    special_number_name: str | None = None
+
+
 _ARKANSAS_DID_I_WIN_GAMES = {
-    "lucky-for-life": "Lucky Ball",
-    "mega-millions": "Mega Ball",
-    "powerball": "Powerball",
+    "arkansas-lotto": _ArkansasDidIWinGame(6),
+    "lucky-for-life": _ArkansasDidIWinGame(5, "Lucky Ball"),
+    "millionaire-for-life": _ArkansasDidIWinGame(5, "Millionaire Ball"),
+    "mega-millions": _ArkansasDidIWinGame(5, "Mega Ball"),
+    "powerball": _ArkansasDidIWinGame(5, "Powerball"),
 }
+
 
 def parse_arkansas_did_i_win(
     raw_html: str,
     game_slug: str,
 ) -> tuple[ParsedDraw, ...]:
-    special_number_name = _ARKANSAS_DID_I_WIN_GAMES[game_slug]
+    game = _ARKANSAS_DID_I_WIN_GAMES[game_slug]
     soup = BeautifulSoup(raw_html, "html.parser")
     draws: list[ParsedDraw] = []
     for row in soup.select("tr"):
         cells = [cell.get_text(" ", strip=True) for cell in row.find_all("td")]
-        if len(cells) < 7:
+        expected_cell_count = game.number_count + 1
+        if game.special_number_name is not None:
+            expected_cell_count += 1
+        if len(cells) < expected_cell_count:
             continue
         draw_date = _arkansas_draw_date(cells[0])
         if draw_date is None:
             continue
-        numbers = tuple(cells[1:6])
-        special_number = cells[6]
-        if not all(re.fullmatch(r"\d{1,2}", value) for value in (*numbers, special_number)):
+        numbers = tuple(cells[1 : 1 + game.number_count])
+        special_number = cells[1 + game.number_count] if game.special_number_name else None
+        values = (*numbers, special_number) if special_number is not None else numbers
+        if not all(re.fullmatch(r"\d{1,2}", value) for value in values):
             continue
+        winning_parts = list(numbers)
+        if special_number is not None:
+            winning_parts.append(f"{special_number} {game.special_number_name}")
         draws.append(
             ParsedDraw(
                 draw_date=draw_date,
-                winning_number=", ".join(
-                    [*numbers, f"{special_number} {special_number_name}"]
-                ),
+                winning_number=", ".join(winning_parts),
                 prizes=(),
             )
         )
     return tuple(draws)
+
 
 def _arkansas_draw_date(raw_value: str) -> str | None:
     try:

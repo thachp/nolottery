@@ -325,6 +325,29 @@ def test_analyze_supports_arkansas_lucky_for_life(tmp_path):
     assert payload["options"]
 
 
+def test_analyze_supports_arkansas_millionaire_for_life(tmp_path):
+    result = runner.invoke(
+        app,
+        [
+            "--data-dir",
+            str(tmp_path),
+            "analyze",
+            "millionaire-for-life",
+            "-j",
+            "ar",
+            "--output",
+            "json",
+        ],
+    )
+
+    assert result.exit_code == 0, result.output
+    payload = json.loads(result.output)
+    assert payload["jurisdiction_code"] == "ar"
+    assert payload["game_slug"] == "millionaire-for-life"
+    assert payload["best_option"] == "Standard $5"
+    assert payload["options"]
+
+
 def test_analyze_reports_cataloged_game_without_ev_support(tmp_path):
     result = runner.invoke(
         app,
@@ -633,6 +656,35 @@ def test_recommend_supports_arkansas_lucky_for_life(tmp_path):
     assert lucky_for_life["number_selection"] == [1, 2, 3, 4, 5, 1]
     assert lucky_for_life["number_selection_label"] == (
         "White: 1, 2, 3, 4, 5; Lucky Ball: 1"
+    )
+
+
+def test_recommend_supports_arkansas_millionaire_for_life(tmp_path):
+    result = runner.invoke(
+        app,
+        [
+            "--data-dir",
+            str(tmp_path),
+            "recommend",
+            "-j",
+            "ar",
+            "--budget",
+            "5",
+            "--output",
+            "json",
+        ],
+    )
+
+    assert result.exit_code == 0, result.output
+    payload = json.loads(result.output)
+    millionaire_for_life = next(
+        recommendation
+        for recommendation in payload["recommendations"]
+        if recommendation["game_slug"] == "millionaire-for-life"
+    )
+    assert millionaire_for_life["number_selection"] == [1, 2, 3, 4, 5, 1]
+    assert millionaire_for_life["number_selection_label"] == (
+        "White: 1, 2, 3, 4, 5; Life Ball: 1"
     )
 
 

@@ -2143,10 +2143,15 @@ def test_coverage_reports_arkansas_catalog_and_supported_national_games(tmp_path
     assert games["lucky-for-life"]["support_statuses"] == FULL_SUPPORT_STATUSES
     assert games["lucky-for-life"]["results_adapter"] == "ar_did_i_win_date"
     assert games["lucky-for-life"]["blocking_reason"] == ""
-    assert games["arkansas-lotto"]["support_statuses"] == ["cataloged"]
-    assert games["arkansas-lotto"]["blocking_reason"] == (
-        "Rules and fetch adapter pending"
-    )
+    assert games["millionaire-for-life"]["support_statuses"] == FULL_SUPPORT_STATUSES
+    assert games["millionaire-for-life"]["results_adapter"] == "ar_did_i_win_date"
+    assert games["millionaire-for-life"]["blocking_reason"] == ""
+    assert games["arkansas-lotto"]["support_statuses"] == [
+        "cataloged",
+        "fetch_supported",
+    ]
+    assert games["arkansas-lotto"]["results_adapter"] == "ar_did_i_win_date"
+    assert games["arkansas-lotto"]["blocking_reason"] == ""
 
 
 def test_coverage_reports_arizona_catalog_and_backfill_supported_national_games(

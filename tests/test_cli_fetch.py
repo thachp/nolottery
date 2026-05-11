@@ -275,6 +275,37 @@ def _arkansas_lucky_for_life_history_html() -> str:
     """
 
 
+def _arkansas_millionaire_for_life_history_html() -> str:
+    return """
+    <html>
+      <body>
+        <h1>Millionaire for Life Winning Numbers</h1>
+        <table>
+          <tbody>
+            <tr><td>05/06/2026</td><td>6</td><td>18</td><td>30</td><td>32</td><td>43</td><td>1</td></tr>
+          </tbody>
+        </table>
+      </body>
+    </html>
+    """
+
+
+def _arkansas_lotto_history_html() -> str:
+    return """
+    <html>
+      <body>
+        <h1>LOTTO Winning Numbers</h1>
+        <table>
+          <tbody>
+            <tr><td>05/07/2026</td><td>3</td><td>12</td><td>18</td><td>27</td><td>31</td><td>40</td></tr>
+            <tr><td>05/04/2026</td><td>7</td><td>10</td><td>21</td><td>29</td><td>33</td><td>36</td></tr>
+          </tbody>
+        </table>
+      </body>
+    </html>
+    """
+
+
 def _official_national_powerball_results_html() -> str:
     return """
     <html>
@@ -2891,7 +2922,118 @@ def test_fetch_arkansas_lucky_for_life_backfill_reads_official_history_fixture(
     ]
 
 
-def test_fetch_all_arkansas_backfill_uses_supported_national_games(tmp_path):
+def test_fetch_arkansas_millionaire_for_life_backfill_reads_official_history_fixture(
+    tmp_path,
+):
+    fixtures = tmp_path / "fixtures"
+    fixtures.mkdir()
+    (fixtures / "millionaire-for-life-ar-backfill.html").write_text(
+        _arkansas_millionaire_for_life_history_html(),
+        encoding="utf-8",
+    )
+
+    result = runner.invoke(
+        app,
+        [
+            "--data-dir",
+            str(tmp_path / "data"),
+            "fetch",
+            "millionaire-for-life",
+            "-j",
+            "ar",
+            "--backfill",
+            "--source-dir",
+            str(fixtures),
+        ],
+    )
+
+    assert result.exit_code == 0, result.output
+    assert "Millionaire For Life" in result.output
+    assert "1 draw" in result.output
+
+    draws_result = runner.invoke(
+        app,
+        [
+            "--data-dir",
+            str(tmp_path / "data"),
+            "draws",
+            "millionaire-for-life",
+            "-j",
+            "ar",
+            "--output",
+            "json",
+        ],
+    )
+
+    assert draws_result.exit_code == 0, draws_result.output
+    payload = json.loads(draws_result.output)
+    assert payload["games"][0]["draws"] == [
+        {
+            "jurisdiction_code": "ar",
+            "draw_date": "Wed, May 06, 2026",
+            "winning_number": "6, 18, 30, 32, 43, 1 Millionaire Ball",
+        }
+    ]
+
+
+def test_fetch_arkansas_lotto_backfill_reads_official_history_fixture(tmp_path):
+    fixtures = tmp_path / "fixtures"
+    fixtures.mkdir()
+    (fixtures / "arkansas-lotto-ar-backfill.html").write_text(
+        _arkansas_lotto_history_html(),
+        encoding="utf-8",
+    )
+
+    result = runner.invoke(
+        app,
+        [
+            "--data-dir",
+            str(tmp_path / "data"),
+            "fetch",
+            "arkansas-lotto",
+            "-j",
+            "ar",
+            "--backfill",
+            "--source-dir",
+            str(fixtures),
+        ],
+    )
+
+    assert result.exit_code == 0, result.output
+    assert "LOTTO" in result.output
+    assert "2 draws" in result.output
+
+    draws_result = runner.invoke(
+        app,
+        [
+            "--data-dir",
+            str(tmp_path / "data"),
+            "draws",
+            "arkansas-lotto",
+            "-j",
+            "ar",
+            "--output",
+            "json",
+        ],
+    )
+
+    assert draws_result.exit_code == 0, draws_result.output
+    payload = json.loads(draws_result.output)
+    assert payload["games"][0]["draws"] == [
+        {
+            "jurisdiction_code": "ar",
+            "draw_date": "Thu, May 07, 2026",
+            "winning_number": "3, 12, 18, 27, 31, 40",
+        },
+        {
+            "jurisdiction_code": "ar",
+            "draw_date": "Mon, May 04, 2026",
+            "winning_number": "7, 10, 21, 29, 33, 36",
+        },
+    ]
+
+
+def test_fetch_all_arkansas_backfill_uses_supported_games(tmp_path):
     fixtures = tmp_path / "fixtures"
     fixtures.mkdir()
     (fixtures / "powerball-ar-backfill.html").write_text(
@@ -2904,6 +3046,14 @@ def test_fetch_all_arkansas_backfill_uses_supported_national_games(tmp_path):
     )
     (fixtures / "lucky-for-life-ar-backfill.html").write_text(
         _arkansas_lucky_for_life_history_html(),
+        encoding="utf-8",
+    )
+    (fixtures / "millionaire-for-life-ar-backfill.html").write_text(
+        _arkansas_millionaire_for_life_history_html(),
+        encoding="utf-8",
+    )
+    (fixtures / "arkansas-lotto-ar-backfill.html").write_text(
+        _arkansas_lotto_history_html(),
         encoding="utf-8",
     )
 
@@ -2926,7 +3076,9 @@ def test_fetch_all_arkansas_backfill_uses_supported_national_games(tmp_path):
     assert "Powerball" in result.output
     assert "Mega Millions" in result.output
     assert "Lucky for Life" in result.output
-    assert "3 games fetched" in result.output
+    assert "Millionaire For Life" in result.output
+    assert "LOTTO" in result.output
+    assert "5 games fetched" in result.output
 
 
 def test_fetch_colorado_powerball_backfill_reads_official_history_fixture(tmp_path):
