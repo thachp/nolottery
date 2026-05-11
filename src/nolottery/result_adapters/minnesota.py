@@ -28,15 +28,19 @@ from nolottery.result_adapters.common import (
 )
 
 _MINNESOTA_WINNING_NUMBERS_GAMES = {
-    "mega-millions": ("Mega Millions", "Mega Ball"),
-    "powerball": ("Powerball", "Powerball"),
+    "lotto-america": ("Lotto America", 5, "Star Ball"),
+    "mega-millions": ("Mega Millions", 5, "Mega Ball"),
+    "minnesota-pick-3": ("Pick 3", 3, None),
+    "powerball": ("Powerball", 5, "Powerball"),
 }
 
 def parse_minnesota_winning_numbers_page(
     raw_html: str,
     game_slug: str,
 ) -> tuple[ParsedDraw, ...]:
-    game_label, special_number_name = _MINNESOTA_WINNING_NUMBERS_GAMES[game_slug]
+    game_label, primary_count, special_number_name = _MINNESOTA_WINNING_NUMBERS_GAMES[
+        game_slug
+    ]
     soup = BeautifulSoup(raw_html, "html.parser")
     draws: list[ParsedDraw] = []
     for card in soup.select("figure.card--winning-numbers"):
@@ -57,15 +61,20 @@ def parse_minnesota_winning_numbers_page(
             for item in card.select(".lottery-number-list-item")
             if re.fullmatch(r"\d{1,2}", item.get_text(" ", strip=True))
         ]
-        if draw_date is None or len(numbers) != 6:
+        expected_count = primary_count + (1 if special_number_name is not None else 0)
+        if draw_date is None or len(numbers) != expected_count:
             continue
+        winning_numbers = numbers
+        if special_number_name is not None:
+            winning_numbers = [
+                *numbers[:primary_count],
+                f"{numbers[-1]} {special_number_name}",
+            ]
 
         draws.append(
             ParsedDraw(
                 draw_date=draw_date,
-                winning_number=", ".join(
-                    [*numbers[:5], f"{numbers[5]} {special_number_name}"]
-                ),
+                winning_number=", ".join(winning_numbers),
                 prizes=(),
             )
         )

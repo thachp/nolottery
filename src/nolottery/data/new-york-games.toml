@@ -104,10 +104,280 @@ reviewed_on = '2026-05-07'
 slug = 'quick-draw'
 name = 'Quick Draw'
 source_url = 'https://nylottery.ny.gov/draw-game/?game=quickdraw'
-reviewed_on = '2026-05-07'
+reviewed_on = '2026-05-11'
+
+[[games.wager_options]]
+slug = '10-spot'
+label = '10 Spot $1'
+ticket_cost = 1.0
+
+[[games.wager_options.prize_tiers]]
+label = 'Match 10'
+probability = 1.1221189513378526e-07
+prize = 100000
+
+[[games.wager_options.prize_tiers]]
+label = 'Match 9'
+probability = 6.1206488243241065e-06
+prize = 5000
+
+[[games.wager_options.prize_tiers]]
+label = 'Match 8'
+probability = 0.00013541935474085828
+prize = 300
+
+[[games.wager_options.prize_tiers]]
+label = 'Match 7'
+probability = 0.0016111431818112247
+prize = 45
+
+[[games.wager_options.prize_tiers]]
+label = 'Match 6'
+probability = 0.011479395632778725
+prize = 10
+
+[[games.wager_options.prize_tiers]]
+label = 'Match 5'
+probability = 0.05142763103760388
+prize = 2
+
+[[games.wager_options.prize_tiers]]
+label = 'Match 0'
+probability = 0.04579069075257
+prize = 5
+
+[[games.wager_options]]
+slug = '9-spot'
+label = '9 Spot $1'
+ticket_cost = 1.0
+
+[[games.wager_options.prize_tiers]]
+label = 'Match 9'
+probability = 7.24276777662495e-07
+prize = 30000
+
+[[games.wager_options.prize_tiers]]
+label = 'Match 8'
+probability = 3.2592455008975846e-05
+prize = 3000
+
+[[games.wager_options.prize_tiers]]
+label = 'Match 7'
+probability = 0.0005916784100039093
+prize = 125
+
+[[games.wager_options.prize_tiers]]
+label = 'Match 6'
+probability = 0.00571955751215263
+prize = 20
+
+[[games.wager_options.prize_tiers]]
+label = 'Match 5'
+probability = 0.0326014312028298
+prize = 5
+
+[[games.wager_options.prize_tiers]]
+label = 'Match 0'
+probability = 0.06374786444654104
+prize = 2
+
+[[games.wager_options]]
+slug = '8-spot'
+label = '8 Spot $1'
+ticket_cost = 1.0
+
+[[games.wager_options.prize_tiers]]
+label = 'Match 8'
+probability = 4.345660666919208e-06
+prize = 10000
+
+[[games.wager_options.prize_tiers]]
+label = 'Match 7'
+probability = 0.00016045516380498625
+prize = 550
+
+[[games.wager_options.prize_tiers]]
+label = 'Match 6'
+probability = 0.0023667137800489815
+prize = 75
+
+[[games.wager_options.prize_tiers]]
+label = 'Match 5'
+probability = 0.018302581945235017
+prize = 6
+
+[[games.wager_options.prize_tiers]]
+label = 'Match 0'
+probability = 0.08826592758663301
+prize = 2
+
+[[games.wager_options]]
+slug = '7-spot'
+label = '7 Spot $1'
+ticket_cost = 1.0
+
+[[games.wager_options.prize_tiers]]
+label = 'Match 7'
+probability = 2.4402556063304693e-05
+prize = 5000
+
+[[games.wager_options.prize_tiers]]
+label = 'Match 6'
+probability = 0.0007320766944043205
+prize = 100
+
+[[games.wager_options.prize_tiers]]
+label = 'Match 5'
+probability = 0.008638502843795136
+prize = 20
+
+[[games.wager_options.prize_tiers]]
+label = 'Match 4'
+probability = 0.05219097722385754
+prize = 2
+
+[[games.wager_options.prize_tiers]]
+label = 'Match 0'
+probability = 0.12157463466822281
+prize = 1
+
+[[games.wager_options]]
+slug = '6-spot'
+label = '6 Spot $1'
+ticket_cost = 1.0
+
+[[games.wager_options.prize_tiers]]
+label = 'Match 6'
+probability = 0.00012898493973133546
+prize = 1000
+
+[[games.wager_options.prize_tiers]]
+label = 'Match 5'
+probability = 0.0030956388330556027
+prize = 55
+
+[[games.wager_options.prize_tiers]]
+label = 'Match 4'
+probability = 0.02853791690329356
+prize = 6
+
+[[games.wager_options.prize_tiers]]
+label = 'Match 3'
+probability = 0.12981955082435415
+prize = 1
+
+[[games.wager_options]]
+slug = '5-spot'
+label = '5 Spot $1'
+ticket_cost = 1.0
+
+[[games.wager_options.prize_tiers]]
+label = 'Match 5'
+probability = 0.0006449247069752347
+prize = 300
+
+[[games.wager_options.prize_tiers]]
+label = 'Match 4'
+probability = 0.012092337085988608
+prize = 20
+
+[[games.wager_options.prize_tiers]]
+label = 'Match 3'
+probability = 0.08393486654356219
+prize = 2
+
+[[games.wager_options]]
+slug = '4-spot'
+label = '4 Spot $1'
+ticket_cost = 1.0
+
+[[games.wager_options.prize_tiers]]
+label = 'Match 4'
+probability = 0.0030633923087409307
+prize = 55
+
+[[games.wager_options.prize_tiers]]
+label = 'Match 3'
+probability = 0.04324791869391286
+prize = 5
+
+[[games.wager_options.prize_tiers]]
+label = 'Match 2'
+probability = 0.2126347572774246
+prize = 1
+
+[[games.wager_options]]
+slug = '3-spot'
+label = '3 Spot $1'
+ticket_cost = 1.0
+
+[[games.wager_options.prize_tiers]]
+label = 'Match 3'
+probability = 0.013875360412486715
+prize = 23
+
+[[games.wager_options.prize_tiers]]
+label = 'Match 2'
+probability = 0.13875398917718884
+prize = 2
+
+[[games.wager_options]]
+slug = '2-spot'
+label = '2 Spot $1'
+ticket_cost = 1.0
+
+[[games.wager_options.prize_tiers]]
+label = 'Match 2'
+probability = 0.060126506168979535
+prize = 10
+
+[[games.wager_options]]
+slug = '1-spot'
+label = '1 Spot $1'
+ticket_cost = 1.0
+
+[[games.wager_options.prize_tiers]]
+label = 'Match 1'
+probability = 0.25
+prize = 2
 
 [[games]]
 slug = 'pick-10'
 name = 'Pick 10'
 source_url = 'https://nodeprod.nylottery.ny.gov/draw-games/'
-reviewed_on = '2026-05-07'
+reviewed_on = '2026-05-11'
+
+[[games.wager_options]]
+slug = 'standard'
+label = 'Standard $1'
+ticket_cost = 1.0
+
+[[games.wager_options.prize_tiers]]
+label = 'Match 10'
+probability = 1.1221189513378526e-07
+prize = 500000
+
+[[games.wager_options.prize_tiers]]
+label = 'Match 9'
+probability = 6.1206488243241065e-06
+prize = 6000
+
+[[games.wager_options.prize_tiers]]
+label = 'Match 8'
+probability = 0.00013541935474085828
+prize = 300
+
+[[games.wager_options.prize_tiers]]
+label = 'Match 7'
+probability = 0.0016111431818112247
+prize = 40
+
+[[games.wager_options.prize_tiers]]
+label = 'Match 6'
+probability = 0.011479395632778725
+prize = 10
+
+[[games.wager_options.prize_tiers]]
+label = 'Match 0'
+probability = 0.04579069075257
+prize = 4

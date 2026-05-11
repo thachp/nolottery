@@ -374,6 +374,257 @@ def test_low_share_supports_arkansas_millionaire_for_life(tmp_path):
 @pytest.mark.parametrize(
     ("game_slug", "expected_length"),
     [
+        ("lucky-for-life", 6),
+        ("millionaire-for-life", 6),
+    ],
+)
+def test_low_share_supports_massachusetts_life_games(
+    tmp_path,
+    game_slug,
+    expected_length,
+):
+    result = runner.invoke(
+        app,
+        [
+            "--data-dir",
+            str(tmp_path),
+            "low-share",
+            game_slug,
+            "-j",
+            "ma",
+            "--count",
+            "1",
+            "--candidates",
+            "5",
+            "--seed",
+            "4",
+            "--output",
+            "json",
+        ],
+    )
+
+    assert result.exit_code == 0, result.output
+    payload = json.loads(result.output)
+    pick = payload["games"][0]["options"][0]["picks"][0]
+    assert len(pick["numbers"]) == expected_length
+    assert pick["label"] != "n/a"
+    assert pick["reasons"]
+
+
+def test_low_share_supports_dc_millionaire_for_life(tmp_path):
+    result = runner.invoke(
+        app,
+        [
+            "--data-dir",
+            str(tmp_path),
+            "low-share",
+            "millionaire-for-life",
+            "-j",
+            "dc",
+            "--count",
+            "1",
+            "--candidates",
+            "5",
+            "--seed",
+            "4",
+            "--output",
+            "json",
+        ],
+    )
+
+    assert result.exit_code == 0, result.output
+    payload = json.loads(result.output)
+    pick = payload["games"][0]["options"][0]["picks"][0]
+    assert len(pick["numbers"]) == 6
+    assert pick["label"] != "n/a"
+    assert pick["reasons"]
+
+
+def test_low_share_supports_minnesota_lotto_america(tmp_path):
+    result = runner.invoke(
+        app,
+        [
+            "--data-dir",
+            str(tmp_path),
+            "low-share",
+            "lotto-america",
+            "-j",
+            "mn",
+            "--count",
+            "1",
+            "--candidates",
+            "5",
+            "--seed",
+            "4",
+            "--output",
+            "json",
+        ],
+    )
+
+    assert result.exit_code == 0, result.output
+    payload = json.loads(result.output)
+    pick = payload["games"][0]["options"][0]["picks"][0]
+    assert len(pick["numbers"]) == 6
+    assert pick["label"] != "n/a"
+    assert pick["reasons"]
+
+
+def test_low_share_supports_minnesota_pick_3(tmp_path):
+    result = runner.invoke(
+        app,
+        [
+            "--data-dir",
+            str(tmp_path),
+            "low-share",
+            "minnesota-pick-3",
+            "-j",
+            "mn",
+            "--count",
+            "1",
+            "--candidates",
+            "5",
+            "--seed",
+            "4",
+            "--output",
+            "json",
+        ],
+    )
+
+    assert result.exit_code == 0, result.output
+    payload = json.loads(result.output)
+    pick = payload["games"][0]["options"][0]["picks"][0]
+    assert len(pick["numbers"]) == 3
+    assert pick["label"] != "n/a"
+    assert pick["reasons"]
+
+
+@pytest.mark.parametrize(
+    ("game_slug", "expected_length"),
+    [
+        ("dc-3", 3),
+        ("dc-4", 4),
+        ("dc-5", 5),
+    ],
+)
+def test_low_share_supports_dc_fixed_prize_digit_games(
+    tmp_path,
+    game_slug,
+    expected_length,
+):
+    result = runner.invoke(
+        app,
+        [
+            "--data-dir",
+            str(tmp_path),
+            "low-share",
+            game_slug,
+            "-j",
+            "dc",
+            "--count",
+            "1",
+            "--candidates",
+            "5",
+            "--seed",
+            "4",
+            "--output",
+            "json",
+        ],
+    )
+
+    assert result.exit_code == 0, result.output
+    payload = json.loads(result.output)
+    pick = payload["games"][0]["options"][0]["picks"][0]
+    assert len(pick["numbers"]) == expected_length
+    assert pick["label"] != "n/a"
+    assert pick["reasons"]
+
+
+@pytest.mark.parametrize(
+    ("game_slug", "expected_length"),
+    [
+        ("georgia-cash-3", 3),
+        ("georgia-cash-4", 4),
+        ("georgia-cash-pop", 1),
+        ("georgia-five", 5),
+        ("millionaire-for-life", 6),
+    ],
+)
+def test_low_share_supports_georgia_local_games(
+    tmp_path,
+    game_slug,
+    expected_length,
+):
+    result = runner.invoke(
+        app,
+        [
+            "--data-dir",
+            str(tmp_path),
+            "low-share",
+            game_slug,
+            "-j",
+            "ga",
+            "--count",
+            "1",
+            "--candidates",
+            "5",
+            "--seed",
+            "4",
+            "--output",
+            "json",
+        ],
+    )
+
+    assert result.exit_code == 0, result.output
+    payload = json.loads(result.output)
+    pick = payload["games"][0]["options"][0]["picks"][0]
+    assert len(pick["numbers"]) == expected_length
+    assert pick["label"] != "n/a"
+    assert pick["reasons"]
+
+
+@pytest.mark.parametrize(
+    ("game_slug", "expected_length"),
+    [
+        ("mississippi-cash-3", 3),
+        ("mississippi-cash-4", 4),
+    ],
+)
+def test_low_share_supports_mississippi_digit_games(
+    tmp_path,
+    game_slug,
+    expected_length,
+):
+    result = runner.invoke(
+        app,
+        [
+            "--data-dir",
+            str(tmp_path),
+            "low-share",
+            game_slug,
+            "-j",
+            "ms",
+            "--count",
+            "1",
+            "--candidates",
+            "5",
+            "--seed",
+            "4",
+            "--output",
+            "json",
+        ],
+    )
+
+    assert result.exit_code == 0, result.output
+    payload = json.loads(result.output)
+    pick = payload["games"][0]["options"][0]["picks"][0]
+    assert len(pick["numbers"]) == expected_length
+    assert pick["label"] != "n/a"
+    assert pick["reasons"]
+
+
+@pytest.mark.parametrize(
+    ("game_slug", "expected_length"),
+    [
         ("arkansas-cash-3", 3),
         ("arkansas-cash-4", 4),
         ("arkansas-lotto", 6),
@@ -394,6 +645,46 @@ def test_low_share_supports_arkansas_local_draw_games(
             game_slug,
             "-j",
             "ar",
+            "--count",
+            "1",
+            "--candidates",
+            "5",
+            "--seed",
+            "4",
+            "--output",
+            "json",
+        ],
+    )
+
+    assert result.exit_code == 0, result.output
+    payload = json.loads(result.output)
+    pick = payload["games"][0]["options"][0]["picks"][0]
+    assert len(pick["numbers"]) == expected_length
+    assert pick["label"] != "n/a"
+    assert pick["reasons"]
+
+
+@pytest.mark.parametrize(
+    ("game_slug", "expected_length"),
+    [
+        ("quick-draw", 20),
+        ("pick-10", 10),
+    ],
+)
+def test_low_share_supports_new_york_fixed_prize_local_games(
+    tmp_path,
+    game_slug,
+    expected_length,
+):
+    result = runner.invoke(
+        app,
+        [
+            "--data-dir",
+            str(tmp_path),
+            "low-share",
+            game_slug,
+            "-j",
+            "ny",
             "--count",
             "1",
             "--candidates",

@@ -802,6 +802,27 @@ def _georgia_mega_millions_history_json() -> str:
     )
 
 
+def _georgia_cash_digit_history_json(game_name: str, *numbers: str) -> str:
+    return json.dumps(
+        {
+            "draws": [
+                {
+                    "gameName": game_name,
+                    "id": "1234",
+                    "status": "CLOSED",
+                    "closeTime": 1778381105000,
+                    "results": [
+                        {
+                            "primary": list(numbers),
+                            "drawType": "Regular",
+                        }
+                    ],
+                }
+            ]
+        }
+    )
+
+
 def _idaho_powerball_history_html() -> str:
     return """
     <html>
@@ -1247,6 +1268,20 @@ def _massachusetts_draw_results_json() -> str:
                     "extras": {"megaball": 10},
                     "status": "COMPLETE",
                 },
+                {
+                    "gameIdentifier": "lucky_for_life",
+                    "drawDate": "2026-05-04",
+                    "winningNumbers": [1, 11, 21, 31, 41],
+                    "extras": {"luckyball": 7},
+                    "status": "COMPLETE",
+                },
+                {
+                    "gameIdentifier": "millionaire_for_life",
+                    "drawDate": "2026-05-03",
+                    "winningNumbers": [6, 18, 30, 32, 43],
+                    "extras": {"millionaireball": 1},
+                    "status": "COMPLETE",
+                },
             ]
         }
     )
@@ -1334,6 +1369,27 @@ def _minnesota_winning_numbers_html() -> str:
           </ul>
           <p class="lottery-drawing"><span>May 5th, 2026</span></p>
         </figure>
+        <figure class="card card--lottery card--winning-numbers">
+          <h4>Lotto America</h4>
+          <ul class="lottery-number-list" aria-label="Winning numbers">
+            <li class="lottery-number-list-item">8</li>
+            <li class="lottery-number-list-item">12</li>
+            <li class="lottery-number-list-item">13</li>
+            <li class="lottery-number-list-item">27</li>
+            <li class="lottery-number-list-item">42</li>
+            <li class="lottery-number-list-item power-ball">4</li>
+          </ul>
+          <p class="lottery-drawing"><span>May 9th, 2026</span></p>
+        </figure>
+        <figure class="card card--lottery card--winning-numbers">
+          <h4>Pick 3</h4>
+          <ul class="lottery-number-list" aria-label="Winning numbers">
+            <li class="lottery-number-list-item">4</li>
+            <li class="lottery-number-list-item">8</li>
+            <li class="lottery-number-list-item">3</li>
+          </ul>
+          <p class="lottery-drawing"><span>May 10th, 2026</span></p>
+        </figure>
       </body>
     </html>
     """
@@ -1359,6 +1415,42 @@ def _mississippi_home_page_html() -> str:
             <span><i>12</i></span><span><i>22</i></span>
             <span><i>50</i></span><span><i>51</i></span>
             <span><i>55</i></span><span><i class="powerball">10</i></span>
+          </div>
+        </div>
+        <div class="drawgamewrap cash4wrap">
+          <a href="https://www.mslottery.com/games/cash-4/">Cash 4</a>
+          <div class="drawn-numbers MIDDAY">
+            <p class="latestdraw">05/11 MIDDAY Numbers</p>
+            <div class="results-wrap">
+              <span><i>4</i></span><span><i>9</i></span>
+              <span><i>9</i></span><span><i>1</i></span>
+              <span><i class="fireball">7</i></span>
+            </div>
+          </div>
+          <div class="drawn-numbers EVE">
+            <p class="latestdraw">05/10 EVE Numbers</p>
+            <div class="results-wrap">
+              <span><i>5</i></span><span><i>8</i></span>
+              <span><i>3</i></span><span><i>7</i></span>
+              <span><i class="fireball">9</i></span>
+            </div>
+          </div>
+        </div>
+        <div class="drawgamewrap cash3wrap">
+          <a href="https://www.mslottery.com/games/cash-3/">Cash 3</a>
+          <div class="drawn-numbers MIDDAY">
+            <p class="latestdraw">05/11 MIDDAY Numbers</p>
+            <div class="results-wrap">
+              <span><i>5</i></span><span><i>4</i></span>
+              <span><i>3</i></span><span><i class="fireball">7</i></span>
+            </div>
+          </div>
+          <div class="drawn-numbers EVE">
+            <p class="latestdraw">05/10 EVE Numbers</p>
+            <div class="results-wrap">
+              <span><i>5</i></span><span><i>1</i></span>
+              <span><i>9</i></span><span><i class="fireball">9</i></span>
+            </div>
           </div>
         </div>
       </body>
@@ -3818,6 +3910,79 @@ def test_fetch_georgia_mega_millions_backfill_reads_official_json_fixture(
     ]
 
 
+@pytest.mark.parametrize(
+    ("game_slug", "game_name", "numbers", "expected_winning_number"),
+    [
+        ("georgia-cash-3", "CASH 3", ("6", "0", "5"), "6, 0, 5"),
+        ("georgia-cash-4", "CASH 4", ("6", "9", "7", "9"), "6, 9, 7, 9"),
+        ("georgia-cash-pop", "CASH POP", ("1",), "1"),
+        ("georgia-five", "GEORGIA FIVE", ("8", "2", "0", "4", "8"), "8, 2, 0, 4, 8"),
+        (
+            "millionaire-for-life",
+            "MILLION 4 LIFE",
+            ("6", "18", "30", "32", "43", "MB-01"),
+            "6, 18, 30, 32, 43, 01 Millionaire Ball",
+        ),
+    ],
+)
+def test_fetch_georgia_local_games_backfill_reads_official_json_fixture(
+    tmp_path,
+    game_slug,
+    game_name,
+    numbers,
+    expected_winning_number,
+):
+    fixtures = tmp_path / "fixtures"
+    fixtures.mkdir()
+    (fixtures / f"{game_slug}-ga-backfill.json").write_text(
+        _georgia_cash_digit_history_json(game_name, *numbers),
+        encoding="utf-8",
+    )
+
+    result = runner.invoke(
+        app,
+        [
+            "--data-dir",
+            str(tmp_path / "data"),
+            "fetch",
+            game_slug,
+            "-j",
+            "ga",
+            "--backfill",
+            "--source-dir",
+            str(fixtures),
+        ],
+    )
+
+    assert result.exit_code == 0, result.output
+    assert "1 draw" in result.output
+    assert "1 page" in result.output
+
+    draws_result = runner.invoke(
+        app,
+        [
+            "--data-dir",
+            str(tmp_path / "data"),
+            "draws",
+            game_slug,
+            "-j",
+            "ga",
+            "--output",
+            "json",
+        ],
+    )
+
+    assert draws_result.exit_code == 0, draws_result.output
+    payload = json.loads(draws_result.output)
+    assert payload["games"][0]["draws"] == [
+        {
+            "jurisdiction_code": "ga",
+            "draw_date": "Sat, May 09, 2026",
+            "winning_number": expected_winning_number,
+        }
+    ]
+
+
 def test_fetch_idaho_powerball_backfill_reads_official_draw_page_fixture(tmp_path):
     fixtures = tmp_path / "fixtures"
     fixtures.mkdir()
@@ -5131,6 +5296,81 @@ def test_fetch_massachusetts_mega_millions_backfill_reads_official_json_fixture(
     ]
 
 
+@pytest.mark.parametrize(
+    ("game_slug", "expected_name", "expected_draw"),
+    [
+        (
+            "lucky-for-life",
+            "Lucky for Life",
+            {
+                "jurisdiction_code": "ma",
+                "draw_date": "Mon, May 04, 2026",
+                "winning_number": "1, 11, 21, 31, 41, 7 Lucky Ball",
+            },
+        ),
+        (
+            "millionaire-for-life",
+            "Millionaire For Life",
+            {
+                "jurisdiction_code": "ma",
+                "draw_date": "Sun, May 03, 2026",
+                "winning_number": "6, 18, 30, 32, 43, 1 Millionaire Ball",
+            },
+        ),
+    ],
+)
+def test_fetch_massachusetts_life_games_backfill_reads_official_json_fixture(
+    tmp_path,
+    game_slug,
+    expected_name,
+    expected_draw,
+):
+    fixtures = tmp_path / "fixtures"
+    fixtures.mkdir()
+    (fixtures / f"{game_slug}-ma-backfill.json").write_text(
+        _massachusetts_draw_results_json(),
+        encoding="utf-8",
+    )
+
+    result = runner.invoke(
+        app,
+        [
+            "--data-dir",
+            str(tmp_path / "data"),
+            "fetch",
+            game_slug,
+            "-j",
+            "ma",
+            "--backfill",
+            "--source-dir",
+            str(fixtures),
+        ],
+    )
+
+    assert result.exit_code == 0, result.output
+    assert expected_name in result.output
+    assert "1 draw" in result.output
+    assert "1 page" in result.output
+
+    draws_result = runner.invoke(
+        app,
+        [
+            "--data-dir",
+            str(tmp_path / "data"),
+            "draws",
+            game_slug,
+            "-j",
+            "ma",
+            "--output",
+            "json",
+        ],
+    )
+
+    assert draws_result.exit_code == 0, draws_result.output
+    payload = json.loads(draws_result.output)
+    assert payload["games"][0]["draws"] == [expected_draw]
+
+
 def test_fetch_michigan_powerball_backfill_reads_official_graphql_fixture(tmp_path):
     fixtures = tmp_path / "fixtures"
     fixtures.mkdir()
@@ -5347,6 +5587,114 @@ def test_fetch_minnesota_mega_millions_backfill_reads_official_page_fixture(
     ]
 
 
+def test_fetch_minnesota_lotto_america_backfill_reads_official_page_fixture(
+    tmp_path,
+):
+    fixtures = tmp_path / "fixtures"
+    fixtures.mkdir()
+    (fixtures / "lotto-america-mn-backfill.html").write_text(
+        _minnesota_winning_numbers_html(),
+        encoding="utf-8",
+    )
+
+    result = runner.invoke(
+        app,
+        [
+            "--data-dir",
+            str(tmp_path / "data"),
+            "fetch",
+            "lotto-america",
+            "-j",
+            "mn",
+            "--backfill",
+            "--source-dir",
+            str(fixtures),
+        ],
+    )
+
+    assert result.exit_code == 0, result.output
+    assert "Lotto America" in result.output
+    assert "1 draw" in result.output
+    assert "1 page" in result.output
+
+    draws_result = runner.invoke(
+        app,
+        [
+            "--data-dir",
+            str(tmp_path / "data"),
+            "draws",
+            "lotto-america",
+            "-j",
+            "mn",
+            "--output",
+            "json",
+        ],
+    )
+
+    assert draws_result.exit_code == 0, draws_result.output
+    payload = json.loads(draws_result.output)
+    assert payload["games"][0]["draws"] == [
+        {
+            "jurisdiction_code": "mn",
+            "draw_date": "Sat, May 09, 2026",
+            "winning_number": "8, 12, 13, 27, 42, 4 Star Ball",
+        }
+    ]
+
+
+def test_fetch_minnesota_pick_3_backfill_reads_official_page_fixture(tmp_path):
+    fixtures = tmp_path / "fixtures"
+    fixtures.mkdir()
+    (fixtures / "minnesota-pick-3-mn-backfill.html").write_text(
+        _minnesota_winning_numbers_html(),
+        encoding="utf-8",
+    )
+
+    result = runner.invoke(
+        app,
+        [
+            "--data-dir",
+            str(tmp_path / "data"),
+            "fetch",
+            "minnesota-pick-3",
+            "-j",
+            "mn",
+            "--backfill",
+            "--source-dir",
+            str(fixtures),
+        ],
+    )
+
+    assert result.exit_code == 0, result.output
+    assert "Pick 3" in result.output
+    assert "1 draw" in result.output
+    assert "1 page" in result.output
+
+    draws_result = runner.invoke(
+        app,
+        [
+            "--data-dir",
+            str(tmp_path / "data"),
+            "draws",
+            "minnesota-pick-3",
+            "-j",
+            "mn",
+            "--output",
+            "json",
+        ],
+    )
+
+    assert draws_result.exit_code == 0, draws_result.output
+    payload = json.loads(draws_result.output)
+    assert payload["games"][0]["draws"] == [
+        {
+            "jurisdiction_code": "mn",
+            "draw_date": "Sun, May 10, 2026",
+            "winning_number": "4, 8, 3",
+        }
+    ]
+
+
 def test_fetch_mississippi_powerball_backfill_reads_official_home_fixture(tmp_path):
     fixtures = tmp_path / "fixtures"
     fixtures.mkdir()
@@ -5452,6 +5800,82 @@ def test_fetch_mississippi_mega_millions_backfill_reads_official_home_fixture(
             "draw_date": "Tue, May 05, 2026",
             "winning_number": "12, 22, 50, 51, 55, 10 Mega Ball",
         }
+    ]
+
+
+@pytest.mark.parametrize(
+    ("game_slug", "expected_draws"),
+    [
+        (
+            "mississippi-cash-3",
+            [
+                ("Mon, May 11, 2026 Midday", "5, 4, 3"),
+                ("Sun, May 10, 2026 Evening", "5, 1, 9"),
+            ],
+        ),
+        (
+            "mississippi-cash-4",
+            [
+                ("Mon, May 11, 2026 Midday", "4, 9, 9, 1"),
+                ("Sun, May 10, 2026 Evening", "5, 8, 3, 7"),
+            ],
+        ),
+    ],
+)
+def test_fetch_mississippi_digit_games_backfill_reads_official_home_fixture(
+    tmp_path,
+    game_slug,
+    expected_draws,
+):
+    fixtures = tmp_path / "fixtures"
+    fixtures.mkdir()
+    (fixtures / f"{game_slug}-ms-backfill.html").write_text(
+        _mississippi_home_page_html(),
+        encoding="utf-8",
+    )
+
+    result = runner.invoke(
+        app,
+        [
+            "--data-dir",
+            str(tmp_path / "data"),
+            "fetch",
+            game_slug,
+            "-j",
+            "ms",
+            "--backfill",
+            "--source-dir",
+            str(fixtures),
+        ],
+    )
+
+    assert result.exit_code == 0, result.output
+    assert "2 draws" in result.output
+    assert "1 page" in result.output
+
+    draws_result = runner.invoke(
+        app,
+        [
+            "--data-dir",
+            str(tmp_path / "data"),
+            "draws",
+            game_slug,
+            "-j",
+            "ms",
+            "--output",
+            "json",
+        ],
+    )
+
+    assert draws_result.exit_code == 0, draws_result.output
+    payload = json.loads(draws_result.output)
+    assert payload["games"][0]["draws"] == [
+        {
+            "jurisdiction_code": "ms",
+            "draw_date": draw_date,
+            "winning_number": winning_number,
+        }
+        for draw_date, winning_number in expected_draws
     ]
 
 

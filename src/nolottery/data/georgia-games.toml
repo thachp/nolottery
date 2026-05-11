@@ -4,19 +4,89 @@
 slug = 'georgia-cash-3'
 name = 'Cash 3'
 source_url = 'https://www.galottery.com/en-us/games/draw-games/cash-three.html'
-reviewed_on = '2026-05-07'
+reviewed_on = '2026-05-11'
+
+[[games.wager_options]]
+slug = 'straight-1'
+label = 'Straight $1'
+ticket_cost = 1.0
+
+[[games.wager_options.prize_tiers]]
+label = 'Straight'
+probability = 0.001
+prize = 500
 
 [[games]]
 slug = 'georgia-cash-4'
 name = 'Cash 4'
 source_url = 'https://www.galottery.com/en-us/games/draw-games/cash-four.html'
-reviewed_on = '2026-05-07'
+reviewed_on = '2026-05-11'
+
+[[games.wager_options]]
+slug = 'straight-1'
+label = 'Straight $1'
+ticket_cost = 1.0
+
+[[games.wager_options.prize_tiers]]
+label = 'Straight'
+probability = 0.0001
+prize = 5000
 
 [[games]]
 slug = 'georgia-cash-pop'
 name = 'Cash Pop'
 source_url = 'https://www.galottery.com/en-us/games/draw-games/cash-pop.html'
-reviewed_on = '2026-05-07'
+reviewed_on = '2026-05-11'
+
+[[games.wager_options]]
+slug = 'one-pop'
+label = '1 POP $1'
+ticket_cost = 1.0
+
+[[games.wager_options.prize_tiers]]
+label = '$5'
+probability = 0.03125
+prize = 5
+
+[[games.wager_options.prize_tiers]]
+label = '$7'
+probability = 0.013333333333333334
+prize = 7
+
+[[games.wager_options.prize_tiers]]
+label = '$10'
+probability = 0.009523809523809525
+prize = 10
+
+[[games.wager_options.prize_tiers]]
+label = '$15'
+probability = 0.006060606060606061
+prize = 15
+
+[[games.wager_options.prize_tiers]]
+label = '$20'
+probability = 0.0044444444444444444
+prize = 20
+
+[[games.wager_options.prize_tiers]]
+label = '$25'
+probability = 0.0012121212121212121
+prize = 25
+
+[[games.wager_options.prize_tiers]]
+label = '$50'
+probability = 0.00044444444444444447
+prize = 50
+
+[[games.wager_options.prize_tiers]]
+label = '$100'
+probability = 0.00022222222222222223
+prize = 100
+
+[[games.wager_options.prize_tiers]]
+label = '$250'
+probability = 0.00012121212121212121
+prize = 250
 
 [[games]]
 slug = 'georgia-keno'
@@ -34,7 +104,67 @@ reviewed_on = '2026-05-07'
 slug = 'georgia-five'
 name = 'Georgia Five'
 source_url = 'https://www.galottery.com/en-us/games/draw-games/georgia-five.html'
-reviewed_on = '2026-05-07'
+reviewed_on = '2026-05-11'
+
+[[games.wager_options]]
+slug = 'standard'
+label = 'Standard $1'
+ticket_cost = 1.0
+
+[[games.wager_options.prize_tiers]]
+label = 'All 5 Numbers'
+probability = 0.00001
+prize = 10000
+
+[[games.wager_options.prize_tiers]]
+label = 'First or Last 4 Numbers'
+probability = 0.00017998560115190784
+prize = 225
+
+[[games.wager_options.prize_tiers]]
+label = 'First 3 Numbers + Last Number'
+probability = 0.00009000090000900009
+prize = 21
+
+[[games.wager_options.prize_tiers]]
+label = 'First Number + Last 3 Numbers'
+probability = 0.00009000090000900009
+prize = 21
+
+[[games.wager_options.prize_tiers]]
+label = 'First or Last 3 Numbers'
+probability = 0.0016207455429497568
+prize = 20
+
+[[games.wager_options.prize_tiers]]
+label = 'First 2 Numbers + Last 2 Numbers'
+probability = 0.00009000090000900009
+prize = 20
+
+[[games.wager_options.prize_tiers]]
+label = 'First 2 Numbers + Last Number'
+probability = 0.0008097165991902834
+prize = 11
+
+[[games.wager_options.prize_tiers]]
+label = 'First Number + Last 2 Numbers'
+probability = 0.0008097165991902834
+prize = 11
+
+[[games.wager_options.prize_tiers]]
+label = 'First or Last 2 Numbers'
+probability = 0.016129032258064516
+prize = 10
+
+[[games.wager_options.prize_tiers]]
+label = 'First Number + Last Number'
+probability = 0.008130081300813009
+prize = 2
+
+[[games.wager_options.prize_tiers]]
+label = 'First or Last Number'
+probability = 0.16666666666666666
+prize = 1
 
 [[games]]
 slug = 'georgia-jumbo-bucks-lotto'

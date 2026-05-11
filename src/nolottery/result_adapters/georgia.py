@@ -28,8 +28,13 @@ from nolottery.result_adapters.common import (
 )
 
 _GEORGIA_DRAW_GAMES = {
-    "mega-millions": ("MEGA MILLIONS", "MB", "Mega Ball"),
-    "powerball": ("POWERBALL", "PB", "Powerball"),
+    "georgia-cash-3": ("CASH 3", 3, None, None),
+    "georgia-cash-4": ("CASH 4", 4, None, None),
+    "georgia-cash-pop": ("CASH POP", 1, None, None),
+    "georgia-five": ("GEORGIA FIVE", 5, None, None),
+    "mega-millions": ("MEGA MILLIONS", 5, "MB", "Mega Ball"),
+    "millionaire-for-life": ("MILLION 4 LIFE", 5, "MB", "Millionaire Ball"),
+    "powerball": ("POWERBALL", 5, "PB", "Powerball"),
 }
 
 _GEORGIA_TIMEZONE = ZoneInfo("America/New_York")
@@ -38,7 +43,9 @@ def parse_georgia_draw_games_json(
     raw_json: str,
     game_slug: str,
 ) -> tuple[ParsedDraw, ...]:
-    game_name, special_prefix, special_number_name = _GEORGIA_DRAW_GAMES[game_slug]
+    game_name, primary_count, special_prefix, special_number_name = _GEORGIA_DRAW_GAMES[
+        game_slug
+    ]
     payload = json.loads(raw_json)
     draws: list[ParsedDraw] = []
     for item in payload.get("draws") or ():
@@ -47,7 +54,12 @@ def parse_georgia_draw_games_json(
         if item.get("status") == "OPEN":
             continue
         draw_date = _georgia_draw_date(item.get("closeTime"))
-        numbers = _georgia_draw_numbers(item, special_prefix, special_number_name)
+        numbers = _georgia_draw_numbers(
+            item,
+            primary_count,
+            special_prefix,
+            special_number_name,
+        )
         if draw_date is None or numbers is None:
             continue
         draws.append(
@@ -61,8 +73,9 @@ def parse_georgia_draw_games_json(
 
 def _georgia_draw_numbers(
     item: dict[str, object],
-    special_prefix: str,
-    special_number_name: str,
+    primary_count: int,
+    special_prefix: str | None,
+    special_number_name: str | None,
 ) -> tuple[str, ...] | None:
     results = item.get("results")
     if not isinstance(results, list) or not results:
@@ -77,7 +90,9 @@ def _georgia_draw_numbers(
         str(number)
         for number in raw_numbers
         if isinstance(number, str) and re.fullmatch(r"\d{1,2}", number)
-    ][:5]
+    ][:primary_count]
+    if special_prefix is None or special_number_name is None:
+        return tuple(primary_numbers) if len(primary_numbers) == primary_count else None
     special_marker = next(
         (
             number
@@ -86,7 +101,7 @@ def _georgia_draw_numbers(
         ),
         None,
     )
-    if len(primary_numbers) != 5 or special_marker is None:
+    if len(primary_numbers) != primary_count or special_marker is None:
         return None
     special_number = special_marker.split("-", 1)[1]
     if not re.fullmatch(r"\d{1,2}", special_number):
@@ -111,7 +126,7 @@ def _georgia_draw_games_source(
         source_file = source_dir / f"{source_name}.json"
         return source_file.read_text(encoding="utf-8"), source_file.as_uri()
 
-    game_name, _, _ = _GEORGIA_DRAW_GAMES[game.slug]
+    game_name, _, _, _ = _GEORGIA_DRAW_GAMES[game.slug]
     query = urlencode(
         {
             "game-names": game_name,

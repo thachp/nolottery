@@ -125,6 +125,15 @@ def suggest_numbers(game_slug: str, option_slug: str) -> tuple[int, ...]:
         "florida-pick-5": 5,
         "arkansas-cash-3": 3,
         "arkansas-cash-4": 4,
+        "dc-3": 3,
+        "dc-4": 4,
+        "dc-5": 5,
+        "georgia-cash-3": 3,
+        "georgia-cash-4": 4,
+        "georgia-five": 5,
+        "minnesota-pick-3": 3,
+        "mississippi-cash-3": 3,
+        "mississippi-cash-4": 4,
         "colorado-pick-3": 3,
         "idaho-pick-3": 3,
         "idaho-pick-4": 4,
@@ -138,12 +147,16 @@ def suggest_numbers(game_slug: str, option_slug: str) -> tuple[int, ...]:
     }.get(game_slug)
     if digit_count is not None:
         return tuple(range(1, digit_count + 1))
-    if game_slug in {"cashpop", "oregon-cash-pop"}:
+    if game_slug in {"cashpop", "georgia-cash-pop", "oregon-cash-pop"}:
         count = _selection_count(option_slug)
         return tuple(range(1, min(count, 15) + 1))
     if game_slug in {"daily-keno", "oregon-keno"}:
         count = _selection_count(option_slug)
         return tuple(range(1, min(count, 80) + 1))
+    if game_slug == "quick-draw":
+        return tuple(range(1, 21))
+    if game_slug == "pick-10":
+        return tuple(range(1, 11))
     if game_slug == "powerball":
         return (1, 2, 3, 4, 5, 1)
     if game_slug == "mega-millions":

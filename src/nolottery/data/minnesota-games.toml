@@ -16,4 +16,14 @@ reviewed_on = '2026-05-07'
 slug = 'minnesota-pick-3'
 name = 'Pick 3'
 source_url = 'https://www.mnlottery.com/games/lotto/pick-3'
-reviewed_on = '2026-05-07'
+reviewed_on = '2026-05-11'
+
+[[games.wager_options]]
+slug = 'straight-1'
+label = 'Straight $1'
+ticket_cost = 1.0
+
+[[games.wager_options.prize_tiers]]
+label = 'Straight'
+probability = 0.001
+prize = 500

@@ -348,6 +348,211 @@ def test_analyze_supports_arkansas_millionaire_for_life(tmp_path):
     assert payload["options"]
 
 
+@pytest.mark.parametrize(
+    ("game_slug", "best_option"),
+    [
+        ("lucky-for-life", "Standard $2"),
+        ("millionaire-for-life", "Standard $5"),
+    ],
+)
+def test_analyze_supports_massachusetts_life_games(tmp_path, game_slug, best_option):
+    result = runner.invoke(
+        app,
+        [
+            "--data-dir",
+            str(tmp_path),
+            "analyze",
+            game_slug,
+            "-j",
+            "ma",
+            "--output",
+            "json",
+        ],
+    )
+
+    assert result.exit_code == 0, result.output
+    payload = json.loads(result.output)
+    assert payload["jurisdiction_code"] == "ma"
+    assert payload["game_slug"] == game_slug
+    assert payload["best_option"] == best_option
+    assert payload["options"]
+
+
+def test_analyze_supports_dc_millionaire_for_life(tmp_path):
+    result = runner.invoke(
+        app,
+        [
+            "--data-dir",
+            str(tmp_path),
+            "analyze",
+            "millionaire-for-life",
+            "-j",
+            "dc",
+            "--output",
+            "json",
+        ],
+    )
+
+    assert result.exit_code == 0, result.output
+    payload = json.loads(result.output)
+    assert payload["jurisdiction_code"] == "dc"
+    assert payload["game_slug"] == "millionaire-for-life"
+    assert payload["best_option"] == "Standard $5"
+    assert payload["options"]
+
+
+def test_analyze_supports_minnesota_lotto_america(tmp_path):
+    result = runner.invoke(
+        app,
+        [
+            "--data-dir",
+            str(tmp_path),
+            "analyze",
+            "lotto-america",
+            "-j",
+            "mn",
+            "--output",
+            "json",
+        ],
+    )
+
+    assert result.exit_code == 0, result.output
+    payload = json.loads(result.output)
+    assert payload["jurisdiction_code"] == "mn"
+    assert payload["game_slug"] == "lotto-america"
+    assert payload["best_option"] == "Standard $1"
+    assert payload["options"]
+
+
+def test_analyze_supports_minnesota_pick_3(tmp_path):
+    result = runner.invoke(
+        app,
+        [
+            "--data-dir",
+            str(tmp_path),
+            "analyze",
+            "minnesota-pick-3",
+            "-j",
+            "mn",
+            "--output",
+            "json",
+        ],
+    )
+
+    assert result.exit_code == 0, result.output
+    payload = json.loads(result.output)
+    assert payload["jurisdiction_code"] == "mn"
+    assert payload["game_slug"] == "minnesota-pick-3"
+    assert payload["best_option"] == "Straight $1"
+    assert payload["options"]
+
+
+@pytest.mark.parametrize(
+    ("game_slug", "best_option"),
+    [
+        ("dc-3", "Straight $1"),
+        ("dc-4", "Straight $1"),
+        ("dc-5", "Straight $1"),
+    ],
+)
+def test_analyze_supports_dc_fixed_prize_digit_games(
+    tmp_path,
+    game_slug,
+    best_option,
+):
+    result = runner.invoke(
+        app,
+        [
+            "--data-dir",
+            str(tmp_path),
+            "analyze",
+            game_slug,
+            "-j",
+            "dc",
+            "--output",
+            "json",
+        ],
+    )
+
+    assert result.exit_code == 0, result.output
+    payload = json.loads(result.output)
+    assert payload["jurisdiction_code"] == "dc"
+    assert payload["game_slug"] == game_slug
+    assert payload["best_option"] == best_option
+    assert payload["options"]
+
+
+@pytest.mark.parametrize(
+    ("game_slug", "best_option"),
+    [
+        ("georgia-cash-3", "Straight $1"),
+        ("georgia-cash-4", "Straight $1"),
+        ("georgia-cash-pop", "1 POP $1"),
+        ("georgia-five", "Standard $1"),
+        ("millionaire-for-life", "Standard $5"),
+    ],
+)
+def test_analyze_supports_georgia_local_games(
+    tmp_path,
+    game_slug,
+    best_option,
+):
+    result = runner.invoke(
+        app,
+        [
+            "--data-dir",
+            str(tmp_path),
+            "analyze",
+            game_slug,
+            "-j",
+            "ga",
+            "--output",
+            "json",
+        ],
+    )
+
+    assert result.exit_code == 0, result.output
+    payload = json.loads(result.output)
+    assert payload["jurisdiction_code"] == "ga"
+    assert payload["game_slug"] == game_slug
+    assert payload["best_option"] == best_option
+    assert payload["options"]
+
+
+@pytest.mark.parametrize(
+    ("game_slug", "best_option"),
+    [
+        ("mississippi-cash-3", "Exact Order $1"),
+        ("mississippi-cash-4", "Exact Order $1"),
+    ],
+)
+def test_analyze_supports_mississippi_digit_games(
+    tmp_path,
+    game_slug,
+    best_option,
+):
+    result = runner.invoke(
+        app,
+        [
+            "--data-dir",
+            str(tmp_path),
+            "analyze",
+            game_slug,
+            "-j",
+            "ms",
+            "--output",
+            "json",
+        ],
+    )
+
+    assert result.exit_code == 0, result.output
+    payload = json.loads(result.output)
+    assert payload["jurisdiction_code"] == "ms"
+    assert payload["game_slug"] == game_slug
+    assert payload["best_option"] == best_option
+    assert payload["options"]
+
+
 def test_analyze_supports_arkansas_local_draw_games(tmp_path):
     expected_best_options = {
         "arkansas-cash-3": "Straight $0.50",
@@ -398,6 +603,40 @@ def test_analyze_reports_cataloged_game_without_ev_support(tmp_path):
     assert "EV support pending for game: new-york-lotto" in result.output
 
 
+@pytest.mark.parametrize(
+    ("game_slug", "best_option"),
+    [
+        ("quick-draw", "5 Spot $1"),
+        ("pick-10", "Standard $1"),
+    ],
+)
+def test_analyze_supports_new_york_fixed_prize_local_games(
+    tmp_path,
+    game_slug,
+    best_option,
+):
+    result = runner.invoke(
+        app,
+        [
+            "--data-dir",
+            str(tmp_path),
+            "analyze",
+            game_slug,
+            "-j",
+            "ny",
+            "--output",
+            "json",
+        ],
+    )
+
+    assert result.exit_code == 0, result.output
+    payload = json.loads(result.output)
+    assert payload["jurisdiction_code"] == "ny"
+    assert payload["game_slug"] == game_slug
+    assert payload["best_option"] == best_option
+    assert payload["options"]
+
+
 def test_analyze_all_skips_cataloged_new_york_games_without_ev_support(tmp_path):
     result = runner.invoke(
         app,
@@ -418,6 +657,8 @@ def test_analyze_all_skips_cataloged_new_york_games_without_ev_support(tmp_path)
     assert payload["jurisdiction_code"] == "ny"
     game_slugs = {game["game_slug"] for game in payload["games"]}
     assert "numbers" in game_slugs
+    assert "quick-draw" in game_slugs
+    assert "pick-10" in game_slugs
     assert "new-york-lotto" not in game_slugs
 
 
@@ -573,7 +814,7 @@ def test_recommend_can_use_pick3_when_budget_is_under_one_dollar(tmp_path):
     assert payload["best"]["hit_rate"] == 0.01
 
 
-def test_recommend_supports_new_york_numbers(tmp_path):
+def test_recommend_supports_new_york_fixed_prize_local_games(tmp_path):
     result = runner.invoke(
         app,
         [
@@ -592,10 +833,10 @@ def test_recommend_supports_new_york_numbers(tmp_path):
     assert result.exit_code == 0, result.output
     payload = json.loads(result.output)
     assert payload["jurisdiction_code"] == "ny"
-    assert payload["best"]["game_slug"] == "numbers"
-    assert payload["best"]["number_selection"] == [1, 2, 3]
+    assert payload["best"]["game_slug"] == "quick-draw"
+    assert payload["best"]["number_selection"] == list(range(1, 21))
     assert payload["best"]["prediction_method"] == "quick-pick-random-no-edge"
-    assert len(payload["best"]["prediction"]) == 3
+    assert len(payload["best"]["prediction"]) == 20
 
 
 def test_recommend_supports_florida_pick_2(tmp_path):

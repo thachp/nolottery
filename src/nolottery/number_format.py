@@ -74,6 +74,30 @@ NUMBER_FORMATS: dict[str, NumberFormat] = {
         game_slug="arkansas-cash-4",
         pools=(NumberPool("digits", 0, 9, 4, ordered=True, allow_repeats=True),),
     ),
+    "dc-3": NumberFormat(
+        game_slug="dc-3",
+        pools=(NumberPool("digits", 0, 9, 3, ordered=True, allow_repeats=True),),
+    ),
+    "dc-4": NumberFormat(
+        game_slug="dc-4",
+        pools=(NumberPool("digits", 0, 9, 4, ordered=True, allow_repeats=True),),
+    ),
+    "dc-5": NumberFormat(
+        game_slug="dc-5",
+        pools=(NumberPool("digits", 0, 9, 5, ordered=True, allow_repeats=True),),
+    ),
+    "georgia-cash-3": NumberFormat(
+        game_slug="georgia-cash-3",
+        pools=(NumberPool("digits", 0, 9, 3, ordered=True, allow_repeats=True),),
+    ),
+    "georgia-cash-4": NumberFormat(
+        game_slug="georgia-cash-4",
+        pools=(NumberPool("digits", 0, 9, 4, ordered=True, allow_repeats=True),),
+    ),
+    "georgia-five": NumberFormat(
+        game_slug="georgia-five",
+        pools=(NumberPool("digits", 0, 9, 5, ordered=True, allow_repeats=True),),
+    ),
     "arkansas-lotto": NumberFormat(
         game_slug="arkansas-lotto",
         pools=(NumberPool("numbers", 1, 40, 6),),
@@ -153,6 +177,14 @@ NUMBER_FORMATS: dict[str, NumberFormat] = {
         game_slug="win-4",
         pools=(NumberPool("digits", 0, 9, 4, ordered=True, allow_repeats=True),),
     ),
+    "quick-draw": NumberFormat(
+        game_slug="quick-draw",
+        pools=(NumberPool("numbers", 1, 80, 20),),
+    ),
+    "pick-10": NumberFormat(
+        game_slug="pick-10",
+        pools=(NumberPool("numbers", 1, 80, 10),),
+    ),
     "hit-5": NumberFormat(
         game_slug="hit-5",
         pools=(NumberPool("white", 1, 42, 5),),
@@ -160,6 +192,18 @@ NUMBER_FORMATS: dict[str, NumberFormat] = {
     "match-4": NumberFormat(
         game_slug="match-4",
         pools=(NumberPool("white", 1, 24, 4),),
+    ),
+    "minnesota-pick-3": NumberFormat(
+        game_slug="minnesota-pick-3",
+        pools=(NumberPool("digits", 0, 9, 3, ordered=True, allow_repeats=True),),
+    ),
+    "mississippi-cash-3": NumberFormat(
+        game_slug="mississippi-cash-3",
+        pools=(NumberPool("digits", 0, 9, 3, ordered=True, allow_repeats=True),),
+    ),
+    "mississippi-cash-4": NumberFormat(
+        game_slug="mississippi-cash-4",
+        pools=(NumberPool("digits", 0, 9, 4, ordered=True, allow_repeats=True),),
     ),
     "colorado-lotto-plus": NumberFormat(
         game_slug="colorado-lotto-plus",
@@ -237,7 +281,7 @@ def quick_pick(
     rng: RandomSource | None = None,
 ) -> tuple[int, ...]:
     source = rng if rng is not None else random.SystemRandom()
-    if game_slug in {"cashpop", "oregon-cash-pop"}:
+    if game_slug in {"cashpop", "georgia-cash-pop", "oregon-cash-pop"}:
         count = _selection_count(option_slug)
         if count >= 15:
             return tuple(range(1, 16))

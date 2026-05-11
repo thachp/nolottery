@@ -131,15 +131,15 @@ blocking_reason = 'Rules verification pending'
 
 [[jurisdictions.offerings]]
 game_slug = 'quick-draw'
-support_statuses = ['cataloged', 'fetch_supported', 'audit_supported']
+support_statuses = ['cataloged', 'rules_verified', 'ev_supported', 'fetch_supported', 'audit_supported', 'low_share_supported']
 results_adapter = 'ny_open_data_socrata'
-blocking_reason = 'Rules verification pending'
+blocking_reason = ''
 
 [[jurisdictions.offerings]]
 game_slug = 'pick-10'
-support_statuses = ['cataloged', 'fetch_supported', 'audit_supported']
+support_statuses = ['cataloged', 'rules_verified', 'ev_supported', 'fetch_supported', 'audit_supported', 'low_share_supported']
 results_adapter = 'ny_open_data_socrata'
-blocking_reason = 'Rules verification pending'
+blocking_reason = ''
 
 [[jurisdictions]]
 code = 'fl'
@@ -218,23 +218,23 @@ name = 'District of Columbia'
 [[jurisdictions.offerings]]
 game_slug = 'dc-3'
 source_url = 'https://dclottery.com/winning-numbers/past-draw-numbers?game=10'
-support_statuses = ['cataloged', 'fetch_supported', 'audit_supported']
+support_statuses = ['cataloged', 'rules_verified', 'ev_supported', 'fetch_supported', 'audit_supported', 'low_share_supported']
 results_adapter = 'dc_past_draw_numbers'
-blocking_reason = 'Rules verification pending'
+blocking_reason = ''
 
 [[jurisdictions.offerings]]
 game_slug = 'dc-4'
 source_url = 'https://dclottery.com/winning-numbers/past-draw-numbers?game=11'
-support_statuses = ['cataloged', 'fetch_supported', 'audit_supported']
+support_statuses = ['cataloged', 'rules_verified', 'ev_supported', 'fetch_supported', 'audit_supported', 'low_share_supported']
 results_adapter = 'dc_past_draw_numbers'
-blocking_reason = 'Rules verification pending'
+blocking_reason = ''
 
 [[jurisdictions.offerings]]
 game_slug = 'dc-5'
 source_url = 'https://dclottery.com/winning-numbers/past-draw-numbers?game=12'
-support_statuses = ['cataloged', 'fetch_supported', 'audit_supported']
+support_statuses = ['cataloged', 'rules_verified', 'ev_supported', 'fetch_supported', 'audit_supported', 'low_share_supported']
 results_adapter = 'dc_past_draw_numbers'
-blocking_reason = 'Rules verification pending'
+blocking_reason = ''
 
 [[jurisdictions.offerings]]
 game_slug = 'powerball'
@@ -260,9 +260,9 @@ blocking_reason = ''
 [[jurisdictions.offerings]]
 game_slug = 'millionaire-for-life'
 source_url = 'https://dclottery.com/winning-numbers/past-draw-numbers?game=376'
-support_statuses = ['cataloged', 'fetch_supported', 'audit_supported']
+support_statuses = ['cataloged', 'rules_verified', 'ev_supported', 'fetch_supported', 'audit_supported', 'low_share_supported']
 results_adapter = 'dc_past_draw_numbers'
-blocking_reason = 'Rules verification pending'
+blocking_reason = ''
 
 [[jurisdictions.offerings]]
 game_slug = 'dc-keno'
@@ -575,29 +575,36 @@ blocking_reason = ''
 [[jurisdictions.offerings]]
 game_slug = 'millionaire-for-life'
 source_url = 'https://www.galottery.com/en-us/games/draw-games/millionaireforlife.html'
-support_statuses = ['cataloged']
-blocking_reason = 'Rules and fetch adapter pending'
+support_statuses = ['cataloged', 'rules_verified', 'ev_supported', 'fetch_supported', 'audit_supported', 'low_share_supported']
+results_adapter = 'ga_draw_games_json'
+blocking_reason = ''
 
 [[jurisdictions.offerings]]
 game_slug = 'cash4life'
 source_url = 'https://www.galottery.com/en-us/games/draw-games/cash-for-life.html'
 support_statuses = ['cataloged']
-blocking_reason = 'Rules and fetch adapter pending'
+blocking_reason = 'Retired after 2026-02-22; historical adapter pending'
 
 [[jurisdictions.offerings]]
 game_slug = 'georgia-cash-3'
-support_statuses = ['cataloged']
-blocking_reason = 'Rules and fetch adapter pending'
+source_url = 'https://www.galottery.com/en-us/games/draw-games/cash-three.html'
+support_statuses = ['cataloged', 'rules_verified', 'ev_supported', 'fetch_supported', 'audit_supported', 'low_share_supported']
+results_adapter = 'ga_draw_games_json'
+blocking_reason = ''
 
 [[jurisdictions.offerings]]
 game_slug = 'georgia-cash-4'
-support_statuses = ['cataloged']
-blocking_reason = 'Rules and fetch adapter pending'
+source_url = 'https://www.galottery.com/en-us/games/draw-games/cash-four.html'
+support_statuses = ['cataloged', 'rules_verified', 'ev_supported', 'fetch_supported', 'audit_supported', 'low_share_supported']
+results_adapter = 'ga_draw_games_json'
+blocking_reason = ''
 
 [[jurisdictions.offerings]]
 game_slug = 'georgia-cash-pop'
-support_statuses = ['cataloged']
-blocking_reason = 'Rules and fetch adapter pending'
+source_url = 'https://www.galottery.com/en-us/games/draw-games/cash-pop.html'
+support_statuses = ['cataloged', 'rules_verified', 'ev_supported', 'fetch_supported', 'audit_supported', 'low_share_supported']
+results_adapter = 'ga_draw_games_json'
+blocking_reason = ''
 
 [[jurisdictions.offerings]]
 game_slug = 'georgia-keno'
@@ -611,8 +618,10 @@ blocking_reason = 'Rules and fetch adapter pending'
 
 [[jurisdictions.offerings]]
 game_slug = 'georgia-five'
-support_statuses = ['cataloged']
-blocking_reason = 'Rules and fetch adapter pending'
+source_url = 'https://www.galottery.com/en-us/games/draw-games/georgia-five.html'
+support_statuses = ['cataloged', 'rules_verified', 'ev_supported', 'fetch_supported', 'audit_supported', 'low_share_supported']
+results_adapter = 'ga_draw_games_json'
+blocking_reason = ''
 
 [[jurisdictions.offerings]]
 game_slug = 'georgia-jumbo-bucks-lotto'
@@ -622,7 +631,7 @@ blocking_reason = 'Rules and fetch adapter pending'
 [[jurisdictions.offerings]]
 game_slug = 'georgia-all-or-nothing'
 support_statuses = ['cataloged']
-blocking_reason = 'Rules and fetch adapter pending'
+blocking_reason = 'Retired after 2019-12-08; historical adapter pending'
 
 [[jurisdictions]]
 code = 'hi'
@@ -1130,14 +1139,16 @@ blocking_reason = ''
 [[jurisdictions.offerings]]
 game_slug = 'millionaire-for-life'
 source_url = 'https://www.masslottery.com/api/v1/draw-results'
-support_statuses = ['cataloged']
-blocking_reason = 'Rules and fetch adapter pending'
+support_statuses = ['cataloged', 'rules_verified', 'ev_supported', 'fetch_supported', 'audit_supported', 'low_share_supported']
+results_adapter = 'ma_draw_results_json'
+blocking_reason = ''
 
 [[jurisdictions.offerings]]
 game_slug = 'lucky-for-life'
 source_url = 'https://www.masslottery.com/api/v1/draw-results'
-support_statuses = ['cataloged']
-blocking_reason = 'Rules and fetch adapter pending'
+support_statuses = ['cataloged', 'rules_verified', 'ev_supported', 'fetch_supported', 'audit_supported', 'low_share_supported']
+results_adapter = 'ma_draw_results_json'
+blocking_reason = ''
 
 [[jurisdictions.offerings]]
 game_slug = 'massachusetts-numbers-game'
@@ -1257,8 +1268,9 @@ blocking_reason = ''
 [[jurisdictions.offerings]]
 game_slug = 'lotto-america'
 source_url = 'https://www.mnlottery.com/games/lotto/lotto-america'
-support_statuses = ['cataloged']
-blocking_reason = 'Rules and fetch adapter pending'
+support_statuses = ['cataloged', 'rules_verified', 'ev_supported', 'fetch_supported', 'audit_supported', 'low_share_supported']
+results_adapter = 'mn_winning_numbers_page'
+blocking_reason = ''
 
 [[jurisdictions.offerings]]
 game_slug = 'minnesota-gopher-5'
@@ -1272,8 +1284,10 @@ blocking_reason = 'Rules and fetch adapter pending'
 
 [[jurisdictions.offerings]]
 game_slug = 'minnesota-pick-3'
-support_statuses = ['cataloged']
-blocking_reason = 'Rules and fetch adapter pending'
+source_url = 'https://www.mnlottery.com/games/lotto/pick-3'
+support_statuses = ['cataloged', 'rules_verified', 'ev_supported', 'fetch_supported', 'audit_supported', 'low_share_supported']
+results_adapter = 'mn_winning_numbers_page'
+blocking_reason = ''
 
 [[jurisdictions]]
 code = 'ms'
@@ -1313,13 +1327,17 @@ blocking_reason = 'Rules and fetch adapter pending'
 
 [[jurisdictions.offerings]]
 game_slug = 'mississippi-cash-4'
-support_statuses = ['cataloged']
-blocking_reason = 'Rules and fetch adapter pending'
+source_url = 'https://www.mslottery.com/games/cash-4/'
+support_statuses = ['cataloged', 'rules_verified', 'ev_supported', 'fetch_supported', 'audit_supported', 'low_share_supported']
+results_adapter = 'ms_home_page'
+blocking_reason = ''
 
 [[jurisdictions.offerings]]
 game_slug = 'mississippi-cash-3'
-support_statuses = ['cataloged']
-blocking_reason = 'Rules and fetch adapter pending'
+source_url = 'https://www.mslottery.com/games/cash-3/'
+support_statuses = ['cataloged', 'rules_verified', 'ev_supported', 'fetch_supported', 'audit_supported', 'low_share_supported']
+results_adapter = 'ms_home_page'
+blocking_reason = ''
 
 [[jurisdictions.offerings]]
 game_slug = 'mississippi-cash-pop'

@@ -10,13 +10,33 @@ reviewed_on = '2026-05-07'
 slug = 'mississippi-cash-4'
 name = 'Cash 4'
 source_url = 'https://www.mslottery.com/games/cash-4/'
-reviewed_on = '2026-05-07'
+reviewed_on = '2026-05-11'
+
+[[games.wager_options]]
+slug = 'exact-order-1'
+label = 'Exact Order $1'
+ticket_cost = 1.0
+
+[[games.wager_options.prize_tiers]]
+label = 'Exact Order'
+probability = 0.0001
+prize = 5000
 
 [[games]]
 slug = 'mississippi-cash-3'
 name = 'Cash 3'
 source_url = 'https://www.mslottery.com/games/cash-3/'
-reviewed_on = '2026-05-07'
+reviewed_on = '2026-05-11'
+
+[[games.wager_options]]
+slug = 'exact-order-1'
+label = 'Exact Order $1'
+ticket_cost = 1.0
+
+[[games.wager_options.prize_tiers]]
+label = 'Exact Order'
+probability = 0.001
+prize = 500
 
 [[games]]
 slug = 'mississippi-cash-pop'

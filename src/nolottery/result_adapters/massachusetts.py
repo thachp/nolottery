@@ -28,7 +28,13 @@ from nolottery.result_adapters.common import (
 )
 
 _MASSACHUSETTS_DRAW_RESULTS_GAMES = {
+    "lucky-for-life": ("lucky_for_life", "luckyball", "Lucky Ball"),
     "mega-millions": ("mega_millions", "megaball", "Mega Ball"),
+    "millionaire-for-life": (
+        "millionaire_for_life",
+        "millionaireball",
+        "Millionaire Ball",
+    ),
     "powerball": ("powerball", "powerball", "Powerball"),
 }
 

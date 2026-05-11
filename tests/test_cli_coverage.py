@@ -123,7 +123,15 @@ def test_coverage_reports_representative_catalog_jurisdictions(tmp_path):
             "mega-millions",
             "powerball",
         },
-        "dc": {"powerball", "mega-millions", "lotto-america"},
+        "dc": {
+            "dc-3",
+            "dc-4",
+            "dc-5",
+            "powerball",
+            "mega-millions",
+            "lotto-america",
+            "millionaire-for-life",
+        },
     }
     expected = {
         "ny": (
@@ -330,6 +338,29 @@ def test_coverage_reports_new_york_past_drawing_capabilities(tmp_path):
         assert "fetch_supported" in game["support_statuses"]
         assert "audit_supported" in game["support_statuses"]
         assert game["results_adapter"] == "ny_open_data_socrata"
+
+
+def test_coverage_reports_new_york_fixed_prize_local_game_full_support(tmp_path):
+    result = runner.invoke(
+        app,
+        [
+            "--data-dir",
+            str(tmp_path),
+            "coverage",
+            "-j",
+            "ny",
+            "--output",
+            "json",
+        ],
+    )
+
+    assert result.exit_code == 0, result.output
+    payload = json.loads(result.output)
+    games = {game["game_slug"]: game for game in payload["games"]}
+    for game_slug in ("quick-draw", "pick-10"):
+        assert games[game_slug]["support_statuses"] == FULL_SUPPORT_STATUSES
+        assert games[game_slug]["results_adapter"] == "ny_open_data_socrata"
+        assert games[game_slug]["blocking_reason"] == ""
 
 
 def test_coverage_reports_florida_full_history_fetch_support(tmp_path):
@@ -1283,11 +1314,18 @@ def test_coverage_reports_georgia_catalog_and_supported_national_games(tmp_path)
         "audit_supported",
         "low_share_supported",
     ]
-    assert games["mega-millions"]["results_adapter"] == "ga_draw_games_json"
-    assert games["georgia-cash-3"]["support_statuses"] == ["cataloged"]
-    assert games["georgia-cash-3"]["blocking_reason"] == (
-        "Rules and fetch adapter pending"
-    )
+    for game_slug in (
+        "georgia-cash-3",
+        "georgia-cash-4",
+        "georgia-cash-pop",
+        "georgia-five",
+        "mega-millions",
+        "millionaire-for-life",
+        "powerball",
+    ):
+        assert games[game_slug]["support_statuses"] == FULL_SUPPORT_STATUSES
+        assert games[game_slug]["results_adapter"] == "ga_draw_games_json"
+        assert games[game_slug]["blocking_reason"] == ""
 
 
 def test_coverage_reports_idaho_catalog_and_supported_national_games(tmp_path):
@@ -1753,7 +1791,15 @@ def test_coverage_reports_massachusetts_catalog_and_supported_national_games(tmp
         "audit_supported",
         "low_share_supported",
     ]
-    assert games["mega-millions"]["results_adapter"] == "ma_draw_results_json"
+    for game_slug in (
+        "lucky-for-life",
+        "mega-millions",
+        "millionaire-for-life",
+        "powerball",
+    ):
+        assert games[game_slug]["support_statuses"] == FULL_SUPPORT_STATUSES
+        assert games[game_slug]["results_adapter"] == "ma_draw_results_json"
+        assert games[game_slug]["blocking_reason"] == ""
     assert games["massachusetts-mass-cash"]["support_statuses"] == ["cataloged"]
     assert games["massachusetts-mass-cash"]["blocking_reason"] == (
         "Rules and fetch adapter pending"
@@ -1843,7 +1889,13 @@ def test_coverage_reports_minnesota_catalog_and_supported_national_games(tmp_pat
         "audit_supported",
         "low_share_supported",
     ]
-    assert games["mega-millions"]["results_adapter"] == "mn_winning_numbers_page"
+    for game_slug in ("lotto-america", "mega-millions", "powerball"):
+        assert games[game_slug]["support_statuses"] == FULL_SUPPORT_STATUSES
+        assert games[game_slug]["results_adapter"] == "mn_winning_numbers_page"
+        assert games[game_slug]["blocking_reason"] == ""
+    assert games["minnesota-pick-3"]["support_statuses"] == FULL_SUPPORT_STATUSES
+    assert games["minnesota-pick-3"]["results_adapter"] == "mn_winning_numbers_page"
+    assert games["minnesota-pick-3"]["blocking_reason"] == ""
     assert games["minnesota-gopher-5"]["support_statuses"] == ["cataloged"]
     assert games["minnesota-gopher-5"]["blocking_reason"] == (
         "Rules and fetch adapter pending"
@@ -1888,6 +1940,10 @@ def test_coverage_reports_mississippi_catalog_and_supported_national_games(tmp_p
         "low_share_supported",
     ]
     assert games["mega-millions"]["results_adapter"] == "ms_home_page"
+    for game_slug in ("mississippi-cash-3", "mississippi-cash-4"):
+        assert games[game_slug]["support_statuses"] == FULL_SUPPORT_STATUSES
+        assert games[game_slug]["results_adapter"] == "ms_home_page"
+        assert games[game_slug]["blocking_reason"] == ""
     assert games["mississippi-match-5"]["support_statuses"] == ["cataloged"]
     assert games["mississippi-match-5"]["blocking_reason"] == (
         "Rules and fetch adapter pending"

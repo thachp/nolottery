@@ -301,7 +301,7 @@ def _current_simple_specs() -> dict[str, _ParseSpec]:
         "me": _ParseSpec(maine._MAINE_HOME_PAGE_GAMES, maine.parse_maine_home_page),
         "md": _ParseSpec(maryland._MARYLAND_WINNING_NUMBERS_GAMES, maryland.parse_maryland_winning_numbers_page),
         "mn": _ParseSpec(minnesota._MINNESOTA_WINNING_NUMBERS_GAMES, minnesota.parse_minnesota_winning_numbers_page),
-        "ms": _ParseSpec(mississippi._MISSISSIPPI_HOME_PAGE_GAMES, mississippi.parse_mississippi_home_page),
+        "ms": _ParseSpec(mississippi._MISSISSIPPI_HOME_PAGE_ALL_GAMES, mississippi.parse_mississippi_home_page),
         "mo": _ParseSpec(missouri._MISSOURI_WINNING_NUMBERS_GAMES, missouri.parse_missouri_winning_numbers_page),
         "mt": _ParseSpec(montana._MONTANA_WINNING_NUMBERS_GAMES, montana.parse_montana_winning_numbers_table),
         "ne": _ParseSpec(nebraska._NEBRASKA_DRAW_RESULTS_GAMES, nebraska.parse_nebraska_draw_results_page),
