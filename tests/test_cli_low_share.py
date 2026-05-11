@@ -1,5 +1,6 @@
 import json
 
+import pytest
 from typer.testing import CliRunner
 
 from nolottery import db
@@ -368,6 +369,48 @@ def test_low_share_supports_arkansas_millionaire_for_life(tmp_path):
     assert pick["numbers"] == [4, 15, 19, 49, 52, 5]
     assert pick["label"] == "White: 4, 15, 19, 49, 52; Life Ball: 5"
     assert "bonus ball avoids popular numbers" in pick["reasons"]
+
+
+@pytest.mark.parametrize(
+    ("game_slug", "expected_length"),
+    [
+        ("arkansas-cash-3", 3),
+        ("arkansas-cash-4", 4),
+        ("arkansas-lotto", 6),
+        ("arkansas-natural-state-jackpot", 5),
+    ],
+)
+def test_low_share_supports_arkansas_local_draw_games(
+    tmp_path,
+    game_slug,
+    expected_length,
+):
+    result = runner.invoke(
+        app,
+        [
+            "--data-dir",
+            str(tmp_path),
+            "low-share",
+            game_slug,
+            "-j",
+            "ar",
+            "--count",
+            "1",
+            "--candidates",
+            "5",
+            "--seed",
+            "4",
+            "--output",
+            "json",
+        ],
+    )
+
+    assert result.exit_code == 0, result.output
+    payload = json.loads(result.output)
+    pick = payload["games"][0]["options"][0]["picks"][0]
+    assert len(pick["numbers"]) == expected_length
+    assert pick["label"] != "n/a"
+    assert pick["reasons"]
 
 
 def test_low_share_reports_cataloged_game_without_low_share_support(tmp_path):

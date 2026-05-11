@@ -316,7 +316,7 @@ def _draw_key(
     option_slug: str,
     draw: Draw,
 ) -> tuple[int, ...] | None:
-    if game_slug == "pick-3":
+    if game_slug in {"pick-3", "arkansas-cash-3"}:
         digits = (
             draw.pools["position_1"][0],
             draw.pools["position_2"][0],
@@ -327,6 +327,16 @@ def _draw_key(
         if "back-pair" in option_slug:
             return digits[1:]
         if "box" in option_slug or "superbox" in option_slug:
+            return tuple(sorted(digits))
+        return digits
+    if game_slug == "arkansas-cash-4":
+        digits = (
+            draw.pools["position_1"][0],
+            draw.pools["position_2"][0],
+            draw.pools["position_3"][0],
+            draw.pools["position_4"][0],
+        )
+        if "box" in option_slug:
             return tuple(sorted(digits))
         return digits
     if game_slug in {
@@ -352,7 +362,11 @@ def _candidate_key(
     option_slug: str,
     numbers: tuple[int, ...],
 ) -> tuple[int, ...]:
-    if game_slug == "pick-3" and ("box" in option_slug or "superbox" in option_slug):
+    if game_slug in {"pick-3", "arkansas-cash-3"} and (
+        "box" in option_slug or "superbox" in option_slug
+    ):
+        return tuple(sorted(numbers))
+    if game_slug == "arkansas-cash-4" and "box" in option_slug:
         return tuple(sorted(numbers))
     return numbers
 
@@ -389,6 +403,8 @@ def _is_arithmetic_pattern(numbers: tuple[int, ...]) -> bool:
 def _target_spread(game_slug: str) -> int:
     return {
         "cashpop": 6,
+        "arkansas-lotto": 18,
+        "arkansas-natural-state-jackpot": 14,
         "colorado-cash-5": 12,
         "colorado-lotto-plus": 18,
         "daily-keno": 25,

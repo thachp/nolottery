@@ -275,6 +275,66 @@ def _arkansas_lucky_for_life_history_html() -> str:
     """
 
 
+def _arkansas_cash_3_history_html() -> str:
+    return """
+    <html>
+      <body>
+        <h1>Recent Cash 3 Drawings</h1>
+        <div class="draw-game__numbers-container">
+          <small><strong>May 10, 2026 Evening Drawing</strong></small>
+          <div class="draw-game__numbers">
+            <div class="draw-game__number">0</div>
+            <div class="draw-game__number">9</div>
+            <div class="draw-game__number">4</div>
+          </div>
+        </div>
+        <div class="draw-game__numbers-container">
+          <small><strong>May 9, 2026 Midday Drawing</strong></small>
+          <div class="draw-game__numbers">
+            <div class="draw-game__number">5</div>
+            <div class="draw-game__number">1</div>
+            <div class="draw-game__number">7</div>
+          </div>
+        </div>
+      </body>
+    </html>
+    """
+
+
+def _arkansas_cash_4_history_html() -> str:
+    return """
+    <html>
+      <body>
+        <h1>Recent Cash 4 Drawings</h1>
+        <div class="draw-game__numbers-container">
+          <small><strong>May 10, 2026 Evening Drawing</strong></small>
+          <div class="draw-game__numbers">
+            <div class="draw-game__number">5</div>
+            <div class="draw-game__number">6</div>
+            <div class="draw-game__number">0</div>
+            <div class="draw-game__number">4</div>
+          </div>
+        </div>
+      </body>
+    </html>
+    """
+
+
+def _arkansas_natural_state_jackpot_history_html() -> str:
+    return """
+    <html>
+      <body>
+        <h1>Natural State Jackpot Winning Numbers</h1>
+        <table>
+          <tbody>
+            <tr><td>05/10/2026</td><td><ul><li>1</li><li>15</li><li>23</li><li>24</li><li>33</li></ul></td></tr>
+          </tbody>
+        </table>
+      </body>
+    </html>
+    """
+
+
 def _arkansas_millionaire_for_life_history_html() -> str:
     return """
     <html>
@@ -3033,6 +3093,104 @@ def test_fetch_arkansas_lotto_backfill_reads_official_history_fixture(tmp_path):
     ]
 
 
+@pytest.mark.parametrize(
+    ("game_slug", "fixture_html", "expected_name", "expected_draws"),
+    [
+        (
+            "arkansas-cash-3",
+            _arkansas_cash_3_history_html(),
+            "Cash 3",
+            [
+                {
+                    "jurisdiction_code": "ar",
+                    "draw_date": "Sun, May 10, 2026 Evening",
+                    "winning_number": "0, 9, 4",
+                },
+                {
+                    "jurisdiction_code": "ar",
+                    "draw_date": "Sat, May 09, 2026 Midday",
+                    "winning_number": "5, 1, 7",
+                },
+            ],
+        ),
+        (
+            "arkansas-cash-4",
+            _arkansas_cash_4_history_html(),
+            "Cash 4",
+            [
+                {
+                    "jurisdiction_code": "ar",
+                    "draw_date": "Sun, May 10, 2026 Evening",
+                    "winning_number": "5, 6, 0, 4",
+                }
+            ],
+        ),
+        (
+            "arkansas-natural-state-jackpot",
+            _arkansas_natural_state_jackpot_history_html(),
+            "Natural State Jackpot",
+            [
+                {
+                    "jurisdiction_code": "ar",
+                    "draw_date": "Sun, May 10, 2026",
+                    "winning_number": "1, 15, 23, 24, 33",
+                }
+            ],
+        ),
+    ],
+)
+def test_fetch_arkansas_local_game_backfill_reads_official_history_fixture(
+    tmp_path,
+    game_slug,
+    fixture_html,
+    expected_name,
+    expected_draws,
+):
+    fixtures = tmp_path / "fixtures"
+    fixtures.mkdir()
+    (fixtures / f"{game_slug}-ar-backfill.html").write_text(
+        fixture_html,
+        encoding="utf-8",
+    )
+
+    result = runner.invoke(
+        app,
+        [
+            "--data-dir",
+            str(tmp_path / "data"),
+            "fetch",
+            game_slug,
+            "-j",
+            "ar",
+            "--backfill",
+            "--source-dir",
+            str(fixtures),
+        ],
+    )
+
+    assert result.exit_code == 0, result.output
+    assert expected_name in result.output
+    assert f"{len(expected_draws)} draw" in result.output
+
+    draws_result = runner.invoke(
+        app,
+        [
+            "--data-dir",
+            str(tmp_path / "data"),
+            "draws",
+            game_slug,
+            "-j",
+            "ar",
+            "--output",
+            "json",
+        ],
+    )
+
+    assert draws_result.exit_code == 0, draws_result.output
+    payload = json.loads(draws_result.output)
+    assert payload["games"][0]["draws"] == expected_draws
+
+
 def test_fetch_all_arkansas_backfill_uses_supported_games(tmp_path):
     fixtures = tmp_path / "fixtures"
     fixtures.mkdir()
@@ -3056,6 +3214,18 @@ def test_fetch_all_arkansas_backfill_uses_supported_games(tmp_path):
         _arkansas_lotto_history_html(),
         encoding="utf-8",
     )
+    (fixtures / "arkansas-cash-3-ar-backfill.html").write_text(
+        _arkansas_cash_3_history_html(),
+        encoding="utf-8",
+    )
+    (fixtures / "arkansas-cash-4-ar-backfill.html").write_text(
+        _arkansas_cash_4_history_html(),
+        encoding="utf-8",
+    )
+    (fixtures / "arkansas-natural-state-jackpot-ar-backfill.html").write_text(
+        _arkansas_natural_state_jackpot_history_html(),
+        encoding="utf-8",
+    )
 
     result = runner.invoke(
         app,
@@ -3073,12 +3243,12 @@ def test_fetch_all_arkansas_backfill_uses_supported_games(tmp_path):
     )
 
     assert result.exit_code == 0, result.output
+    assert "8 games fetched" in result.output
     assert "Powerball" in result.output
     assert "Mega Millions" in result.output
     assert "Lucky for Life" in result.output
     assert "Millionaire For Life" in result.output
     assert "LOTTO" in result.output
-    assert "5 games fetched" in result.output
 
 
 def test_fetch_colorado_powerball_backfill_reads_official_history_fixture(tmp_path):

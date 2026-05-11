@@ -6,11 +6,81 @@ name = 'LOTTO'
 source_url = 'https://www.myarkansaslottery.com/games/lotto'
 reviewed_on = '2026-05-07'
 
+[[games.wager_options]]
+slug = 'standard'
+label = 'Standard $2'
+ticket_cost = 2.0
+
+[[games.wager_options.prize_tiers]]
+label = '6 of 6 Jackpot Estimate'
+probability = 2.6052657631605e-07
+prize = 250000
+
+[[games.wager_options.prize_tiers]]
+label = '5 of 6 + Bonus'
+probability = 1.5631594578963001e-06
+prize = 25000
+
+[[games.wager_options.prize_tiers]]
+label = '5 of 6'
+probability = 5.15842621105779e-05
+prize = 1500
+
+[[games.wager_options.prize_tiers]]
+label = '4 of 6 + Bonus'
+probability = 0.00012896065527644474
+prize = 500
+
+[[games.wager_options.prize_tiers]]
+label = '4 of 6'
+probability = 0.002063370484423116
+prize = 25
+
+[[games.wager_options.prize_tiers]]
+label = '3 of 6 + Bonus'
+probability = 0.002751160645897488
+prize = 10
+
+[[games.wager_options.prize_tiers]]
+label = '3 of 6'
+probability = 0.028428660007607374
+prize = 2
+
+[[games.wager_options.prize_tiers]]
+label = '2 of 6 + Bonus'
+probability = 0.021321495005705533
+prize = 3
+
 [[games]]
 slug = 'arkansas-natural-state-jackpot'
 name = 'Natural State Jackpot'
 source_url = 'https://www.myarkansaslottery.com/games/natural-state-jackpot'
 reviewed_on = '2026-05-07'
+
+[[games.wager_options]]
+slug = 'standard'
+label = 'Standard $1'
+ticket_cost = 1.0
+
+[[games.wager_options.prize_tiers]]
+label = '5 of 5 Jackpot Estimate'
+probability = 1.736843842107e-06
+prize = 250000
+
+[[games.wager_options.prize_tiers]]
+label = '4 of 5'
+probability = 0.00029526345315819
+prize = 300
+
+[[games.wager_options.prize_tiers]]
+label = '3 of 5'
+probability = 0.00974369395422027
+prize = 7
+
+[[games.wager_options.prize_tiers]]
+label = '2 of 5'
+probability = 0.10393273551168287
+prize = 1
 
 [[games]]
 slug = 'arkansas-cash-3'
@@ -18,11 +88,51 @@ name = 'Cash 3'
 source_url = 'https://www.myarkansaslottery.com/games/cash-3'
 reviewed_on = '2026-05-07'
 
+[[games.wager_options]]
+slug = 'straight-50c'
+label = 'Straight $0.50'
+ticket_cost = 0.5
+
+[[games.wager_options.prize_tiers]]
+label = 'Straight'
+probability = 0.001
+prize = 250
+
+[[games.wager_options]]
+slug = 'straight-1'
+label = 'Straight $1'
+ticket_cost = 1.0
+
+[[games.wager_options.prize_tiers]]
+label = 'Straight'
+probability = 0.001
+prize = 500
+
 [[games]]
 slug = 'arkansas-cash-4'
 name = 'Cash 4'
 source_url = 'https://www.myarkansaslottery.com/games/cash-4'
 reviewed_on = '2026-05-07'
+
+[[games.wager_options]]
+slug = 'straight-50c'
+label = 'Straight $0.50'
+ticket_cost = 0.5
+
+[[games.wager_options.prize_tiers]]
+label = 'Straight'
+probability = 0.0001
+prize = 2500
+
+[[games.wager_options]]
+slug = 'straight-1'
+label = 'Straight $1'
+ticket_cost = 1.0
+
+[[games.wager_options.prize_tiers]]
+label = 'Straight'
+probability = 0.0001
+prize = 5000
 
 [[games]]
 slug = 'lucky-for-life'

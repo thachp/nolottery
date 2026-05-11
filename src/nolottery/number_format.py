@@ -66,6 +66,22 @@ NUMBER_FORMATS: dict[str, NumberFormat] = {
             NumberPool("lucky-ball", 1, 18, 1),
         ),
     ),
+    "arkansas-cash-3": NumberFormat(
+        game_slug="arkansas-cash-3",
+        pools=(NumberPool("digits", 0, 9, 3, ordered=True, allow_repeats=True),),
+    ),
+    "arkansas-cash-4": NumberFormat(
+        game_slug="arkansas-cash-4",
+        pools=(NumberPool("digits", 0, 9, 4, ordered=True, allow_repeats=True),),
+    ),
+    "arkansas-lotto": NumberFormat(
+        game_slug="arkansas-lotto",
+        pools=(NumberPool("numbers", 1, 40, 6),),
+    ),
+    "arkansas-natural-state-jackpot": NumberFormat(
+        game_slug="arkansas-natural-state-jackpot",
+        pools=(NumberPool("numbers", 1, 39, 5),),
+    ),
     "idaho-cash": NumberFormat(
         game_slug="idaho-cash",
         pools=(NumberPool("white", 1, 45, 5),),

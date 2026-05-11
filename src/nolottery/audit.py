@@ -216,6 +216,34 @@ AUDIT_RULES: dict[str, AuditRule] = {
             AuditPool("position_3", 0, 9, 1, ordered=True),
         ),
     ),
+    "arkansas-cash-3": AuditRule(
+        game_slug="arkansas-cash-3",
+        pools=(
+            AuditPool("position_1", 0, 9, 1, ordered=True),
+            AuditPool("position_2", 0, 9, 1, ordered=True),
+            AuditPool("position_3", 0, 9, 1, ordered=True),
+        ),
+    ),
+    "arkansas-cash-4": AuditRule(
+        game_slug="arkansas-cash-4",
+        pools=(
+            AuditPool("position_1", 0, 9, 1, ordered=True),
+            AuditPool("position_2", 0, 9, 1, ordered=True),
+            AuditPool("position_3", 0, 9, 1, ordered=True),
+            AuditPool("position_4", 0, 9, 1, ordered=True),
+        ),
+    ),
+    "arkansas-lotto": AuditRule(
+        game_slug="arkansas-lotto",
+        pools=(
+            AuditPool("numbers", 1, 40, 6),
+            AuditPool("bonus", 1, 40, 1),
+        ),
+    ),
+    "arkansas-natural-state-jackpot": AuditRule(
+        game_slug="arkansas-natural-state-jackpot",
+        pools=(AuditPool("numbers", 1, 39, 5),),
+    ),
     "mega-millions": AuditRule(
         game_slug="mega-millions",
         pools=(
@@ -826,6 +854,8 @@ def _parse_draw(
         "pick-3",
         "daily-3",
         "daily-4",
+        "arkansas-cash-3",
+        "arkansas-cash-4",
         "colorado-pick-3",
         "idaho-pick-3",
         "idaho-pick-4",
@@ -861,7 +891,7 @@ def _parse_draw(
             "white": tuple(numbers[:4]),
             "bonus_ball": (numbers[4],),
         }
-    elif rule.game_slug == "new-york-lotto":
+    elif rule.game_slug in {"new-york-lotto", "arkansas-lotto"}:
         if len(numbers) != 7:
             return None
         pools = {
@@ -910,7 +940,13 @@ def _parse_numbers(game_slug: str, winning_number: str) -> tuple[int, ...]:
         return tuple(int(match) for match in matches)
     tokens = re.findall(r"\d+", winning_number)
     if (
-        game_slug in {"pick-3", "daily-3", "idaho-pick-3", "numbers"}
+        game_slug in {
+            "pick-3",
+            "daily-3",
+            "arkansas-cash-3",
+            "idaho-pick-3",
+            "numbers",
+        }
         and len(tokens) == 1
         and len(tokens[0]) == 3
     ):
@@ -918,7 +954,13 @@ def _parse_numbers(game_slug: str, winning_number: str) -> tuple[int, ...]:
     if game_slug == "texas-pick-3":
         return tuple(int(token) for token in tokens[:3])
     if (
-        game_slug in {"daily-4", "idaho-pick-4", "oregon-pick-4", "win-4"}
+        game_slug in {
+            "daily-4",
+            "arkansas-cash-4",
+            "idaho-pick-4",
+            "oregon-pick-4",
+            "win-4",
+        }
         and len(tokens) == 1
         and len(tokens[0]) == 4
     ):

@@ -2120,6 +2120,7 @@ def test_coverage_reports_arkansas_catalog_and_supported_national_games(tmp_path
     payload = json.loads(result.output)
     assert payload["jurisdiction_code"] == "ar"
     assert payload["jurisdiction"] == "Arkansas"
+    assert payload["blocking_reason"] == ""
     games = {game["game_slug"]: game for game in payload["games"]}
     assert set(games) == {
         "arkansas-cash-3",
@@ -2146,12 +2147,15 @@ def test_coverage_reports_arkansas_catalog_and_supported_national_games(tmp_path
     assert games["millionaire-for-life"]["support_statuses"] == FULL_SUPPORT_STATUSES
     assert games["millionaire-for-life"]["results_adapter"] == "ar_did_i_win_date"
     assert games["millionaire-for-life"]["blocking_reason"] == ""
-    assert games["arkansas-lotto"]["support_statuses"] == [
-        "cataloged",
-        "fetch_supported",
-    ]
-    assert games["arkansas-lotto"]["results_adapter"] == "ar_did_i_win_date"
-    assert games["arkansas-lotto"]["blocking_reason"] == ""
+    for game_slug in (
+        "arkansas-cash-3",
+        "arkansas-cash-4",
+        "arkansas-lotto",
+        "arkansas-natural-state-jackpot",
+    ):
+        assert games[game_slug]["support_statuses"] == FULL_SUPPORT_STATUSES
+        assert games[game_slug]["results_adapter"] == "ar_did_i_win_date"
+        assert games[game_slug]["blocking_reason"] == ""
 
 
 def test_coverage_reports_arizona_catalog_and_backfill_supported_national_games(

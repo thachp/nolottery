@@ -348,6 +348,37 @@ def test_analyze_supports_arkansas_millionaire_for_life(tmp_path):
     assert payload["options"]
 
 
+def test_analyze_supports_arkansas_local_draw_games(tmp_path):
+    expected_best_options = {
+        "arkansas-cash-3": "Straight $0.50",
+        "arkansas-cash-4": "Straight $0.50",
+        "arkansas-lotto": "Standard $2",
+        "arkansas-natural-state-jackpot": "Standard $1",
+    }
+
+    for game_slug, best_option in expected_best_options.items():
+        result = runner.invoke(
+            app,
+            [
+                "--data-dir",
+                str(tmp_path),
+                "analyze",
+                game_slug,
+                "-j",
+                "ar",
+                "--output",
+                "json",
+            ],
+        )
+
+        assert result.exit_code == 0, result.output
+        payload = json.loads(result.output)
+        assert payload["jurisdiction_code"] == "ar"
+        assert payload["game_slug"] == game_slug
+        assert payload["best_option"] == best_option
+        assert payload["options"]
+
+
 def test_analyze_reports_cataloged_game_without_ev_support(tmp_path):
     result = runner.invoke(
         app,
@@ -686,6 +717,40 @@ def test_recommend_supports_arkansas_millionaire_for_life(tmp_path):
     assert millionaire_for_life["number_selection_label"] == (
         "White: 1, 2, 3, 4, 5; Life Ball: 1"
     )
+
+
+def test_recommend_supports_arkansas_local_draw_games(tmp_path):
+    result = runner.invoke(
+        app,
+        [
+            "--data-dir",
+            str(tmp_path),
+            "recommend",
+            "-j",
+            "ar",
+            "--budget",
+            "2",
+            "--output",
+            "json",
+        ],
+    )
+
+    assert result.exit_code == 0, result.output
+    payload = json.loads(result.output)
+    recommendations = {
+        recommendation["game_slug"]: recommendation
+        for recommendation in payload["recommendations"]
+    }
+    assert recommendations["arkansas-cash-3"]["number_selection"] == [1, 2, 3]
+    assert recommendations["arkansas-cash-4"]["number_selection"] == [1, 2, 3, 4]
+    assert recommendations["arkansas-lotto"]["number_selection"] == [1, 2, 3, 4, 5, 6]
+    assert recommendations["arkansas-natural-state-jackpot"]["number_selection"] == [
+        1,
+        2,
+        3,
+        4,
+        5,
+    ]
 
 
 @pytest.mark.parametrize(

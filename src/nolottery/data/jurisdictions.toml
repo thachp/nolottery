@@ -332,7 +332,7 @@ blocking_reason = 'Rules and fetch adapter pending'
 [[jurisdictions]]
 code = 'ar'
 name = 'Arkansas'
-blocking_reason = 'Arkansas local draw-game rules and adapters pending'
+blocking_reason = ''
 
 [[jurisdictions.offerings]]
 game_slug = 'powerball'
@@ -351,24 +351,30 @@ blocking_reason = ''
 [[jurisdictions.offerings]]
 game_slug = 'arkansas-lotto'
 source_url = 'https://www.myarkansaslottery.com/games/lotto/did-i-win-date'
-support_statuses = ['cataloged', 'fetch_supported']
+support_statuses = ['cataloged', 'rules_verified', 'ev_supported', 'fetch_supported', 'audit_supported', 'low_share_supported']
 results_adapter = 'ar_did_i_win_date'
 blocking_reason = ''
 
 [[jurisdictions.offerings]]
 game_slug = 'arkansas-natural-state-jackpot'
-support_statuses = ['cataloged']
-blocking_reason = 'Rules and fetch adapter pending'
+source_url = 'https://www.myarkansaslottery.com/games/natural-state-jackpot/did-i-win-date'
+support_statuses = ['cataloged', 'rules_verified', 'ev_supported', 'fetch_supported', 'audit_supported', 'low_share_supported']
+results_adapter = 'ar_did_i_win_date'
+blocking_reason = ''
 
 [[jurisdictions.offerings]]
 game_slug = 'arkansas-cash-3'
-support_statuses = ['cataloged']
-blocking_reason = 'Rules and fetch adapter pending'
+source_url = 'https://www.myarkansaslottery.com/games/cash-3'
+support_statuses = ['cataloged', 'rules_verified', 'ev_supported', 'fetch_supported', 'audit_supported', 'low_share_supported']
+results_adapter = 'ar_did_i_win_date'
+blocking_reason = ''
 
 [[jurisdictions.offerings]]
 game_slug = 'arkansas-cash-4'
-support_statuses = ['cataloged']
-blocking_reason = 'Rules and fetch adapter pending'
+source_url = 'https://www.myarkansaslottery.com/games/cash-4'
+support_statuses = ['cataloged', 'rules_verified', 'ev_supported', 'fetch_supported', 'audit_supported', 'low_share_supported']
+results_adapter = 'ar_did_i_win_date'
+blocking_reason = ''
 
 [[jurisdictions.offerings]]
 game_slug = 'lucky-for-life'
