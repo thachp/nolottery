@@ -24,6 +24,15 @@ def test_quick_pick_uses_option_count_for_daily_keno():
     assert all(1 <= number <= 80 for number in numbers)
 
 
+def test_quick_pick_uses_option_count_for_michigan_club_keno():
+    numbers = quick_pick("michigan-club-keno", "4-spot", rng=random.Random(4))
+
+    assert len(numbers) == 4
+    assert numbers == tuple(sorted(numbers))
+    assert len(set(numbers)) == 4
+    assert all(1 <= number <= 80 for number in numbers)
+
+
 def test_quick_pick_uses_fixed_count_for_new_york_keno_style_games():
     quick_draw = quick_pick("quick-draw", "10-spot", rng=random.Random(4))
     pick_10 = quick_pick("pick-10", "standard", rng=random.Random(4))
@@ -66,3 +75,28 @@ def test_quick_pick_supports_fixed_prize_digit_games(game_slug, expected_length)
 
     assert len(numbers) == expected_length
     assert all(0 <= number <= 9 for number in numbers)
+
+
+@pytest.mark.parametrize(
+    ("game_slug", "option_slug", "expected_length", "minimum", "maximum"),
+    [
+        ("michigan-cash-pop", "one-pop", 1, 1, 15),
+        ("michigan-fantasy-5", "standard", 5, 1, 39),
+        ("michigan-keno", "standard", 10, 1, 80),
+        ("michigan-lotto-47", "standard", 6, 1, 47),
+        ("michigan-poker-lotto", "standard", 5, 1, 52),
+    ],
+)
+def test_quick_pick_supports_michigan_local_number_games(
+    game_slug,
+    option_slug,
+    expected_length,
+    minimum,
+    maximum,
+):
+    numbers = quick_pick(game_slug, option_slug, rng=random.Random(4))
+
+    assert len(numbers) == expected_length
+    assert numbers == tuple(sorted(numbers))
+    assert len(set(numbers)) == expected_length
+    assert all(minimum <= number <= maximum for number in numbers)

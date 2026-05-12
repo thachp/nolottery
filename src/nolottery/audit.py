@@ -295,6 +295,10 @@ AUDIT_RULES: dict[str, AuditRule] = {
         game_slug="michigan-lotto-47",
         pools=(AuditPool("numbers", 1, 47, 6),),
     ),
+    "michigan-poker-lotto": AuditRule(
+        game_slug="michigan-poker-lotto",
+        pools=(AuditPool("cards", 1, 52, 5),),
+    ),
     "superlotto-plus": AuditRule(
         game_slug="superlotto-plus",
         pools=(

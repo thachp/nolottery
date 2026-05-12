@@ -1866,27 +1866,17 @@ def test_coverage_reports_michigan_catalog_and_supported_national_games(tmp_path
         "michigan-fantasy-5",
         "michigan-keno",
         "michigan-lotto-47",
+        "michigan-poker-lotto",
     ):
-        assert games[game_slug]["support_statuses"] == [
-            "cataloged",
-            "fetch_supported",
-            "audit_supported",
-        ]
-        assert games[game_slug]["blocking_reason"]
+        assert games[game_slug]["support_statuses"] == FULL_SUPPORT_STATUSES
+        assert games[game_slug]["blocking_reason"] == ""
     assert games["michigan-cash-pop"]["results_adapter"] == "mi_graphql_draw_range"
     assert games["michigan-club-keno"]["results_adapter"] == "mi_graphql_draw_range"
     assert games["michigan-fantasy-5"]["results_adapter"] == "mi_graphql_draw_history"
     assert games["michigan-keno"]["results_adapter"] == "mi_graphql_draw_history"
     assert games["michigan-lotto-47"]["results_adapter"] == "mi_graphql_draw_history"
-    assert games["michigan-poker-lotto"]["support_statuses"] == [
-        "cataloged",
-        "fetch_supported",
-    ]
     assert games["michigan-poker-lotto"]["results_adapter"] == (
         "mi_graphql_draw_history"
-    )
-    assert games["michigan-poker-lotto"]["blocking_reason"] == (
-        "Card decoding, audit, and EV rules pending"
     )
 
 

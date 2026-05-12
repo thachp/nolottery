@@ -383,6 +383,12 @@ def test_analyze_supports_massachusetts_life_games(tmp_path, game_slug, best_opt
     [
         ("michigan-daily-3", "Straight $1"),
         ("michigan-daily-4", "Straight $1"),
+        ("michigan-cash-pop", "1 POP $1"),
+        ("michigan-club-keno", "2-Spot $1"),
+        ("michigan-fantasy-5", "Standard $1"),
+        ("michigan-keno", "Standard $1"),
+        ("michigan-lotto-47", "Standard $1"),
+        ("michigan-poker-lotto", "Standard $2"),
         ("millionaire-for-life", "Standard $5"),
     ],
 )

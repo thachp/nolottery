@@ -4,13 +4,63 @@
 slug = 'michigan-lotto-47'
 name = 'Lotto 47'
 source_url = 'https://www.michiganlottery.com/games/lotto-47'
-reviewed_on = '2026-05-07'
+reviewed_on = '2026-05-12'
+
+[[games.wager_options]]
+slug = 'standard'
+label = 'Standard $1'
+ticket_cost = 1.0
+
+[[games.wager_options.prize_tiers]]
+label = 'Match 6 of 6 Jackpot'
+probability = 9.313091515186905e-08
+prize = 1200000
+
+[[games.wager_options.prize_tiers]]
+label = 'Match 5 of 6'
+probability = 2.2910205127359786e-05
+prize = 2500
+
+[[games.wager_options.prize_tiers]]
+label = 'Match 4 of 6'
+probability = 0.0011455102563679893
+prize = 100
+
+[[games.wager_options.prize_tiers]]
+label = 'Match 3 of 6'
+probability = 0.01985551111037848
+prize = 5
 
 [[games]]
 slug = 'michigan-fantasy-5'
 name = 'Fantasy 5'
 source_url = 'https://www.michiganlottery.com/games/fantasy-5'
-reviewed_on = '2026-05-07'
+reviewed_on = '2026-05-12'
+
+[[games.wager_options]]
+slug = 'standard'
+label = 'Standard $1'
+ticket_cost = 1.0
+
+[[games.wager_options.prize_tiers]]
+label = 'Match 5 of 5 Jackpot'
+probability = 1.736843842107e-06
+prize = 110000
+
+[[games.wager_options.prize_tiers]]
+label = 'Match 4 of 5'
+probability = 0.00029526345315819
+prize = 100
+
+[[games.wager_options.prize_tiers]]
+label = 'Match 3 of 5'
+probability = 0.00974369395422027
+prize = 10
+
+[[games.wager_options.prize_tiers]]
+label = 'Match 2 of 5'
+probability = 0.10393273551168287
+prize = 1
 
 [[games]]
 slug = 'michigan-daily-3'
@@ -48,22 +98,407 @@ prize = 5000
 slug = 'michigan-keno'
 name = 'Keno'
 source_url = 'https://www.michiganlottery.com/games/keno'
-reviewed_on = '2026-05-07'
+reviewed_on = '2026-05-12'
+
+[[games.wager_options]]
+slug = 'standard'
+label = 'Standard $1'
+ticket_cost = 1.0
+
+[[games.wager_options.prize_tiers]]
+label = 'Match 10 of 22'
+probability = 3.9274163296954456e-07
+prize = 250000
+
+[[games.wager_options.prize_tiers]]
+label = 'Match 9 of 22'
+probability = 1.752231900941045e-05
+prize = 2500
+
+[[games.wager_options.prize_tiers]]
+label = 'Match 8 of 22'
+probability = 0.0003210339161366986
+prize = 250
+
+[[games.wager_options.prize_tiers]]
+label = 'Match 7 of 22'
+probability = 0.003196070987316466
+prize = 25
+
+[[games.wager_options.prize_tiers]]
+label = 'Match 6 of 22'
+probability = 0.019226364533075618
+prize = 7
+
+[[games.wager_options.prize_tiers]]
+label = 'Match 0 of 22'
+probability = 0.03169130421839497
+prize = 1
 
 [[games]]
 slug = 'michigan-club-keno'
 name = 'Club Keno'
 source_url = 'https://www.michiganlottery.com/games/club-keno'
-reviewed_on = '2026-05-07'
+reviewed_on = '2026-05-12'
+
+[[games.wager_options]]
+slug = '1-spot'
+label = '1-Spot $1'
+ticket_cost = 1.0
+
+[[games.wager_options.prize_tiers]]
+label = 'Match 1'
+probability = 0.25
+prize = 2
+
+[[games.wager_options]]
+slug = '2-spot'
+label = '2-Spot $1'
+ticket_cost = 1.0
+
+[[games.wager_options.prize_tiers]]
+label = 'Match 2'
+probability = 0.060126582278481014
+prize = 11
+
+[[games.wager_options]]
+slug = '3-spot'
+label = '3-Spot $1'
+ticket_cost = 1.0
+
+[[games.wager_options.prize_tiers]]
+label = 'Match 3'
+probability = 0.013875365141187927
+prize = 27
+
+[[games.wager_options.prize_tiers]]
+label = 'Match 2'
+probability = 0.13875365141187926
+prize = 2
+
+[[games.wager_options]]
+slug = '4-spot'
+label = '4-Spot $1'
+ticket_cost = 1.0
+
+[[games.wager_options.prize_tiers]]
+label = 'Match 4'
+probability = 0.003063392303898633
+prize = 72
+
+[[games.wager_options.prize_tiers]]
+label = 'Match 3'
+probability = 0.04324789134915717
+prize = 5
+
+[[games.wager_options.prize_tiers]]
+label = 'Match 2'
+probability = 0.21263546580002277
+prize = 1
+
+[[games.wager_options]]
+slug = '5-spot'
+label = '5-Spot $1'
+ticket_cost = 1.0
+
+[[games.wager_options.prize_tiers]]
+label = 'Match 5'
+probability = 0.0006449246955576069
+prize = 410
+
+[[games.wager_options.prize_tiers]]
+label = 'Match 4'
+probability = 0.01209233804170513
+prize = 18
+
+[[games.wager_options.prize_tiers]]
+label = 'Match 3'
+probability = 0.08393505228948267
+prize = 2
+
+[[games.wager_options]]
+slug = '6-spot'
+label = '6-Spot $1'
+ticket_cost = 1.0
+
+[[games.wager_options.prize_tiers]]
+label = 'Match 6'
+probability = 0.0001289849391115214
+prize = 1100
+
+[[games.wager_options.prize_tiers]]
+label = 'Match 5'
+probability = 0.0030956385386765135
+prize = 57
+
+[[games.wager_options.prize_tiers]]
+label = 'Match 4'
+probability = 0.028537917778424106
+prize = 7
+
+[[games.wager_options.prize_tiers]]
+label = 'Match 3'
+probability = 0.12981954754106653
+prize = 1
+
+[[games.wager_options]]
+slug = '7-spot'
+label = '7-Spot $1'
+ticket_cost = 1.0
+
+[[games.wager_options.prize_tiers]]
+label = 'Match 7'
+probability = 2.440255604812567e-05
+prize = 2000
+
+[[games.wager_options.prize_tiers]]
+label = 'Match 6'
+probability = 0.00073207668144377
+prize = 100
+
+[[games.wager_options.prize_tiers]]
+label = 'Match 5'
+probability = 0.008638504841036487
+prize = 11
+
+[[games.wager_options.prize_tiers]]
+label = 'Match 4'
+probability = 0.05219096674792877
+prize = 5
+
+[[games.wager_options.prize_tiers]]
+label = 'Match 3'
+probability = 0.17499324144893766
+prize = 1
+
+[[games.wager_options]]
+slug = '8-spot'
+label = '8-Spot $1'
+ticket_cost = 1.0
+
+[[games.wager_options.prize_tiers]]
+label = 'Match 8'
+probability = 4.345660666104571e-06
+prize = 10000
+
+[[games.wager_options.prize_tiers]]
+label = 'Match 7'
+probability = 0.00016045516305616877
+prize = 300
+
+[[games.wager_options.prize_tiers]]
+label = 'Match 6'
+probability = 0.0023667136550784896
+prize = 50
+
+[[games.wager_options.prize_tiers]]
+label = 'Match 5'
+probability = 0.01830258559927365
+prize = 15
+
+[[games.wager_options.prize_tiers]]
+label = 'Match 4'
+probability = 0.08150370149676549
+prize = 2
+
+[[games.wager_options]]
+slug = '9-spot'
+label = '9-Spot $1'
+ticket_cost = 1.0
+
+[[games.wager_options.prize_tiers]]
+label = 'Match 9'
+probability = 7.242767776840952e-07
+prize = 25000
+
+[[games.wager_options.prize_tiers]]
+label = 'Match 8'
+probability = 3.2592454995784283e-05
+prize = 2000
+
+[[games.wager_options.prize_tiers]]
+label = 'Match 7'
+probability = 0.0005916784137696224
+prize = 100
+
+[[games.wager_options.prize_tiers]]
+label = 'Match 6'
+probability = 0.005719557999773016
+prize = 20
+
+[[games.wager_options.prize_tiers]]
+label = 'Match 5'
+probability = 0.03260148059870619
+prize = 5
+
+[[games.wager_options.prize_tiers]]
+label = 'Match 4'
+probability = 0.11410518209547167
+prize = 2
+
+[[games.wager_options]]
+slug = '10-spot'
+label = '10-Spot $1'
+ticket_cost = 1.0
+
+[[games.wager_options.prize_tiers]]
+label = 'Match 10'
+probability = 1.122118951341556e-07
+prize = 100000
+
+[[games.wager_options.prize_tiers]]
+label = 'Match 9'
+probability = 6.120648825499396e-06
+prize = 5000
+
+[[games.wager_options.prize_tiers]]
+label = 'Match 8'
+probability = 0.00013541935526417413
+prize = 500
+
+[[games.wager_options.prize_tiers]]
+label = 'Match 7'
+probability = 0.0016111430985276101
+prize = 50
+
+[[games.wager_options.prize_tiers]]
+label = 'Match 6'
+probability = 0.011479394577009222
+prize = 10
+
+[[games.wager_options.prize_tiers]]
+label = 'Match 5'
+probability = 0.05142768770500132
+prize = 2
+
+[[games.wager_options.prize_tiers]]
+label = 'Match 0'
+probability = 0.04579070078902784
+prize = 5
 
 [[games]]
 slug = 'michigan-poker-lotto'
 name = 'Poker Lotto'
 source_url = 'https://www.michiganlottery.com/games/poker-lotto'
-reviewed_on = '2026-05-07'
+reviewed_on = '2026-05-12'
+
+[[games.wager_options]]
+slug = 'standard'
+label = 'Standard $2'
+ticket_cost = 2.0
+
+[[games.wager_options.prize_tiers]]
+label = 'Draw Match 5 of 5'
+probability = 3.8476929233231754e-07
+prize = 100000
+
+[[games.wager_options.prize_tiers]]
+label = 'Draw Match 4 of 5'
+probability = 9.042078369809462e-05
+prize = 500
+
+[[games.wager_options.prize_tiers]]
+label = 'Draw Match 3 of 5'
+probability = 0.004159356050112353
+prize = 25
+
+[[games.wager_options.prize_tiers]]
+label = 'Draw Match 2 of 5'
+probability = 0.06239034075168529
+prize = 3
+
+[[games.wager_options.prize_tiers]]
+label = 'Royal Flush'
+probability = 1.5390771693292702e-06
+prize = 5000
+
+[[games.wager_options.prize_tiers]]
+label = 'Straight Flush'
+probability = 1.3851694523963431e-05
+prize = 500
+
+[[games.wager_options.prize_tiers]]
+label = '4 of a Kind'
+probability = 0.00024009603841536616
+prize = 150
+
+[[games.wager_options.prize_tiers]]
+label = 'Full House'
+probability = 0.0014405762304921968
+prize = 75
+
+[[games.wager_options.prize_tiers]]
+label = 'Flush'
+probability = 0.001965401545233478
+prize = 50
+
+[[games.wager_options.prize_tiers]]
+label = 'Straight'
+probability = 0.003924646781789639
+prize = 20
+
+[[games.wager_options.prize_tiers]]
+label = '3 of a Kind'
+probability = 0.02112845138055222
+prize = 5
+
+[[games.wager_options.prize_tiers]]
+label = '2 Pair'
+probability = 0.0475390156062425
+prize = 3
+
+[[games.wager_options.prize_tiers]]
+label = 'Pair of Jacks or Better'
+probability = 0.13002123926493675
+prize = 2
 
 [[games]]
 slug = 'michigan-cash-pop'
 name = 'Cash Pop'
 source_url = 'https://www.michiganlottery.com/games/cash-pop'
-reviewed_on = '2026-05-07'
+reviewed_on = '2026-05-12'
+
+[[games.wager_options]]
+slug = 'one-pop'
+label = '1 POP $1'
+ticket_cost = 1.0
+
+[[games.wager_options.prize_tiers]]
+label = '$100'
+probability = 0.00022624434389140272
+prize = 100
+
+[[games.wager_options.prize_tiers]]
+label = '$50'
+probability = 0.00015082956259426848
+prize = 50
+
+[[games.wager_options.prize_tiers]]
+label = '$25'
+probability = 0.0023378582202111613
+prize = 25
+
+[[games.wager_options.prize_tiers]]
+label = '$20'
+probability = 0.003996983408748115
+prize = 20
+
+[[games.wager_options.prize_tiers]]
+label = '$15'
+probability = 0.005279034690799396
+prize = 15
+
+[[games.wager_options.prize_tiers]]
+label = '$10'
+probability = 0.010030165912518853
+prize = 10
+
+[[games.wager_options.prize_tiers]]
+label = '$7'
+probability = 0.013951734539969835
+prize = 7
+
+[[games.wager_options.prize_tiers]]
+label = '$5'
+probability = 0.030693815987933633
+prize = 5

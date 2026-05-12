@@ -345,6 +345,8 @@ def test_audit_frequency_parses_michigan_local_game_pools(tmp_path):
         ),
         ("mi", "michigan-lotto-47", "Mon, May 11, 2026", "13, 14, 32, 33, 36, 42"),
         ("mi", "michigan-lotto-47", "Sat, May 09, 2026", "1, 9, 16, 21, 25, 47"),
+        ("mi", "michigan-poker-lotto", "Mon, May 11, 2026", "23, 29, 45, 43, 42"),
+        ("mi", "michigan-poker-lotto", "Sun, May 10, 2026", "29, 42, 14, 2, 4"),
     ]
     conn.executemany(
         """
@@ -376,6 +378,7 @@ def test_audit_frequency_parses_michigan_local_game_pools(tmp_path):
         "michigan-fantasy-5": ["numbers"],
         "michigan-keno": ["numbers"],
         "michigan-lotto-47": ["numbers"],
+        "michigan-poker-lotto": ["cards"],
     }
 
     for game_slug, expected_pools in cases.items():

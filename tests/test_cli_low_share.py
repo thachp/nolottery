@@ -416,6 +416,12 @@ def test_low_share_supports_massachusetts_life_games(
     [
         ("michigan-daily-3", 3),
         ("michigan-daily-4", 4),
+        ("michigan-cash-pop", 1),
+        ("michigan-club-keno", 1),
+        ("michigan-fantasy-5", 5),
+        ("michigan-keno", 10),
+        ("michigan-lotto-47", 6),
+        ("michigan-poker-lotto", 5),
         ("millionaire-for-life", 6),
     ],
 )

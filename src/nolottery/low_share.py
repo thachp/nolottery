@@ -122,9 +122,14 @@ def _generate_option(
 
 
 def _candidate_numbers(rng, game_slug: str, option_slug: str) -> tuple[int, ...]:
-    if game_slug in {"cashpop", "georgia-cash-pop", "oregon-cash-pop"}:
+    if game_slug in {
+        "cashpop",
+        "georgia-cash-pop",
+        "michigan-cash-pop",
+        "oregon-cash-pop",
+    }:
         return tuple(sorted(rng.sample(range(1, 16), _selection_count(option_slug))))
-    if game_slug in {"daily-keno", "oregon-keno"}:
+    if game_slug in {"daily-keno", "michigan-club-keno", "oregon-keno"}:
         return tuple(sorted(rng.sample(range(1, 81), _selection_count(option_slug))))
     if game_slug == "hot-spot":
         return tuple(sorted(rng.sample(range(1, 81), _selection_count(option_slug))))
@@ -413,6 +418,12 @@ def _target_spread(game_slug: str) -> int:
         "lotto": 20,
         "match-4": 8,
         "mega-millions": 24,
+        "michigan-cash-pop": 6,
+        "michigan-club-keno": 25,
+        "michigan-fantasy-5": 14,
+        "michigan-keno": 35,
+        "michigan-lotto-47": 18,
+        "michigan-poker-lotto": 20,
         "pick-10": 35,
         "quick-draw": 55,
         "lotto-america": 18,

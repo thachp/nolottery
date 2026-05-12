@@ -149,10 +149,15 @@ def suggest_numbers(game_slug: str, option_slug: str) -> tuple[int, ...]:
     }.get(game_slug)
     if digit_count is not None:
         return tuple(range(1, digit_count + 1))
-    if game_slug in {"cashpop", "georgia-cash-pop", "oregon-cash-pop"}:
+    if game_slug in {
+        "cashpop",
+        "georgia-cash-pop",
+        "michigan-cash-pop",
+        "oregon-cash-pop",
+    }:
         count = _selection_count(option_slug)
         return tuple(range(1, min(count, 15) + 1))
-    if game_slug in {"daily-keno", "oregon-keno"}:
+    if game_slug in {"daily-keno", "michigan-club-keno", "oregon-keno"}:
         count = _selection_count(option_slug)
         return tuple(range(1, min(count, 80) + 1))
     if game_slug == "quick-draw":
@@ -187,6 +192,14 @@ def suggest_numbers(game_slug: str, option_slug: str) -> tuple[int, ...]:
         return (1, 2, 3, 4)
     if game_slug == "daily-3":
         return (1, 2, 3)
+    if game_slug == "michigan-fantasy-5":
+        return (1, 2, 3, 4, 5)
+    if game_slug == "michigan-keno":
+        return tuple(range(1, 11))
+    if game_slug == "michigan-lotto-47":
+        return (1, 2, 3, 4, 5, 6)
+    if game_slug == "michigan-poker-lotto":
+        return (1, 2, 3, 4, 5)
     if game_slug == "daily-derby":
         return (1, 2, 3, 67)
     if game_slug == "hot-spot":

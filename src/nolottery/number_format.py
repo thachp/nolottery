@@ -205,6 +205,26 @@ NUMBER_FORMATS: dict[str, NumberFormat] = {
         game_slug="michigan-daily-4",
         pools=(NumberPool("digits", 0, 9, 4, ordered=True, allow_repeats=True),),
     ),
+    "michigan-cash-pop": NumberFormat(
+        game_slug="michigan-cash-pop",
+        pools=(NumberPool("numbers", 1, 15, 1),),
+    ),
+    "michigan-fantasy-5": NumberFormat(
+        game_slug="michigan-fantasy-5",
+        pools=(NumberPool("numbers", 1, 39, 5),),
+    ),
+    "michigan-keno": NumberFormat(
+        game_slug="michigan-keno",
+        pools=(NumberPool("numbers", 1, 80, 10),),
+    ),
+    "michigan-lotto-47": NumberFormat(
+        game_slug="michigan-lotto-47",
+        pools=(NumberPool("numbers", 1, 47, 6),),
+    ),
+    "michigan-poker-lotto": NumberFormat(
+        game_slug="michigan-poker-lotto",
+        pools=(NumberPool("cards", 1, 52, 5),),
+    ),
     "mississippi-cash-3": NumberFormat(
         game_slug="mississippi-cash-3",
         pools=(NumberPool("digits", 0, 9, 3, ordered=True, allow_repeats=True),),
@@ -289,12 +309,17 @@ def quick_pick(
     rng: RandomSource | None = None,
 ) -> tuple[int, ...]:
     source = rng if rng is not None else random.SystemRandom()
-    if game_slug in {"cashpop", "georgia-cash-pop", "oregon-cash-pop"}:
+    if game_slug in {
+        "cashpop",
+        "georgia-cash-pop",
+        "michigan-cash-pop",
+        "oregon-cash-pop",
+    }:
         count = _selection_count(option_slug)
         if count >= 15:
             return tuple(range(1, 16))
         return tuple(sorted(source.sample(range(1, 16), count)))
-    if game_slug in {"daily-keno", "oregon-keno"}:
+    if game_slug in {"daily-keno", "michigan-club-keno", "oregon-keno"}:
         return tuple(sorted(source.sample(range(1, 81), _selection_count(option_slug))))
     if game_slug == "hot-spot":
         return tuple(sorted(source.sample(range(1, 81), _selection_count(option_slug))))
