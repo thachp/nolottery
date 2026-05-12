@@ -98,6 +98,13 @@ def fetch_current_result(
             michigan._michigan_draw_history_source,
             michigan.parse_michigan_draw_history_json,
         )
+    if jurisdiction_code == "mi" and game.slug in michigan._MICHIGAN_DRAW_RANGE_GAMES:
+        return _source_function_fetch(
+            game,
+            source_dir,
+            michigan._michigan_draw_range_source,
+            michigan.parse_michigan_draw_range_json,
+        )
     if jurisdiction_code == "or" and game.slug in oregon._OREGON_API_GAMES:
         return oregon.fetch_oregon_result(game, source_dir, read_source)
     if jurisdiction_code == "ne" and game.slug in nebraska._NEBRASKA_DRAW_RESULTS_GAMES:
@@ -319,7 +326,7 @@ def _parse_specs() -> dict[str, _ParseSpec]:
             "ga": _ParseSpec(georgia._GEORGIA_DRAW_GAMES, georgia.parse_georgia_draw_games_json),
             "ky": _ParseSpec(kentucky._KENTUCKY_WINNING_NUMBERS_GAMES, kentucky.parse_kentucky_winning_numbers_json),
             "ma": _ParseSpec(massachusetts._MASSACHUSETTS_DRAW_RESULTS_GAMES, massachusetts.parse_massachusetts_draw_results_json),
-            "mi": _ParseSpec(michigan._MICHIGAN_DRAW_HISTORY_GAMES, michigan.parse_michigan_draw_history_json),
+            "mi": _ParseSpec(michigan._MICHIGAN_GRAPHQL_GAMES, michigan.parse_michigan_graphql_json),
             "ny": _ParseSpec(new_york._NEW_YORK_OPEN_DATA_GAMES, new_york.parse_new_york_open_data_json),
             "or": _ParseSpec(oregon._OREGON_API_GAMES, oregon.parse_oregon_api_results_json),
             "tx": _ParseSpec(texas._TEXAS_WINNING_NUMBER_GAMES, texas.parse_texas_winning_numbers),

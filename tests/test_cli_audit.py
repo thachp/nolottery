@@ -304,6 +304,106 @@ def test_audit_frequency_parses_active_oregon_game_pools(tmp_path):
             assert all(audit["draw_count"] == 2 for audit in payload["audits"])
 
 
+def test_audit_frequency_parses_michigan_local_game_pools(tmp_path):
+    conn = db.connect(tmp_path)
+    rows = [
+        ("mi", "michigan-cash-pop", "Draw 73256", "7"),
+        ("mi", "michigan-cash-pop", "Draw 73257", "3"),
+        (
+            "mi",
+            "michigan-club-keno",
+            "Draw 1500844",
+            "3, 9, 11, 18, 19, 24, 25, 31, 35, 43, "
+            "49, 52, 57, 58, 59, 68, 69, 73, 78, 80, 2 Kicker",
+        ),
+        (
+            "mi",
+            "michigan-club-keno",
+            "Draw 1500845",
+            "1, 2, 4, 8, 13, 17, 21, 26, 33, 38, "
+            "41, 44, 48, 51, 56, 62, 64, 71, 76, 79, 1 Kicker",
+        ),
+        ("mi", "michigan-daily-3", "Mon, May 11, 2026 Midday", "8, 9, 5"),
+        ("mi", "michigan-daily-3", "Mon, May 11, 2026 Evening", "1, 5, 9"),
+        ("mi", "michigan-daily-4", "Mon, May 11, 2026 Midday", "5, 5, 6, 5"),
+        ("mi", "michigan-daily-4", "Mon, May 11, 2026 Evening", "7, 5, 1, 1"),
+        ("mi", "michigan-fantasy-5", "Mon, May 11, 2026", "1, 7, 11, 25, 28"),
+        ("mi", "michigan-fantasy-5", "Sun, May 10, 2026", "3, 9, 12, 20, 37"),
+        (
+            "mi",
+            "michigan-keno",
+            "Mon, May 11, 2026",
+            "2, 6, 8, 12, 14, 15, 19, 24, 30, 33, 36, "
+            "41, 44, 47, 52, 55, 62, 65, 68, 72, 75, 80",
+        ),
+        (
+            "mi",
+            "michigan-keno",
+            "Sun, May 10, 2026",
+            "1, 4, 5, 7, 10, 13, 18, 22, 27, 34, 39, "
+            "45, 49, 53, 57, 60, 66, 70, 73, 76, 78, 79",
+        ),
+        ("mi", "michigan-lotto-47", "Mon, May 11, 2026", "13, 14, 32, 33, 36, 42"),
+        ("mi", "michigan-lotto-47", "Sat, May 09, 2026", "1, 9, 16, 21, 25, 47"),
+    ]
+    conn.executemany(
+        """
+        insert into draw_results (
+            jurisdiction_code,
+            game_slug,
+            draw_date,
+            winning_number,
+            prize_amount,
+            wa_winners,
+            total
+        )
+        values (?, ?, ?, ?, 0, 0, 0)
+        """,
+        rows,
+    )
+    conn.commit()
+
+    cases = {
+        "michigan-cash-pop": ["numbers"],
+        "michigan-club-keno": ["numbers"],
+        "michigan-daily-3": ["position_1", "position_2", "position_3"],
+        "michigan-daily-4": [
+            "position_1",
+            "position_2",
+            "position_3",
+            "position_4",
+        ],
+        "michigan-fantasy-5": ["numbers"],
+        "michigan-keno": ["numbers"],
+        "michigan-lotto-47": ["numbers"],
+    }
+
+    for game_slug, expected_pools in cases.items():
+        result = runner.invoke(
+            app,
+            [
+                "--data-dir",
+                str(tmp_path),
+                "audit",
+                "frequency",
+                game_slug,
+                "-j",
+                "mi",
+                "--output",
+                "json",
+            ],
+        )
+
+        assert result.exit_code == 0, result.output
+        payload = json.loads(result.output)
+        if len(expected_pools) == 1:
+            assert payload["pool"] == expected_pools[0]
+            assert payload["draw_count"] == 2
+        else:
+            assert [audit["pool"] for audit in payload["audits"]] == expected_pools
+            assert all(audit["draw_count"] == 2 for audit in payload["audits"])
+
+
 def test_audit_frequency_parses_arkansas_local_game_pools(tmp_path):
     conn = db.connect(tmp_path)
     rows = [

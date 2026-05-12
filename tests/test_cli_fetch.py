@@ -1340,6 +1340,117 @@ def _michigan_draw_history_json() -> str:
     )
 
 
+def _michigan_millionaire_for_life_json() -> str:
+    return json.dumps(
+        {
+            "data": {
+                "gameByCode": {
+                    "logicalGameIdentifier": "MILLIONAIRE_FOR_LIFE",
+                    "drawResultsBetweenDates": [
+                        {
+                            "drawDate": "2026-05-10T04:00:00.000Z",
+                            "drawSequence": 1,
+                            "hasPayoutData": True,
+                            "isBonusDraw": False,
+                            "winningNumbers": {
+                                "drawNumbers": [1, 3, 20, 35, 46],
+                                "millionaireball": 5,
+                            },
+                        }
+                    ],
+                }
+            }
+        }
+    )
+
+
+def _michigan_daily_draw_history_json(
+    midday_numbers: list[int],
+    evening_numbers: list[int],
+) -> str:
+    def response(game_code: str, session: str, numbers: list[int]) -> dict[str, object]:
+        return {
+            "game_code": game_code,
+            "session": session,
+            "payload": {
+                "data": {
+                    "gameByCode": {
+                        "logicalGameIdentifier": "DAILY_3",
+                        "drawResultsBetweenDates": [
+                            {
+                                "drawDate": "2026-05-11T04:00:00.000Z",
+                                "drawSequence": 1,
+                                "hasPayoutData": True,
+                                "isBonusDraw": False,
+                                "winningNumbers": {"drawNumbers": numbers},
+                            }
+                        ],
+                    }
+                }
+            },
+        }
+
+    return json.dumps(
+        {
+            "responses": [
+                response("T", "Midday", midday_numbers),
+                response("3", "Evening", evening_numbers),
+            ]
+        }
+    )
+
+
+def _michigan_standard_draw_history_json(
+    logical_game_identifier: str,
+    numbers: list[int],
+) -> str:
+    return json.dumps(
+        {
+            "data": {
+                "gameByCode": {
+                    "logicalGameIdentifier": logical_game_identifier,
+                    "drawResultsBetweenDates": [
+                        {
+                            "drawDate": "2026-05-11T04:00:00.000Z",
+                            "drawSequence": 1,
+                            "hasPayoutData": True,
+                            "isBonusDraw": False,
+                            "winningNumbers": {"drawNumbers": numbers},
+                        }
+                    ],
+                }
+            }
+        }
+    )
+
+
+def _michigan_draw_range_json(
+    draw_number: int,
+    numbers: list[int],
+    *,
+    kicker: int | None = None,
+) -> str:
+    return json.dumps(
+        {
+            "data": {
+                "gameByCode": {
+                    "drawResultsForDrawNumberRange": [
+                        {
+                            "drawNumber": draw_number,
+                            "winningNumbers": {
+                                "drawNumbers": numbers,
+                                "kicker": kicker,
+                                "clubKenoExtraNumbers": [],
+                                "clubKenoPlus3Numbers": [],
+                            },
+                        }
+                    ],
+                }
+            }
+        }
+    )
+
+
 def _minnesota_winning_numbers_html() -> str:
     return """
     <html>
@@ -5475,6 +5586,331 @@ def test_fetch_michigan_mega_millions_backfill_reads_official_graphql_fixture(
             "jurisdiction_code": "mi",
             "draw_date": "Tue, May 05, 2026",
             "winning_number": "12, 22, 50, 51, 55, 10 Mega Ball",
+        }
+    ]
+
+
+def test_fetch_michigan_millionaire_for_life_backfill_reads_official_graphql_fixture(
+    tmp_path,
+):
+    fixtures = tmp_path / "fixtures"
+    fixtures.mkdir()
+    (fixtures / "millionaire-for-life-mi-backfill.json").write_text(
+        _michigan_millionaire_for_life_json(),
+        encoding="utf-8",
+    )
+
+    result = runner.invoke(
+        app,
+        [
+            "--data-dir",
+            str(tmp_path / "data"),
+            "fetch",
+            "millionaire-for-life",
+            "-j",
+            "mi",
+            "--backfill",
+            "--source-dir",
+            str(fixtures),
+        ],
+    )
+
+    assert result.exit_code == 0, result.output
+    assert "Millionaire For Life" in result.output
+    assert "1 draw" in result.output
+    assert "1 page" in result.output
+
+    draws_result = runner.invoke(
+        app,
+        [
+            "--data-dir",
+            str(tmp_path / "data"),
+            "draws",
+            "millionaire-for-life",
+            "-j",
+            "mi",
+            "--output",
+            "json",
+        ],
+    )
+
+    assert draws_result.exit_code == 0, draws_result.output
+    payload = json.loads(draws_result.output)
+    assert payload["games"][0]["draws"] == [
+        {
+            "jurisdiction_code": "mi",
+            "draw_date": "Sun, May 10, 2026",
+            "winning_number": "1, 3, 20, 35, 46, 5 Millionaire Ball",
+        }
+    ]
+
+
+@pytest.mark.parametrize(
+    ("game_slug", "midday_numbers", "evening_numbers", "expected_draws"),
+    [
+        (
+            "michigan-daily-3",
+            [8, 9, 5],
+            [1, 5, 9],
+            [
+                ("Mon, May 11, 2026 Evening", "1, 5, 9"),
+                ("Mon, May 11, 2026 Midday", "8, 9, 5"),
+            ],
+        ),
+        (
+            "michigan-daily-4",
+            [5, 5, 6, 5],
+            [7, 5, 1, 1],
+            [
+                ("Mon, May 11, 2026 Evening", "7, 5, 1, 1"),
+                ("Mon, May 11, 2026 Midday", "5, 5, 6, 5"),
+            ],
+        ),
+    ],
+)
+def test_fetch_michigan_daily_games_backfill_reads_official_graphql_fixture(
+    tmp_path,
+    game_slug,
+    midday_numbers,
+    evening_numbers,
+    expected_draws,
+):
+    fixtures = tmp_path / "fixtures"
+    fixtures.mkdir()
+    (fixtures / f"{game_slug}-mi-backfill.json").write_text(
+        _michigan_daily_draw_history_json(midday_numbers, evening_numbers),
+        encoding="utf-8",
+    )
+
+    result = runner.invoke(
+        app,
+        [
+            "--data-dir",
+            str(tmp_path / "data"),
+            "fetch",
+            game_slug,
+            "-j",
+            "mi",
+            "--backfill",
+            "--source-dir",
+            str(fixtures),
+        ],
+    )
+
+    assert result.exit_code == 0, result.output
+    assert "2 draws" in result.output
+    assert "1 page" in result.output
+
+    draws_result = runner.invoke(
+        app,
+        [
+            "--data-dir",
+            str(tmp_path / "data"),
+            "draws",
+            game_slug,
+            "-j",
+            "mi",
+            "--output",
+            "json",
+        ],
+    )
+
+    assert draws_result.exit_code == 0, draws_result.output
+    payload = json.loads(draws_result.output)
+    assert payload["games"][0]["draws"] == [
+        {
+            "jurisdiction_code": "mi",
+            "draw_date": draw_date,
+            "winning_number": winning_number,
+        }
+        for draw_date, winning_number in expected_draws
+    ]
+
+
+@pytest.mark.parametrize(
+    ("game_slug", "logical_game_identifier", "numbers", "expected_number"),
+    [
+        (
+            "michigan-fantasy-5",
+            "FANTASY_5",
+            [1, 7, 11, 25, 28],
+            "1, 7, 11, 25, 28",
+        ),
+        (
+            "michigan-keno",
+            "DAILY_KENO",
+            [
+                2,
+                6,
+                8,
+                12,
+                14,
+                15,
+                19,
+                24,
+                30,
+                33,
+                36,
+                41,
+                44,
+                47,
+                52,
+                55,
+                62,
+                65,
+                68,
+                72,
+                75,
+                80,
+            ],
+            (
+                "2, 6, 8, 12, 14, 15, 19, 24, 30, 33, 36, "
+                "41, 44, 47, 52, 55, 62, 65, 68, 72, 75, 80"
+            ),
+        ),
+        (
+            "michigan-lotto-47",
+            "LOTTO_47",
+            [13, 14, 32, 33, 36, 42],
+            "13, 14, 32, 33, 36, 42",
+        ),
+        (
+            "michigan-poker-lotto",
+            "POKER_LOTTO",
+            [29, 42, 14, 2, 4],
+            "29, 42, 14, 2, 4",
+        ),
+    ],
+)
+def test_fetch_michigan_standard_local_games_backfill_reads_graphql_fixture(
+    tmp_path,
+    game_slug,
+    logical_game_identifier,
+    numbers,
+    expected_number,
+):
+    fixtures = tmp_path / "fixtures"
+    fixtures.mkdir()
+    (fixtures / f"{game_slug}-mi-backfill.json").write_text(
+        _michigan_standard_draw_history_json(logical_game_identifier, numbers),
+        encoding="utf-8",
+    )
+
+    result = runner.invoke(
+        app,
+        [
+            "--data-dir",
+            str(tmp_path / "data"),
+            "fetch",
+            game_slug,
+            "-j",
+            "mi",
+            "--backfill",
+            "--source-dir",
+            str(fixtures),
+        ],
+    )
+
+    assert result.exit_code == 0, result.output
+    assert "1 draw" in result.output
+    assert "1 page" in result.output
+
+    draws_result = runner.invoke(
+        app,
+        [
+            "--data-dir",
+            str(tmp_path / "data"),
+            "draws",
+            game_slug,
+            "-j",
+            "mi",
+            "--output",
+            "json",
+        ],
+    )
+
+    assert draws_result.exit_code == 0, draws_result.output
+    payload = json.loads(draws_result.output)
+    assert payload["games"][0]["draws"] == [
+        {
+            "jurisdiction_code": "mi",
+            "draw_date": "Mon, May 11, 2026",
+            "winning_number": expected_number,
+        }
+    ]
+
+
+@pytest.mark.parametrize(
+    ("game_slug", "draw_number", "numbers", "kicker", "expected_number"),
+    [
+        ("michigan-cash-pop", 73257, [3], None, "3"),
+        (
+            "michigan-club-keno",
+            1500844,
+            [3, 9, 11, 18, 19, 24, 25, 31, 35, 43, 49, 52, 57, 58, 59, 68, 69, 73, 78, 80],
+            2,
+            (
+                "3, 9, 11, 18, 19, 24, 25, 31, 35, 43, 49, 52, "
+                "57, 58, 59, 68, 69, 73, 78, 80, 2 Kicker"
+            ),
+        ),
+    ],
+)
+def test_fetch_michigan_draw_range_games_backfill_reads_graphql_fixture(
+    tmp_path,
+    game_slug,
+    draw_number,
+    numbers,
+    kicker,
+    expected_number,
+):
+    fixtures = tmp_path / "fixtures"
+    fixtures.mkdir()
+    (fixtures / f"{game_slug}-mi-backfill.json").write_text(
+        _michigan_draw_range_json(draw_number, numbers, kicker=kicker),
+        encoding="utf-8",
+    )
+
+    result = runner.invoke(
+        app,
+        [
+            "--data-dir",
+            str(tmp_path / "data"),
+            "fetch",
+            game_slug,
+            "-j",
+            "mi",
+            "--backfill",
+            "--source-dir",
+            str(fixtures),
+        ],
+    )
+
+    assert result.exit_code == 0, result.output
+    assert "1 draw" in result.output
+    assert "1 page" in result.output
+
+    draws_result = runner.invoke(
+        app,
+        [
+            "--data-dir",
+            str(tmp_path / "data"),
+            "draws",
+            game_slug,
+            "-j",
+            "mi",
+            "--output",
+            "json",
+        ],
+    )
+
+    assert draws_result.exit_code == 0, draws_result.output
+    payload = json.loads(draws_result.output)
+    assert payload["games"][0]["draws"] == [
+        {
+            "jurisdiction_code": "mi",
+            "draw_date": f"Draw {draw_number}",
+            "winning_number": expected_number,
         }
     ]
 

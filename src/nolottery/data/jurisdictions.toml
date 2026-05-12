@@ -1198,53 +1198,70 @@ blocking_reason = ''
 game_slug = 'lucky-for-life'
 source_url = 'https://www.michiganlottery.com/games/lucky-for-life'
 support_statuses = ['cataloged']
-blocking_reason = 'Rules and fetch adapter pending'
+blocking_reason = 'Retired after 2026-02-21; historical adapter pending'
 
 [[jurisdictions.offerings]]
 game_slug = 'millionaire-for-life'
 source_url = 'https://www.michiganlottery.com/games/millionaire-for-life'
-support_statuses = ['cataloged']
-blocking_reason = 'Rules and fetch adapter pending'
+support_statuses = ['cataloged', 'rules_verified', 'ev_supported', 'fetch_supported', 'audit_supported', 'low_share_supported']
+results_adapter = 'mi_graphql_draw_history'
+blocking_reason = ''
 
 [[jurisdictions.offerings]]
 game_slug = 'michigan-lotto-47'
-support_statuses = ['cataloged']
-blocking_reason = 'Rules and fetch adapter pending'
+source_url = 'https://www.michiganlottery.com/games/lotto-47'
+support_statuses = ['cataloged', 'fetch_supported', 'audit_supported']
+results_adapter = 'mi_graphql_draw_history'
+blocking_reason = 'Jackpot EV modeling pending'
 
 [[jurisdictions.offerings]]
 game_slug = 'michigan-fantasy-5'
-support_statuses = ['cataloged']
-blocking_reason = 'Rules and fetch adapter pending'
+source_url = 'https://www.michiganlottery.com/games/fantasy-5'
+support_statuses = ['cataloged', 'fetch_supported', 'audit_supported']
+results_adapter = 'mi_graphql_draw_history'
+blocking_reason = 'Jackpot EV modeling pending'
 
 [[jurisdictions.offerings]]
 game_slug = 'michigan-daily-3'
-support_statuses = ['cataloged']
-blocking_reason = 'Rules and fetch adapter pending'
+source_url = 'https://www.michiganlottery.com/games/daily-3'
+support_statuses = ['cataloged', 'rules_verified', 'ev_supported', 'fetch_supported', 'audit_supported', 'low_share_supported']
+results_adapter = 'mi_graphql_draw_history'
+blocking_reason = ''
 
 [[jurisdictions.offerings]]
 game_slug = 'michigan-daily-4'
-support_statuses = ['cataloged']
-blocking_reason = 'Rules and fetch adapter pending'
+source_url = 'https://www.michiganlottery.com/games/daily-4'
+support_statuses = ['cataloged', 'rules_verified', 'ev_supported', 'fetch_supported', 'audit_supported', 'low_share_supported']
+results_adapter = 'mi_graphql_draw_history'
+blocking_reason = ''
 
 [[jurisdictions.offerings]]
 game_slug = 'michigan-keno'
-support_statuses = ['cataloged']
-blocking_reason = 'Rules and fetch adapter pending'
+source_url = 'https://www.michiganlottery.com/games/keno'
+support_statuses = ['cataloged', 'fetch_supported', 'audit_supported']
+results_adapter = 'mi_graphql_draw_history'
+blocking_reason = 'EV prize table modeling pending'
 
 [[jurisdictions.offerings]]
 game_slug = 'michigan-club-keno'
-support_statuses = ['cataloged']
-blocking_reason = 'Rules and fetch adapter pending'
+source_url = 'https://www.michiganlottery.com/games/club-keno'
+support_statuses = ['cataloged', 'fetch_supported', 'audit_supported']
+results_adapter = 'mi_graphql_draw_range'
+blocking_reason = 'EV spot, add-on, and progressive prize modeling pending'
 
 [[jurisdictions.offerings]]
 game_slug = 'michigan-poker-lotto'
-support_statuses = ['cataloged']
-blocking_reason = 'Rules and fetch adapter pending'
+source_url = 'https://www.michiganlottery.com/games/poker-lotto'
+support_statuses = ['cataloged', 'fetch_supported']
+results_adapter = 'mi_graphql_draw_history'
+blocking_reason = 'Card decoding, audit, and EV rules pending'
 
 [[jurisdictions.offerings]]
 game_slug = 'michigan-cash-pop'
-support_statuses = ['cataloged']
-blocking_reason = 'Rules and fetch adapter pending'
+source_url = 'https://www.michiganlottery.com/games/cash-pop'
+support_statuses = ['cataloged', 'fetch_supported', 'audit_supported']
+results_adapter = 'mi_graphql_draw_range'
+blocking_reason = 'EV prize generation modeling pending'
 
 [[jurisdictions]]
 code = 'mn'

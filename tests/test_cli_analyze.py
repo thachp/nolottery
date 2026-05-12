@@ -378,6 +378,37 @@ def test_analyze_supports_massachusetts_life_games(tmp_path, game_slug, best_opt
     assert payload["options"]
 
 
+@pytest.mark.parametrize(
+    ("game_slug", "best_option"),
+    [
+        ("michigan-daily-3", "Straight $1"),
+        ("michigan-daily-4", "Straight $1"),
+        ("millionaire-for-life", "Standard $5"),
+    ],
+)
+def test_analyze_supports_michigan_local_games(tmp_path, game_slug, best_option):
+    result = runner.invoke(
+        app,
+        [
+            "--data-dir",
+            str(tmp_path),
+            "analyze",
+            game_slug,
+            "-j",
+            "mi",
+            "--output",
+            "json",
+        ],
+    )
+
+    assert result.exit_code == 0, result.output
+    payload = json.loads(result.output)
+    assert payload["jurisdiction_code"] == "mi"
+    assert payload["game_slug"] == game_slug
+    assert payload["best_option"] == best_option
+    assert payload["options"]
+
+
 def test_analyze_supports_dc_millionaire_for_life(tmp_path):
     result = runner.invoke(
         app,

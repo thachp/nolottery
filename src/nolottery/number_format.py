@@ -197,6 +197,14 @@ NUMBER_FORMATS: dict[str, NumberFormat] = {
         game_slug="minnesota-pick-3",
         pools=(NumberPool("digits", 0, 9, 3, ordered=True, allow_repeats=True),),
     ),
+    "michigan-daily-3": NumberFormat(
+        game_slug="michigan-daily-3",
+        pools=(NumberPool("digits", 0, 9, 3, ordered=True, allow_repeats=True),),
+    ),
+    "michigan-daily-4": NumberFormat(
+        game_slug="michigan-daily-4",
+        pools=(NumberPool("digits", 0, 9, 4, ordered=True, allow_repeats=True),),
+    ),
     "mississippi-cash-3": NumberFormat(
         game_slug="mississippi-cash-3",
         pools=(NumberPool("digits", 0, 9, 3, ordered=True, allow_repeats=True),),

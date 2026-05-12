@@ -132,6 +132,8 @@ def suggest_numbers(game_slug: str, option_slug: str) -> tuple[int, ...]:
         "georgia-cash-4": 4,
         "georgia-five": 5,
         "minnesota-pick-3": 3,
+        "michigan-daily-3": 3,
+        "michigan-daily-4": 4,
         "mississippi-cash-3": 3,
         "mississippi-cash-4": 4,
         "colorado-pick-3": 3,

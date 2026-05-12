@@ -411,6 +411,47 @@ def test_low_share_supports_massachusetts_life_games(
     assert pick["reasons"]
 
 
+@pytest.mark.parametrize(
+    ("game_slug", "expected_length"),
+    [
+        ("michigan-daily-3", 3),
+        ("michigan-daily-4", 4),
+        ("millionaire-for-life", 6),
+    ],
+)
+def test_low_share_supports_michigan_local_games(
+    tmp_path,
+    game_slug,
+    expected_length,
+):
+    result = runner.invoke(
+        app,
+        [
+            "--data-dir",
+            str(tmp_path),
+            "low-share",
+            game_slug,
+            "-j",
+            "mi",
+            "--count",
+            "1",
+            "--candidates",
+            "5",
+            "--seed",
+            "4",
+            "--output",
+            "json",
+        ],
+    )
+
+    assert result.exit_code == 0, result.output
+    payload = json.loads(result.output)
+    pick = payload["games"][0]["options"][0]["picks"][0]
+    assert len(pick["numbers"]) == expected_length
+    assert pick["label"] != "n/a"
+    assert pick["reasons"]
+
+
 def test_low_share_supports_dc_millionaire_for_life(tmp_path):
     result = runner.invoke(
         app,
